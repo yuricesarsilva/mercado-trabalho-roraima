@@ -34,6 +34,18 @@ python scripts/02_build_analytic.py
 python scripts/02_sample_audit.py
 python scripts/03_estimate_baseline.py
 python scripts/04_make_tables.py
+python scripts/05_summarize_results.py
 ```
 
 O primeiro alvo empírico é a auditoria amostral. Ela decidirá o nível máximo de desagregação viável para Roraima.
+
+Para a especificação principal, usar quartos trimestres anuais:
+
+```powershell
+python scripts/00_download_pnadc.py --years 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 --quarters 4
+python scripts/01_build_rr_microdata.py --years 2016 2017 2018 2019 2020 2021 2022 2023 2024 2025 --quarters 4
+python scripts/02_build_analytic.py
+python scripts/02_sample_audit.py
+python scripts/03_estimate_baseline.py
+python scripts/05_summarize_results.py
+```

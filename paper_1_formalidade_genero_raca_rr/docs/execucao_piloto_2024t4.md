@@ -54,3 +54,5 @@ Esses coeficientes não devem ser interpretados como resultado final. Eles valid
 ## Próxima decisão
 
 Baixar e empilhar múltiplos anos/trimestres para estabilizar as interações e permitir especificações com efeitos fixos mais ricos.
+
+Após revisão do desenho, a especificação principal do paper deve usar o 4º trimestre de cada ano. O empilhamento de todos os trimestres fica reservado para teste de robustez.

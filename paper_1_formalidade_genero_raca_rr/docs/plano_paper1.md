@@ -20,7 +20,8 @@ Unidade de análise: indivíduo ocupado em Roraima.
 Período inicial recomendado:
 
 - diagnóstico rápido: 2024, 4º trimestre;
-- base principal: 2016-2025 ou 2012-2025, após auditoria de compatibilidade das variáveis.
+- base principal: quartos trimestres anuais, idealmente 2016T4-2025T4 ou 2012T4-2025T4, após auditoria de compatibilidade das variáveis.
+- robustez: todos os trimestres empilhados, com efeitos fixos de ano-trimestre.
 
 ## 4. Variáveis
 
@@ -85,6 +86,8 @@ ln(w_it) =
 ```
 
 `w_it` será estimado como rendimento mensal e rendimento por hora.
+
+Especificação principal: usar apenas o 4º trimestre de cada ano para comparar fotografias de fim de período. O empilhamento de todos os trimestres será tratado como robustez, não como desenho principal.
 
 ## 7. Inferência
 

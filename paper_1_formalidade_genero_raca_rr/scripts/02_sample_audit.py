@@ -9,32 +9,36 @@ from pnadc_rr.paths import INTERIM_DIR, PROCESSED_DIR, TABLES_DIR, ensure_projec
 
 
 def count_table(df: pd.DataFrame, columns: list[str], name: str) -> pd.DataFrame:
-    table = (
-        df.groupby(columns, dropna=False)
-        .size()
-        .reset_index(name="n_amostral")
-        .sort_values("n_amostral", ascending=False)
-    )
+    grouped = df.groupby(columns, dropna=False)
+    table = grouped.size().reset_index(name="n_amostral")
+    if "UPA" in df.columns:
+        table["n_upa"] = grouped["UPA"].nunique().to_numpy()
+    elif "upa" in df.columns:
+        table["n_upa"] = grouped["upa"].nunique().to_numpy()
+    table = table.sort_values("n_amostral", ascending=False)
     table.insert(0, "tabela", name)
     return table
 
 
 def main() -> None:
     ensure_project_dirs()
+    raw_rr_path = INTERIM_DIR / "pnadc_rr_microdata.parquet"
     analytic_path = PROCESSED_DIR / "pnadc_rr_analitica.parquet"
-    input_path = analytic_path if analytic_path.exists() else INTERIM_DIR / "pnadc_rr_microdata.parquet"
-    if not input_path.exists():
-        raise SystemExit(f"Missing input file: {input_path}")
+    if not raw_rr_path.exists():
+        raise SystemExit(f"Missing input file: {raw_rr_path}")
 
-    df = pd.read_parquet(input_path)
-    occupied = df.loc[df["VD4002"] == 1].copy()
+    raw_rr = pd.read_parquet(raw_rr_path)
+    if analytic_path.exists():
+        occupied = pd.read_parquet(analytic_path)
+    else:
+        occupied = raw_rr.loc[raw_rr["VD4002"] == 1].copy()
 
     tables = [
         pd.DataFrame(
             {
                 "tabela": ["totais"],
-                "n_total": [len(df)],
-                "n_14_mais": [(df["V2009"] >= 14).sum()],
+                "n_total": [len(raw_rr)],
+                "n_14_mais": [(raw_rr["V2009"] >= 14).sum()],
                 "n_ocupados": [len(occupied)],
                 "n_ocupados_renda_valida": [(occupied["VD4016"] > 0).sum()],
             }
