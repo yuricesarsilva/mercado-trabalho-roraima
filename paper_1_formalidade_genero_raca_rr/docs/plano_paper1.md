@@ -99,8 +99,14 @@ A PNAD-C tem desenho amostral complexo. A inferência deve considerar pesos, est
 2. Tabela de estatísticas descritivas.
 3. Tabelas de modelos para renda mensal.
 4. Tabelas de modelos para renda/hora.
-5. Figuras com diferenciais ajustados por grupo.
-6. Apêndice de robustez por período e por agregação ocupacional/setorial.
+5. Modelos para jornada semanal como variável dependente.
+6. Figuras com diferenciais ajustados por grupo.
+7. Apêndice de robustez por período e por agregação ocupacional/setorial.
+
+## 8.1. Pendências metodológicas imediatas
+
+- Incorporar deflatores oficiais da PNAD Contínua antes de interpretar a série temporal de rendimentos.
+- Tratar jornada de trabalho como mecanismo: comparar renda mensal sem horas, renda mensal com horas, renda por hora e horas semanais como variável dependente.
 
 ## 9. Critérios de decisão
 

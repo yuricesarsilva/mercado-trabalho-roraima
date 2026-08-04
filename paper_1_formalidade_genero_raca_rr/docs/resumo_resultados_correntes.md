@@ -53,3 +53,8 @@ A interpretação abaixo resume a execução corrente do pipeline. Ela não subs
 - No modelo de ln renda mensal, para ser mulher, quando a variável dependente é rendimento mensal, observa-se rendimento 28.5% menor, e o coeficiente é estatisticamente diferente de zero ao nível de 1%.
 - A diferença entre os modelos de rendimento mensal e rendimento por hora é substantiva: quando usamos renda mensal, parte do diferencial de gênero também reflete diferenças de jornada; quando usamos renda por hora, a comparação se aproxima mais do preço do trabalho.
 - Estes resultados ainda devem ser lidos como diferenciais condicionais, não como efeitos causais. Eles controlam por ocupação, atividade, escolaridade, idade e período, mas a seleção para o emprego formal continua potencialmente endógena.
+
+## Próximos Ajustes
+
+- Deflacionar os rendimentos antes de tratar os resultados de `2016T4-2025T4` como finais.
+- Explorar jornada de trabalho como mecanismo, estimando modelos para renda mensal, renda mensal com controle de horas, renda por hora e horas semanais.
