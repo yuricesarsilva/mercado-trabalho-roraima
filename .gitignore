@@ -1,0 +1,23 @@
+.venv/
+__pycache__/
+.pytest_cache/
+.ipynb_checkpoints/
+
+# Raw and derived microdata are large and reproducible.
+paper_1_formalidade_genero_raca_rr/data/raw/
+paper_1_formalidade_genero_raca_rr/data/interim/
+paper_1_formalidade_genero_raca_rr/data/processed/
+
+# Keep generated outputs out of Git unless explicitly selected.
+paper_1_formalidade_genero_raca_rr/outputs/tables/
+paper_1_formalidade_genero_raca_rr/outputs/figures/
+paper_1_formalidade_genero_raca_rr/outputs/models/
+
+*.log
+*.tmp
+*.zip
+*.7z
+*.parquet
+*.feather
+*.csv
+*.xlsx
