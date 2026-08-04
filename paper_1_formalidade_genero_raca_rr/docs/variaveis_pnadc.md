@@ -19,7 +19,11 @@ Esta lista será validada contra o dicionário oficial de cada ano da PNAD Cont�
 - `VD4011`: grupamento ocupacional do trabalho principal.
 - `VD4016`: rendimento habitual do trabalho principal.
 - `VD4019`: rendimento habitual de todos os trabalhos.
-- `VD4035`: horas habitualmente trabalhadas por semana no trabalho principal.
+- `V4019`: CNPJ do negócio/empresa do trabalho principal.
+- `V4029`: carteira de trabalho assinada.
+- `V4032`: contribuição para instituto de previdência.
+- `V4039`: horas habitualmente trabalhadas por semana no trabalho principal.
+- `VD4035`: horas efetivas em todos os trabalhos.
 
 ## Demografia
 

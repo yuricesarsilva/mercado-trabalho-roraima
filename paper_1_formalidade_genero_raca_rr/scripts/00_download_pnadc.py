@@ -1,7 +1,12 @@
 import argparse
+import re
 from pathlib import Path
+import sys
+from urllib.parse import urljoin
 
 import requests
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from pnadc_rr.config import DEFAULT_QUARTERS, DEFAULT_YEARS, IBGE_PNADC_MICRODATA_BASE_URL
 from pnadc_rr.paths import RAW_DIR, ensure_project_dirs
@@ -14,8 +19,15 @@ def parse_ints(values: list[str] | None, default: list[int]) -> list[int]:
 
 
 def pnadc_zip_url(year: int, quarter: int) -> str:
-    filename = f"PNADC_0{quarter}{year}.zip"
-    return f"{IBGE_PNADC_MICRODATA_BASE_URL}/{year}/{filename}"
+    year_url = f"{IBGE_PNADC_MICRODATA_BASE_URL}/{year}/"
+    response = requests.get(year_url, timeout=120)
+    response.raise_for_status()
+
+    pattern = re.compile(rf'href="(PNADC_0{quarter}{year}(?:_\d+)?\.zip)"')
+    matches = sorted(set(pattern.findall(response.text)))
+    if not matches:
+        raise FileNotFoundError(f"No PNAD-C zip found for {year} Q{quarter} at {year_url}")
+    return urljoin(year_url, matches[-1])
 
 
 def download_file(url: str, destination: Path, overwrite: bool = False) -> None:
@@ -49,7 +61,7 @@ def main() -> None:
         year_dir.mkdir(parents=True, exist_ok=True)
         for quarter in quarters:
             url = pnadc_zip_url(year, quarter)
-            destination = year_dir / f"PNADC_0{quarter}{year}.zip"
+            destination = year_dir / Path(url).name
             download_file(url, destination, overwrite=args.overwrite)
 
 

@@ -30,6 +30,7 @@ Mantidas constantes a ocupação, a atividade econômica, escolaridade, idade, j
 ```powershell
 python scripts/00_download_pnadc.py --years 2024 --quarters 4
 python scripts/01_build_rr_microdata.py --years 2024 --quarters 4
+python scripts/02_build_analytic.py
 python scripts/02_sample_audit.py
 python scripts/03_estimate_baseline.py
 python scripts/04_make_tables.py

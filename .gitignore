@@ -4,14 +4,21 @@ __pycache__/
 .ipynb_checkpoints/
 
 # Raw and derived microdata are large and reproducible.
-paper_1_formalidade_genero_raca_rr/data/raw/
-paper_1_formalidade_genero_raca_rr/data/interim/
-paper_1_formalidade_genero_raca_rr/data/processed/
+paper_1_formalidade_genero_raca_rr/data/raw/*
+paper_1_formalidade_genero_raca_rr/data/interim/*
+paper_1_formalidade_genero_raca_rr/data/processed/*
 
 # Keep generated outputs out of Git unless explicitly selected.
-paper_1_formalidade_genero_raca_rr/outputs/tables/
-paper_1_formalidade_genero_raca_rr/outputs/figures/
-paper_1_formalidade_genero_raca_rr/outputs/models/
+paper_1_formalidade_genero_raca_rr/outputs/tables/*
+paper_1_formalidade_genero_raca_rr/outputs/figures/*
+paper_1_formalidade_genero_raca_rr/outputs/models/*
+
+!paper_1_formalidade_genero_raca_rr/data/raw/.gitkeep
+!paper_1_formalidade_genero_raca_rr/data/interim/.gitkeep
+!paper_1_formalidade_genero_raca_rr/data/processed/.gitkeep
+!paper_1_formalidade_genero_raca_rr/outputs/tables/.gitkeep
+!paper_1_formalidade_genero_raca_rr/outputs/figures/.gitkeep
+!paper_1_formalidade_genero_raca_rr/outputs/models/.gitkeep
 
 *.log
 *.tmp

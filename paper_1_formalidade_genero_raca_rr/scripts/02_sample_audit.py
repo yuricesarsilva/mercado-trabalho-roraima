@@ -1,6 +1,11 @@
+from pathlib import Path
+import sys
+
 import pandas as pd
 
-from pnadc_rr.paths import INTERIM_DIR, TABLES_DIR, ensure_project_dirs
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
+
+from pnadc_rr.paths import INTERIM_DIR, PROCESSED_DIR, TABLES_DIR, ensure_project_dirs
 
 
 def count_table(df: pd.DataFrame, columns: list[str], name: str) -> pd.DataFrame:
@@ -16,7 +21,8 @@ def count_table(df: pd.DataFrame, columns: list[str], name: str) -> pd.DataFrame
 
 def main() -> None:
     ensure_project_dirs()
-    input_path = INTERIM_DIR / "pnadc_rr_microdata.parquet"
+    analytic_path = PROCESSED_DIR / "pnadc_rr_analitica.parquet"
+    input_path = analytic_path if analytic_path.exists() else INTERIM_DIR / "pnadc_rr_microdata.parquet"
     if not input_path.exists():
         raise SystemExit(f"Missing input file: {input_path}")
 
@@ -42,12 +48,23 @@ def main() -> None:
         count_table(occupied, ["VD4009", "V2007", "V2010"], "posicao_sexo_raca"),
     ]
 
-    output = TABLES_DIR / "auditoria_amostral_rr.xlsx"
-    with pd.ExcelWriter(output) as writer:
-        for table in tables:
-            sheet = str(table["tabela"].iloc[0])[:31]
-            table.to_excel(writer, sheet_name=sheet, index=False)
-    print(f"saved: {output}")
+    if {"formal", "mulher", "preto_pardo"}.issubset(occupied.columns):
+        tables.extend(
+            [
+                count_table(occupied, ["formal"], "formalidade"),
+                count_table(occupied, ["formal", "mulher"], "formalidade_genero"),
+                count_table(occupied, ["formal", "preto_pardo"], "formalidade_raca"),
+                count_table(occupied, ["formal", "mulher", "preto_pardo"], "formalidade_genero_raca"),
+                count_table(occupied, ["atividade_grupo", "formal"], "atividade_formalidade"),
+                count_table(occupied, ["ocupacao_grupo", "formal"], "ocupacao_formalidade"),
+            ]
+        )
+
+    for table in tables:
+        name = str(table["tabela"].iloc[0])
+        output = TABLES_DIR / f"auditoria_{name}.csv"
+        table.to_csv(output, index=False, encoding="utf-8")
+        print(f"saved: {output}")
 
 
 if __name__ == "__main__":

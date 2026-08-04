@@ -1,6 +1,11 @@
+from pathlib import Path
+import sys
+
 import numpy as np
 import pandas as pd
 import statsmodels.formula.api as smf
+
+sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from pnadc_rr.paths import MODELS_DIR, PROCESSED_DIR, TABLES_DIR, ensure_project_dirs
 

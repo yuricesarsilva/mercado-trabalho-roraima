@@ -1,0 +1,19 @@
+[build-system]
+requires = ["setuptools>=69"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "pnadc-rr-paper1"
+version = "0.1.0"
+description = "PNAD Contínua analysis for labor-market income differentials in Roraima."
+requires-python = ">=3.11"
+dependencies = [
+  "pandas>=2.2",
+  "numpy>=2.0",
+  "requests>=2.32",
+  "pyarrow>=17.0",
+  "statsmodels>=0.14",
+]
+
+[tool.setuptools.packages.find]
+where = ["src"]
