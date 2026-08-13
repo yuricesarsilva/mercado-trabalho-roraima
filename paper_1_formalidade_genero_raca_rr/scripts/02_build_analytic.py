@@ -6,6 +6,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from pnadc_rr.deflator import load_deflator
 from pnadc_rr.paths import INTERIM_DIR, PROCESSED_DIR, ensure_project_dirs
 
 
@@ -55,12 +56,28 @@ def main() -> None:
     occupied["ln_renda_mensal"] = np.log(occupied["renda_mensal"].where(occupied["renda_mensal"] > 0))
     occupied["ln_renda_hora"] = np.log(occupied["renda_hora"])
 
+    deflator = load_deflator()
+    before_merge = len(occupied)
+    occupied = occupied.merge(deflator, on=["Ano", "Trimestre"], how="left")
+    if len(occupied) != before_merge:
+        raise SystemExit("Deflator merge changed row count; check for duplicate Ano/Trimestre keys.")
+    missing_deflator = occupied["deflator_habitual"].isna().sum()
+    if missing_deflator:
+        print(f"warning: {missing_deflator} rows without a matching deflator (Ano/Trimestre not covered).")
+
+    occupied["renda_mensal_real"] = occupied["renda_mensal"] * occupied["deflator_habitual"]
+    occupied["renda_hora_real"] = occupied["renda_hora"] * occupied["deflator_habitual"]
+    occupied.loc[occupied["renda_hora_real"] <= 0, "renda_hora_real"] = np.nan
+    occupied["ln_renda_mensal_real"] = np.log(occupied["renda_mensal_real"].where(occupied["renda_mensal_real"] > 0))
+    occupied["ln_renda_hora_real"] = np.log(occupied["renda_hora_real"])
+
     output = PROCESSED_DIR / "pnadc_rr_analitica.parquet"
     occupied.to_parquet(output, index=False)
     print(f"saved: {output}")
     print(f"rows: {len(occupied)}")
     print(f"rows with valid formality: {occupied['formal'].notna().sum()}")
     print(f"rows with valid hourly income: {occupied['renda_hora'].notna().sum()}")
+    print(f"rows with valid real hourly income: {occupied['renda_hora_real'].notna().sum()}")
 
 
 if __name__ == "__main__":

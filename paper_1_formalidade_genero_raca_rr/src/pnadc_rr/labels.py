@@ -12,6 +12,7 @@ BASE_LABELS = {
     "formal:preto_pardo": "Trabalhador formal x pessoa preta ou parda",
     "idade": "Idade",
     "idade2": "Idade ao quadrado",
+    "horas_semanais_principal": "Horas semanais habituais (trabalho principal)",
 }
 
 BASE_SHORT_LABELS = {
@@ -23,6 +24,7 @@ BASE_SHORT_LABELS = {
     "formal:preto_pardo": "formal_preto_pardo",
     "idade": "idade",
     "idade2": "idade2",
+    "horas_semanais_principal": "horas_semanais",
 }
 
 ESCOLARIDADE_LABELS = {

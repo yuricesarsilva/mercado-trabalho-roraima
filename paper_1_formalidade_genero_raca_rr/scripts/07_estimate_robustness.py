@@ -6,7 +6,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
-from pnadc_rr.estimation import estimate
+from pnadc_rr.estimation import MINIMAL_FORMULA_RHS, estimate
 from pnadc_rr.paths import PROCESSED_DIR, ensure_project_dirs
 
 
@@ -25,14 +25,19 @@ def main() -> None:
         & df["upa"].notna()
     ].copy()
 
-    # Modelos principais: rendimento real (deflacionado pelo deflator oficial da PNAD-C).
+    # Robustez: mesma amostra e mesma variável dependente do modelo-base, mas sem
+    # nenhum controle além dos próprios tratamentos (formal, mulher, preto_pardo)
+    # e suas interações. Serve para mostrar o quanto os coeficientes de interesse
+    # mudam quando passamos a controlar por composição (ocupação, atividade,
+    # escolaridade, idade, período).
     hourly_real = common.loc[common["renda_hora_real"] > 0].copy()
     hourly_real["ln_renda_hora_real"] = np.log(hourly_real["renda_hora_real"])
     estimate(
         hourly_real,
         "ln_renda_hora_real",
-        "ln_renda_hora_real",
-        "Modelo-base: log do rendimento por hora (real, deflacionado)",
+        "ln_renda_hora_real_sem_controles",
+        "Robustez: log do rendimento por hora (real), sem controles",
+        rhs=MINIMAL_FORMULA_RHS,
     )
 
     monthly_real = common.loc[common["renda_mensal_real"] > 0].copy()
@@ -40,27 +45,9 @@ def main() -> None:
     estimate(
         monthly_real,
         "ln_renda_mensal_real",
-        "ln_renda_mensal_real",
-        "Modelo-base: log do rendimento mensal (real, deflacionado)",
-    )
-
-    # Robustez/comparação: rendimento nominal, sem ajuste de preços.
-    hourly = common.loc[common["renda_hora"] > 0].copy()
-    hourly["ln_renda_hora"] = np.log(hourly["renda_hora"])
-    estimate(
-        hourly,
-        "ln_renda_hora",
-        "ln_renda_hora",
-        "Modelo-base: log do rendimento por hora (nominal)",
-    )
-
-    monthly = common.loc[common["renda_mensal"] > 0].copy()
-    monthly["ln_renda_mensal"] = np.log(monthly["renda_mensal"])
-    estimate(
-        monthly,
-        "ln_renda_mensal",
-        "ln_renda_mensal",
-        "Modelo-base: log do rendimento mensal (nominal)",
+        "ln_renda_mensal_real_sem_controles",
+        "Robustez: log do rendimento mensal (real), sem controles",
+        rhs=MINIMAL_FORMULA_RHS,
     )
 
 

@@ -12,6 +12,7 @@ paper_1_formalidade_genero_raca_rr/data/processed/*
 paper_1_formalidade_genero_raca_rr/outputs/tables/*
 paper_1_formalidade_genero_raca_rr/outputs/figures/*
 paper_1_formalidade_genero_raca_rr/outputs/models/*
+paper_1_formalidade_genero_raca_rr/presentation/gerado/*
 
 !paper_1_formalidade_genero_raca_rr/data/raw/.gitkeep
 !paper_1_formalidade_genero_raca_rr/data/interim/.gitkeep
@@ -19,6 +20,7 @@ paper_1_formalidade_genero_raca_rr/outputs/models/*
 !paper_1_formalidade_genero_raca_rr/outputs/tables/.gitkeep
 !paper_1_formalidade_genero_raca_rr/outputs/figures/.gitkeep
 !paper_1_formalidade_genero_raca_rr/outputs/models/.gitkeep
+!paper_1_formalidade_genero_raca_rr/presentation/gerado/.gitkeep
 
 *.log
 *.tmp
@@ -28,3 +30,19 @@ paper_1_formalidade_genero_raca_rr/outputs/models/*
 *.feather
 *.csv
 *.xlsx
+
+# R artifacts.
+.Rhistory
+.RData
+.Rproj.user/
+
+# LaTeX build artifacts.
+*.aux
+*.nav
+*.out
+*.snm
+*.toc
+*.vrb
+*.fls
+*.fdb_latexmk
+*.synctex.gz

@@ -60,29 +60,34 @@ def coefficient_sentence(models: pd.DataFrame, model: str, variable: str, subjec
 
 def interpretation_text(models: pd.DataFrame) -> list[str]:
     return [
+        (
+            "Os modelos principais abaixo usam rendimento real, deflacionado pelo deflator oficial "
+            "trimestral da PNAD Contínua (IBGE), aplicado por UF e trimestre. Os modelos em valores "
+            "nominais permanecem disponíveis em `outputs/tables/` apenas para comparação."
+        ),
         coefficient_sentence(
             models,
-            "ln_renda_hora",
+            "ln_renda_hora_real",
             "formal",
             "a formalidade, em relação à informalidade",
         ),
         coefficient_sentence(
             models,
-            "ln_renda_hora",
+            "ln_renda_hora_real",
             "mulher",
             "ser mulher, em relação a ser homem",
         ),
         coefficient_sentence(
             models,
-            "ln_renda_hora",
+            "ln_renda_hora_real",
             "preto_pardo",
             "ser pessoa preta ou parda, em relação aos demais grupos de raça/cor",
         ),
         coefficient_sentence(
             models,
-            "ln_renda_mensal",
+            "ln_renda_mensal_real",
             "mulher",
-            "ser mulher, quando a variável dependente é rendimento mensal",
+            "ser mulher, quando a variável dependente é rendimento mensal real",
         ),
         (
             "A diferença entre os modelos de rendimento mensal e rendimento por hora é substantiva: "
@@ -94,6 +99,14 @@ def interpretation_text(models: pd.DataFrame) -> list[str]:
             "Eles controlam por ocupação, atividade, escolaridade, idade e período, mas a seleção para o emprego formal "
             "continua potencialmente endógena."
         ),
+        (
+            "Nota metodológica: como o modelo já satura os efeitos fixos de ano/trimestre, deflacionar o "
+            "rendimento não altera os coeficientes de formal, mulher, preto/pardo, suas interações ou os "
+            "demais controles — o ajuste de preços é absorvido inteiramente pela constante e pelos efeitos "
+            "fixos de período, já que o deflator só varia por ano/trimestre. A deflação segue sendo necessária "
+            "para descrever a evolução do nível de renda ao longo do tempo e para qualquer especificação de "
+            "robustez que não inclua efeitos fixos de período completos."
+        ),
     ]
 
 
@@ -102,7 +115,12 @@ def main() -> None:
     formality = pd.read_csv(TABLES_DIR / "auditoria_formalidade.csv")
     cells = pd.read_csv(TABLES_DIR / "auditoria_formalidade_genero_raca.csv")
     models = pd.concat(
-        [read_key_model("ln_renda_hora"), read_key_model("ln_renda_mensal")],
+        [
+            read_key_model("ln_renda_hora_real"),
+            read_key_model("ln_renda_mensal_real"),
+            read_key_model("ln_renda_hora"),
+            read_key_model("ln_renda_mensal"),
+        ],
         ignore_index=True,
     )
 

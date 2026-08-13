@@ -9,6 +9,7 @@ import requests
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
 from pnadc_rr.config import DEFAULT_QUARTERS, DEFAULT_YEARS, IBGE_PNADC_MICRODATA_BASE_URL
+from pnadc_rr.deflator import download_deflator
 from pnadc_rr.paths import RAW_DIR, ensure_project_dirs
 
 
@@ -63,6 +64,9 @@ def main() -> None:
             url = pnadc_zip_url(year, quarter)
             destination = year_dir / Path(url).name
             download_file(url, destination, overwrite=args.overwrite)
+
+    deflator_path = download_deflator(overwrite=args.overwrite)
+    print(f"saved: {deflator_path}")
 
 
 if __name__ == "__main__":

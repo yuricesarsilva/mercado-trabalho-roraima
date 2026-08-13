@@ -38,5 +38,9 @@ Esta lista será validada contra o dicionário oficial de cada ano da PNAD Cont�
 - `mulher`: indicador para sexo feminino.
 - `preto_pardo`: indicador para pessoas pretas ou pardas.
 - `renda_hora`: rendimento habitual mensal dividido por horas mensais aproximadas.
-- `ln_renda_mensal`: log do rendimento mensal.
-- `ln_renda_hora`: log do rendimento por hora.
+- `ln_renda_mensal`: log do rendimento mensal nominal.
+- `ln_renda_hora`: log do rendimento por hora nominal.
+- `deflator_habitual`: deflator oficial trimestral da PNAD Contínua (IBGE) para rendimento habitual, específico de UF e trimestre.
+- `renda_mensal_real`, `renda_hora_real`: rendimentos mensal e por hora deflacionados (`renda * deflator_habitual`).
+- `ln_renda_mensal_real`, `ln_renda_hora_real`: logs dos rendimentos reais. Usados nos modelos principais.
+- `horas_semanais_principal`: horas habitualmente trabalhadas por semana no trabalho principal (`V4039`). Usada como controle opcional e como variável dependente na análise de mecanismo (`docs/mecanismo_jornada.md`).

@@ -3,3 +3,5 @@ numpy>=2.0
 requests>=2.32
 pyarrow>=17.0
 statsmodels>=0.14
+xlrd>=2.0.1
+matplotlib>=3.8

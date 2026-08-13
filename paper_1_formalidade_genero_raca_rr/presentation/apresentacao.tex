@@ -1,0 +1,391 @@
+\documentclass[aspectratio=169]{beamer}
+
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage{lmodern}
+\usepackage{helvet}
+\renewcommand{\familydefault}{\sfdefault}
+\usepackage{graphicx}
+\usepackage{booktabs}
+\usepackage{array}
+\usepackage{xspace}
+\usepackage{amsmath}
+\usepackage{tabularx}
+
+\graphicspath{{../outputs/figures/}}
+
+% ---------------------------------------------------------------------------
+% Cores (mesma paleta categórica usada nas figuras geradas por
+% scripts/08_make_presentation_assets.py)
+% ---------------------------------------------------------------------------
+\definecolor{accentblue}{HTML}{2A78D6}
+\definecolor{accentorange}{HTML}{EB6834}
+\definecolor{accentred}{HTML}{E34948}
+\definecolor{inkprimary}{HTML}{0B0B0B}
+\definecolor{inksecondary}{HTML}{52514E}
+\definecolor{gridgray}{HTML}{E1E0D9}
+
+\setbeamercolor{normal text}{fg=inkprimary,bg=white}
+\setbeamercolor{structure}{fg=accentblue}
+\setbeamercolor{title}{fg=accentblue}
+\setbeamercolor{frametitle}{fg=inkprimary,bg=white}
+\setbeamercolor{footline}{fg=inksecondary,bg=white}
+\setbeamercolor{block title}{fg=white,bg=accentblue}
+\setbeamercolor{block body}{fg=inkprimary,bg=white}
+\setbeamercolor{alerted text}{fg=accentorange}
+\setbeamercolor{itemize item}{fg=accentblue}
+\setbeamercolor{itemize subitem}{fg=accentorange}
+
+\setbeamertemplate{navigation symbols}{}
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{frametitle}{%
+  \vspace{0.25cm}
+  {\usebeamercolor[fg]{frametitle}\Large\bfseries\insertframetitle}\par
+  \vspace{2pt}
+  {\color{accentblue}\rule{\linewidth}{1.4pt}}
+  \vspace{4pt}
+}
+\setbeamertemplate{footline}{%
+  \leavevmode
+  \hbox{\begin{beamercolorbox}[wd=\paperwidth,ht=2.4ex,dp=1.2ex,leftskip=1em,rightskip=1em]{footline}
+  {\scriptsize Formalidade, g\^enero, ra\c{c}a/cor e renda em Roraima}
+  \hfill
+  {\scriptsize\insertframenumber\,/\,\inserttotalframenumber}
+  \end{beamercolorbox}}
+}
+
+\newcommand{\highlight}[1]{\textcolor{accentblue}{\textbf{#1}}}
+\newcommand{\negativo}[1]{\textcolor{accentred}{\textbf{#1}}}
+
+\input{gerado/numeros.tex}
+
+\title[Formalidade, g\^enero, ra\c{c}a/cor e renda em RR]{Formalidade, g\^enero, ra\c{c}a/cor e renda\\no mercado de trabalho de Roraima}
+\subtitle{Diferenciais condicionais de rendimento com microdados da PNAD Cont\'inua}
+\author{Yuri Cesar Silva}
+\institute{Resultados preliminares de pesquisa}
+\date{Agosto de 2026}
+
+\begin{document}
+
+\begin{frame}[plain]
+  \titlepage
+\end{frame}
+
+\begin{frame}{Sum\'ario}
+  \tableofcontents
+\end{frame}
+
+% =============================================================================
+\section{Introdu\c{c}\~ao}
+% =============================================================================
+
+\begin{frame}{O problema}
+  \begin{itemize}
+    \item Roraima tem um mercado de trabalho pequeno, com forte presen\c{c}a de informalidade e composi\c{c}\~ao demogr\'afica marcada por fluxo migrat\'orio (fronteira com a Venezuela).
+    \item Diferenciais de rendimento por formalidade, g\^enero e ra\c{c}a/cor s\~ao amplamente documentados para o Brasil como um todo, mas pouco explorados especificamente para Roraima.
+    \item \highlight{Pergunta central:} mantidas constantes ocupa\c{c}\~ao, atividade econ\^omica, escolaridade, idade, jornada e per\'iodo, persistem diferenciais de rendimento associados \`a formalidade, g\^enero e ra\c{c}a/cor no mercado de trabalho de Roraima?
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Por que isso importa}
+  \begin{itemize}
+    \item Formalidade: acesso a direitos trabalhistas, previd\^encia e prote\c{c}\~ao social \'e mediado pelo v\'inculo formal.
+    \item G\^enero e ra\c{c}a/cor: diferenciais persistentes mesmo ap\'os controle por escolaridade e ocupa\c{c}\~ao s\~ao evid\^encia consistente com discrimina\c{c}\~ao ou com barreiras de acesso a determinados postos de trabalho.
+    \item Roraima \'e um caso pouco estudado: economia pequena, fortemente dependente do setor p\'ublico, com choque migrat\'orio recente relevante para o mercado de trabalho local.
+    \item Entender a composi\c{c}\~ao desses diferenciais informa pol\'iticas de formaliza\c{c}\~ao, equidade salarial e igualdade racial no estado.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Um primeiro olhar: gaps brutos (sem nenhum controle)}
+  \begin{center}
+    \includegraphics[width=0.95\linewidth,height=0.78\textheight,keepaspectratio]{motivacao_gaps_brutos.pdf}
+  \end{center}
+  \vspace{2mm}
+  {\footnotesize Barra azul = grupo de refer\^encia; barra laranja = grupo de compara\c{c}\~ao. M\'edias ponderadas pelo peso amostral, sem nenhum controle.}
+\end{frame}
+
+\begin{frame}{O quebra-cabe\c{c}a de g\^enero}
+  \begin{itemize}
+    \item O gap \highlight{bruto} de renda por hora entre homens e mulheres em Roraima \'e pequeno: \BrutoGapMulherPct (\BrutoMulherGrupoRef\ vs.\ \BrutoMulherGrupoComp).
+    \item Isso poderia sugerir, \`a primeira vista, aus\^encia de desigualdade de g\^enero no mercado de trabalho local.
+    \item \alert{Mas} essa compara\c{c}\~ao ignora que homens e mulheres est\~ao distribu\'idos de forma desigual entre ocupa\c{c}\~oes, setores, escolaridade e jornada.
+    \item Ao longo desta apresenta\c{c}\~ao, mostramos que o gap \highlight{condicional} (mantendo ocupa\c{c}\~ao, setor, escolaridade, idade e per\'iodo fixos) \'e substancialmente maior: \negativo{\PctMulherHora} na renda por hora.
+    \item Esse \'e um exemplo cl\'assico de por que compara\c{c}\~oes brutas podem esconder desigualdades reais.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Objetivos}
+  \begin{enumerate}
+    \item Estimar o pr\^emio salarial da formalidade em Roraima.
+    \item Estimar os diferenciais condicionais de g\^enero e ra\c{c}a/cor, controlando por composi\c{c}\~ao ocupacional e setorial.
+    \item Testar se a formaliza\c{c}\~ao atenua ou amplia os diferenciais de g\^enero e ra\c{c}a/cor (termos de intera\c{c}\~ao).
+    \item Decompor o diferencial de renda mensal em efeito-pre\c{c}o (renda por hora) e efeito-jornada (horas trabalhadas).
+    \item Reportar os resultados em termos economicamente interpret\'aveis: \% e R\$/horas.
+  \end{enumerate}
+\end{frame}
+
+% =============================================================================
+\section{Revis\~ao de literatura}
+% =============================================================================
+
+\begin{frame}{Base te\'orica: equa\c{c}\~ao de rendimentos}
+  \begin{itemize}
+    \item A especifica\c{c}\~ao segue a tradi\c{c}\~ao da \highlight{equa\c{c}\~ao de rendimentos mincer\-iana}: log do rendimento como fun\c{c}\~ao de capital humano (escolaridade, experi\^encia/idade) e caracter\'isticas do posto de trabalho.
+    \begin{itemize}
+      \item Mincer, J. (1974). \textit{Schooling, Experience, and Earnings}. NBER.
+      \item Card, D. (1999). ``The Causal Effect of Education on Earnings''. \textit{Handbook of Labor Economics}, v.\ 3A.
+    \end{itemize}
+    \item A extens\~ao natural inclui indicadores de \highlight{tratamento} (formalidade, g\^enero, ra\c{c}a/cor) ao lado dos controles de capital humano -- pr\'atica padr\~ao na literatura de diferenciais salariais (Oaxaca-Blinder e extens\~oes com efeitos fixos).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Informalidade no mercado de trabalho}
+  \begin{itemize}
+    \item Ulyssea, G. (2018). ``Firms, Informality, and Development: Theory and Evidence from Brazil''. \textit{American Economic Review}, 108(8).
+    \begin{itemize}
+      \item Modela a informalidade como resposta de firmas a custos de regula\c{c}\~ao e fiscaliza\c{c}\~ao, com implica\c{c}\~oes para produtividade e aloca\c{c}\~ao de trabalhadores.
+    \end{itemize}
+    \item Achado emp\'irico recorrente na literatura brasileira: trabalhadores formais recebem pr\^emio salarial mesmo ap\'os controle por escolaridade e ocupa\c{c}\~ao, consistente com segmenta\c{c}\~ao (n\~ao apenas sele\c{c}\~ao) do mercado de trabalho.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{G\^enero e ra\c{c}a/cor no mercado de trabalho}
+  \begin{itemize}
+    \item Blau, F. \& Kahn, L. (2017). ``The Gender Wage Gap: Extent, Trends, and Explanations''. \textit{Journal of Economic Literature}, 55(3).
+    \begin{itemize}
+      \item Parte do gap de g\^enero \'e explicada por diferen\c{c}as observ\'aveis (ocupa\c{c}\~ao, jornada); uma parcela relevante permanece n\~ao explicada mesmo em especifica\c{c}\~oes ricas em controles.
+    \end{itemize}
+    \item Literatura brasileira sobre desigualdade racial de rendimentos documenta diferenciais persistentes entre brancos e pretos/pardos mesmo ap\'os controle por escolaridade, regi\~ao e setor formal/informal.
+    \item \alert{Nota:} esta \'e uma revis\~ao inicial. Citações espec\'ificas para o contexto de Roraima/regi\~ao Norte, fronteira e fluxo migrat\'orio venezuelano ainda precisam ser levantadas e incorporadas na pr\'oxima rodada.
+  \end{itemize}
+\end{frame}
+
+% =============================================================================
+\section{Dados e metodologia}
+% =============================================================================
+
+\begin{frame}{Fonte de dados e amostra}
+  \begin{itemize}
+    \item \highlight{Fonte:} microdados trimestrais oficiais da PNAD Cont\'inua (IBGE).
+    \item \highlight{Recorte:} indiv\'iduos ocupados em Roraima (UF~14), 4\textordmasculine{} trimestre de cada ano, 2016T4--2025T4 -- ``fotografias'' de fim de per\'iodo (empilhamento de todos os trimestres fica como robustez futura).
+    \item \highlight{Funil amostral (n\~ao ponderado):}
+    \begin{itemize}
+      \item Total de entrevistados: \NTotal
+      \item Popula\c{c}\~ao de 14 anos ou mais: \NQuatorzeMais
+      \item Ocupados: \NOcupados
+      \item Ocupados com rendimento v\'alido: \NRendaValida
+    \end{itemize}
+    \item Estima\c{c}\~ao: WLS com peso amostral (\texttt{V1028}) e erros-padr\~ao clusterizados por UPA.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Vari\'aveis}
+  \begin{columns}[T]
+    \begin{column}{0.5\linewidth}
+      \textbf{Dependentes}
+      \begin{itemize}
+        \item $\ln(\text{renda mensal real})$
+        \item $\ln(\text{renda por hora real})$
+      \end{itemize}
+      \vspace{2mm}
+      \textbf{Tratamentos}
+      \begin{itemize}
+        \item \texttt{formal}: posi\c{c}\~ao na ocupa\c{c}\~ao/carteira assinada, com CNPJ como crit\'erio auxiliar para empregadores/conta-pr\'opria
+        \item \texttt{mulher}: sexo feminino
+        \item \texttt{preto\_pardo}: pretos ou pardos (ref.: brancos, amarelos ou ind\'igenas)
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\linewidth}
+      \textbf{Controles} (agrupados como ``controles'' nas tabelas)
+      \begin{itemize}
+        \item Idade e idade\textsuperscript{2}
+        \item Escolaridade (7 categorias)
+        \item Grande grupo ocupacional (11 categorias)
+        \item Grande grupo de atividade (12 categorias)
+        \item Efeitos fixos de ano-trimestre (10 per\'iodos)
+      \end{itemize}
+    \end{column}
+  \end{columns}
+\end{frame}
+
+\begin{frame}{Renda real: deflacionamento}
+  \begin{itemize}
+    \item Rendimento nominal (\texttt{VD4016}) deflacionado pelo \highlight{deflator oficial trimestral da PNAD Cont\'inua} (IBGE), espec\'ifico por UF e trimestre.
+    \item Renda m\'edia real na amostra: \MediaMensal/m\^es e \MediaHora/hora; jornada m\'edia \MediaHoras\ horas/semana.
+    \item \alert{Nota metodol\'ogica:} como o modelo j\'a satura efeitos fixos de ano-trimestre, os coeficientes de \texttt{formal}, \texttt{mulher} e \texttt{preto\_pardo} s\~ao numericamente id\^enticos entre renda nominal e real -- o deflator (constante dentro de cada per\'iodo) \'e absorvido pelas pr\'oprias dummies de per\'iodo. A defla\c{c}\~ao continua sendo necess\'aria para descrever a evolu\c{c}\~ao do \emph{n\'ivel} de renda ao longo do tempo, o que fazemos nas convers\~oes para R\$ adiante.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Especifica\c{c}\~ao do modelo-base}
+  \small
+  \begin{block}{Modelo principal (WLS, erros clusterizados por UPA)}
+    \setlength{\abovedisplayskip}{2pt}
+    \setlength{\belowdisplayskip}{2pt}
+    \begin{align*}
+      \ln(w_{it}) = {} & \beta_1\, formal_{it} + \beta_2\, mulher_i + \beta_3\, preto\_pardo_i \\
+                        & + \beta_4\, (formal_{it}\times mulher_i) + \beta_5\, (formal_{it}\times preto\_pardo_i) \\
+                        & + X_{it}\,\gamma + FE_{ocupacao} + FE_{atividade} + FE_{periodo} + \varepsilon_{it}
+    \end{align*}
+  \end{block}
+  \begin{itemize}
+    \item $w_{it}$: rendimento mensal real ou rendimento por hora real (dois modelos separados).
+    \item Estimamos tamb\'em uma vers\~ao \highlight{sem controles} (apenas os tratamentos e suas intera\c{c}\~oes) para mostrar o quanto os coeficientes mudam ao controlar por composi\c{c}\~ao -- crit\'erio de robustez principal desta apresenta\c{c}\~ao.
+    \item Leitura causal exige cautela: a sele\c{c}\~ao para o emprego formal \'e potencialmente end\'ogena.
+  \end{itemize}
+\end{frame}
+
+% =============================================================================
+\section{Resultados}
+% =============================================================================
+
+\begin{frame}{Resultado 1 -- Renda mensal real}
+  \begin{center}
+    \scriptsize
+    \renewcommand{\arraystretch}{0.82}
+    \setlength{\tabcolsep}{5pt}
+    \input{gerado/tab_mensal.tex}
+  \end{center}
+  {\scriptsize Coeficientes de $\ln(\text{renda mensal real})$. Erros-padr\~ao clusterizados por UPA entre par\^enteses. $^{*}p<0{,}10$; $^{**}p<0{,}05$; $^{***}p<0{,}01$. Apenas as vari\'aveis de interesse s\~ao exibidas; a coluna (2) inclui todos os controles listados na metodologia.}
+\end{frame}
+
+\begin{frame}{Resultado 2 -- Renda por hora real}
+  \begin{center}
+    \scriptsize
+    \renewcommand{\arraystretch}{0.82}
+    \setlength{\tabcolsep}{5pt}
+    \input{gerado/tab_hora.tex}
+  \end{center}
+  {\scriptsize Coeficientes de $\ln(\text{renda por hora real})$. Erros-padr\~ao clusterizados por UPA entre par\^enteses. $^{*}p<0{,}10$; $^{**}p<0{,}05$; $^{***}p<0{,}01$.}
+\end{frame}
+
+\begin{frame}{Robustez: sem controles vs.\ com controles}
+  \begin{center}
+    \includegraphics[width=0.95\linewidth,height=0.74\textheight,keepaspectratio]{coef_forest.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}{O que a Figura anterior mostra}
+  \begin{itemize}
+    \item \highlight{Formal:} o pr\^emio bruto (\BrutoGapFormalPct\ na renda por hora, comparando m\'edias) \'e superestimado sem controles -- cai de forma acentuada ao controlar por ocupa\c{c}\~ao/atividade/escolaridade, mas continua grande e significativo (\PctFormalHora\ na renda por hora).
+    \item \highlight{Mulher:} o sinal at\'e \highlight{inverte} entre as especifica\c{c}\~oes na renda por hora -- sem controles o coeficiente \'e pr\'oximo de zero/positivo; com controles, torna-se \negativo{\PctMulherHora}. Sinal de que mulheres est\~ao concentradas em ocupa\c{c}\~oes/setores de rendimento mais alto, o que mascara o gap salarial dentro da mesma ocupa\c{c}\~ao.
+    \item \highlight{Preto/pardo:} o gap \'e negativo e significativo nas duas especifica\c{c}\~oes, com magnitude menor ao controlar por composi\c{c}\~ao.
+  \end{itemize}
+\end{frame}
+
+% =============================================================================
+\section{Mecanismo: pre\c{c}o do trabalho vs.\ jornada}
+% =============================================================================
+
+\begin{frame}{Decompondo o diferencial de renda mensal}
+  \begin{itemize}
+    \item O diferencial de renda \highlight{mensal} mistura dois canais: quanto se ganha por hora (pre\c{c}o) e quantas horas se trabalha (quantidade).
+    \item Estrat\'egia: comparar \emph{(i)} renda mensal sem controlar horas, \emph{(ii)} renda mensal controlando por horas, \emph{(iii)} renda por hora, e \emph{(iv)} horas semanais como vari\'avel dependente -- todos na mesma amostra (renda e horas v\'alidas, $N=$\NJornada).
+  \end{itemize}
+  \begin{center}
+    \footnotesize
+    \input{gerado/tab_mecanismo.tex}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Mecanismo de jornada -- visual}
+  \begin{center}
+    \includegraphics[width=0.95\linewidth,height=0.78\textheight,keepaspectratio]{mecanismo_jornada.pdf}
+  \end{center}
+\end{frame}
+
+\begin{frame}{Leitura do mecanismo}
+  \begin{itemize}
+    \item \highlight{Mulheres} trabalham, em m\'edia, \HorasMulher\ horas/semana em rela\c{c}\~ao a homens compar\'aveis -- efeito-jornada relevante. O gap mensal cai de \PctMulherMensalSemHorasJornada\ para \PctMulherMensalComHorasJornada\ ao controlar horas, e o gap por hora \'e \PctMulherHoraJornada. Ou seja: o diferencial de g\^enero \'e \highlight{misto} -- parte pre\c{c}o, parte jornada mais curta.
+    \item \highlight{Formal:} trabalhadores formais trabalham \emph{mais} horas (\HorasFormal\ h/sem) e ainda assim ganham mais por hora -- o pr\^emio de formalidade \highlight{n\~ao} \'e explicado por jornada mais curta.
+    \item \highlight{Preto/pardo:} efeito-jornada pequeno (\HorasPretoPardo\ h/sem); o gap \'e majoritariamente efeito-pre\c{c}o.
+  \end{itemize}
+\end{frame}
+
+% =============================================================================
+\section{Discuss\~ao: quanto isso vale em R\$?}
+% =============================================================================
+
+\begin{frame}{Convertendo \% em R\$ (na renda m\'edia real da amostra)}
+  \begin{center}
+    \includegraphics[width=0.9\linewidth,height=0.62\textheight,keepaspectratio]{gap_reais.pdf}
+  \end{center}
+  {\footnotesize Convers\~ao ilustrativa: efeito percentual do modelo com controles aplicado \`a renda m\'edia real da amostra (\MediaMensal/m\^es; \MediaHora/hora). N\~ao \'e uma previs\~ao para um indiv\'iduo espec\'ifico, mas uma refer\^encia de ordem de grandeza.}
+\end{frame}
+
+\begin{frame}{Discuss\~ao -- Formalidade}
+  \begin{itemize}
+    \item Trabalhadores formais ganham \highlight{\PctFormalMensal} a mais por m\^es (\highlight{\ReaisFormalMensal}) e \highlight{\PctFormalHora} a mais por hora (\highlight{\ReaisFormalHora}) do que informais compar\'aveis.
+    \item \'E o maior diferencial estimado no estudo -- maior que g\^enero ou ra\c{c}a/cor.
+    \item A intera\c{c}\~ao formal$\times$mulher \'e positiva e significativa na renda mensal (\PctFormalMulherMensal, $p=\PValorFormalMulherMensal$): a formaliza\c{c}\~ao \highlight{atenua} o gap mensal de g\^enero, plausivelmente por padronizar jornada. Na renda por hora a intera\c{c}\~ao n\~ao \'e significativa ($p=\PValorFormalMulherHora$).
+    \item A intera\c{c}\~ao formal$\times$preto/pardo n\~ao \'e significativa em nenhum dos dois modelos ($p=\PValorFormalPretoPardoMensal$ mensal; $p=\PValorFormalPretoPardoHora$ hora).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Discuss\~ao -- G\^enero}
+  \begin{itemize}
+    \item Mulheres ganham \negativo{\PctMulherMensal} a menos por m\^es (\negativo{\ReaisMulherMensal}) e \negativo{\PctMulherHora} a menos por hora (\negativo{\ReaisMulherHora}) do que homens compar\'aveis, mantendo ocupa\c{c}\~ao, atividade, escolaridade, idade e per\'iodo fixos.
+    \item O gap \highlight{bruto} (sem controles) era pequeno (\BrutoGapMulherPct) -- a desigualdade s\'o aparece claramente quando comparamos mulheres e homens \emph{dentro da mesma ocupa\c{c}\~ao e setor}.
+    \item Parte do gap mensal \'e jornada mais curta (\HorasMulher\ h/sem); parte \'e pre\c{c}o menor por hora trabalhada.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Discuss\~ao -- Ra\c{c}a/cor}
+  \begin{itemize}
+    \item Pessoas pretas ou pardas ganham \negativo{\PctPretoPardoMensal} a menos por m\^es (\negativo{\ReaisPretoPardoMensal}) e \negativo{\PctPretoPardoHora} a menos por hora (\negativo{\ReaisPretoPardoHora}) do que o grupo de refer\^encia, mantendo os mesmos controles fixos.
+    \item Diferente do g\^enero, o gap racial \'e vis\'ivel mesmo na compara\c{c}\~ao bruta (\BrutoGapPretoPardoPct) e permanece ap\'os controles -- embora de magnitude menor que os gaps de formalidade e g\^enero.
+    \item Efeito-jornada pequeno: o gap racial \'e majoritariamente efeito-pre\c{c}o (renda por hora), n\~ao diferen\c{c}a de horas trabalhadas.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Cautelas de interpreta\c{c}\~ao}
+  \begin{itemize}
+    \item Estes s\~ao \highlight{diferenciais condicionais}, n\~ao efeitos causais: controlamos por ocupa\c{c}\~ao, atividade, escolaridade, idade e per\'iodo, mas a sele\c{c}\~ao para emprego formal, para ocupa\c{c}\~ao e para jornada continua potencialmente end\'ogena.
+    \item A convers\~ao para R\$ usa a renda m\'edia da amostra como refer\^encia -- \'e ilustrativa, n\~ao \'e uma previs\~ao individual.
+    \item Amostra restrita ao 4\textordmasculine\ trimestre de cada ano (fotografias de fim de per\'iodo); robustez com todos os trimestres empilhados ainda n\~ao foi feita.
+  \end{itemize}
+\end{frame}
+
+% =============================================================================
+\section{Conclus\~ao}
+% =============================================================================
+
+\begin{frame}{S\'intese dos achados}
+  \begin{enumerate}
+    \item Pr\^emio de formalidade \'e grande e robusto (\PctFormalHora\ na renda/hora) -- n\~ao explicado por jornada.
+    \item Gap de g\^enero \'e pequeno na compara\c{c}\~ao bruta mas grande e significativo quando controlamos composi\c{c}\~ao (\PctMulherHora\ na renda/hora); \'e parcialmente explicado por jornada mais curta.
+    \item Gap racial \'e menor em magnitude, vis\'ivel mesmo sem controles, e majoritariamente efeito-pre\c{c}o.
+    \item Formaliza\c{c}\~ao atenua o gap \emph{mensal} de g\^enero, mas n\~ao o gap racial.
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}{Pr\'oximos passos}
+  \begin{itemize}
+    \item Aprofundar a revis\~ao de literatura, com foco em: mercado de trabalho na regi\~ao Norte/fronteira, impacto do fluxo migrat\'orio venezuelano, e estudos raciais/g\^enero espec\'ificos para o Brasil.
+    \item R\'eplica das estimativas principais em R com o pacote \texttt{survey}, incorporando desenho amostral completo (estratos e conglomerados).
+    \item Ap\^endice de robustez: todos os trimestres empilhados (n\~ao s\'o o 4\textordmasculine); agrega\c{c}\~oes ocupacionais/setoriais alternativas.
+    \item Investigar mecanismos adicionais do gap de g\^enero (tipo de ocupa\c{c}\~ao, trabalho dom\'estico/cuidado n\~ao remunerado como hip\'otese para a diferen\c{c}a de horas).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Refer\^encias}
+  \footnotesize
+  \begin{itemize}
+    \item Blau, F.\ D. \& Kahn, L.\ M.\ (2017). The Gender Wage Gap: Extent, Trends, and Explanations. \textit{Journal of Economic Literature}, 55(3), 789--865.
+    \item Card, D.\ (1999). The Causal Effect of Education on Earnings. In \textit{Handbook of Labor Economics}, v.\ 3A. Elsevier.
+    \item IBGE (2026). Pesquisa Nacional por Amostra de Domic\'ilios Cont\'inua -- Microdados trimestrais e deflatores oficiais.
+    \item Mincer, J.\ (1974). \textit{Schooling, Experience, and Earnings}. National Bureau of Economic Research.
+    \item Ulyssea, G.\ (2018). Firms, Informality, and Development: Theory and Evidence from Brazil. \textit{American Economic Review}, 108(8), 2015--2047.
+  \end{itemize}
+  \vspace{2mm}
+  {\scriptsize Revis\~ao de literatura preliminar -- refer\^encias adicionais sobre g\^enero/ra\c{c}a no Brasil e mercado de trabalho na regi\~ao Norte ser\~ao incorporadas na pr\'oxima vers\~ao.}
+\end{frame}
+
+\begin{frame}[plain]
+  \centering
+  {\Huge\color{accentblue}\bfseries Obrigado!}
+  \vspace{6mm}
+
+  {\large Coment\'arios e sugest\~oes s\~ao bem-vindos.}
+\end{frame}
+
+\end{document}

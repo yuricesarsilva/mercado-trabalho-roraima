@@ -91,7 +91,9 @@ Especificação principal: usar apenas o 4º trimestre de cada ano para comparar
 
 ## 7. Inferência
 
-A PNAD-C tem desenho amostral complexo. A inferência deve considerar pesos, estratos e conglomerados. Como primeira aproximação operacional em Python, usar WLS com pesos e erros-padrão clusterizados por UPA quando as variáveis de desenho estiverem disponíveis. Em etapa posterior, replicar as estimativas principais em R com `survey` caso R esteja disponível no ambiente.
+A PNAD-C tem desenho amostral complexo. A inferência deve considerar pesos, estratos e conglomerados. Como primeira aproximação operacional em Python, usar WLS com pesos e erros-padrão clusterizados por UPA quando as variáveis de desenho estiverem disponíveis.
+
+~~Em etapa posterior, replicar as estimativas principais em R com `survey` caso R esteja disponível no ambiente.~~ Concluído: ver `docs/replicacao_r_survey.md` e `r/01_replicate_survey.R`. Usa o desenho oficial de réplicas bootstrap da PNAD-C (`PNADcIBGE`), pooled para os 10 anos. Coeficientes batem com a estimação em Python a ~1e-14; os erros-padrão do desenho oficial são sistematicamente menores que os do erro clusterizado por UPA (esperado — a linearização de Taylor sobre peso pós-estratificado é conservadora), sem mudar a significância dos termos principais.
 
 ## 8. Produtos
 
@@ -99,14 +101,14 @@ A PNAD-C tem desenho amostral complexo. A inferência deve considerar pesos, est
 2. Tabela de estatísticas descritivas.
 3. Tabelas de modelos para renda mensal.
 4. Tabelas de modelos para renda/hora.
-5. Modelos para jornada semanal como variável dependente.
+5. ~~Modelos para jornada semanal como variável dependente.~~ Concluído: ver `docs/mecanismo_jornada.md`.
 6. Figuras com diferenciais ajustados por grupo.
 7. Apêndice de robustez por período e por agregação ocupacional/setorial.
 
 ## 8.1. Pendências metodológicas imediatas
 
-- Incorporar deflatores oficiais da PNAD Contínua antes de interpretar a série temporal de rendimentos.
-- Tratar jornada de trabalho como mecanismo: comparar renda mensal sem horas, renda mensal com horas, renda por hora e horas semanais como variável dependente.
+- ~~Incorporar deflatores oficiais da PNAD Contínua antes de interpretar a série temporal de rendimentos.~~ Concluído: ver `docs/proximos_passos.md`.
+- ~~Tratar jornada de trabalho como mecanismo: comparar renda mensal sem horas, renda mensal com horas, renda por hora e horas semanais como variável dependente.~~ Concluído: ver `docs/mecanismo_jornada.md`.
 
 ## 9. Critérios de decisão
 
