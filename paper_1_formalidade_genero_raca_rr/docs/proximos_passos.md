@@ -1,6 +1,22 @@
 # Próximos Passos
 
-Última atualização: 2026-08-13.
+Última atualização: 2026-08-14.
+
+## 5. Evolução temporal dos diferenciais — concluído
+
+`scripts/09_estimate_trends.py` estende o modelo-base de renda por hora real com interações
+`formal:C(periodo)`, `mulher:C(periodo)` e `preto_pardo:C(periodo)`, permitindo que cada
+diferencial varie ano a ano (2016T4-2025T4) em vez de ser constante no tempo. Também estima um
+modelo de robustez com inclinação linear (`termo:Ano`) por termo. Ver `docs/evolucao_temporal.md`
+para a tabela completa e `outputs/figures/tendencia_temporal.png` para o gráfico.
+
+Achado: nenhuma das três tendências lineares é claramente forte — o prêmio de formalidade e a
+penalidade de gênero por hora oscilam ano a ano sem uma direção linear significativa (formal:
+-0,30 p.p./ano; mulher: -0,23 p.p./ano; ambos não significativos), enquanto o diferencial de
+raça/cor mostra uma tendência de queda (em módulo) marginalmente significativa a 10%
+(+0,78 p.p./ano, ou seja, a penalidade está diminuindo). Os IC 95% ano a ano são largos (amostra
+de ~2-3 mil pessoas ocupadas com renda válida por ano em Roraima), então a leitura ano a ano deve
+ser tratada com cautela; a inclinação linear é o resumo mais estável.
 
 ## 3. Réplica em R com `survey` (desenho amostral completo) — concluído
 

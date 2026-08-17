@@ -14,6 +14,27 @@ FORMAL_VD4009 = {1, 3, 5, 7}
 INFORMAL_VD4009 = {2, 4, 6, 10}
 EMPLOYER_SELF_EMPLOYED = {8, 9}
 
+# VD4009 = posição na ocupação no trabalho principal (dicionário oficial PNAD-C).
+PUBLICO_VD4009 = {5, 6, 7}
+EMPREGADOS_VD4009 = {1, 2, 3, 4, 5, 6, 7}
+POSICAO_OCUPACAO_LABELS = {
+    1: "privado_com_carteira",
+    2: "privado_sem_carteira",
+    3: "domestico_com_carteira",
+    4: "domestico_sem_carteira",
+    5: "publico_com_carteira",
+    6: "publico_sem_carteira",
+    7: "militar_estatutario",
+    8: "empregador",
+    9: "conta_propria",
+    10: "familiar_auxiliar",
+}
+
+# V2010 = cor ou raça. amarelo (código 3) fica de fora de raca_grupo (vira NaN, excluído
+# da estimação de raça) por N insuficiente para uma dummy própria (69 de 24.414 ocupados,
+# ~0,3%) -- ver docs/definicao_raca.md. branco = referência.
+RACA_GRUPO_LABELS = {1: "branco", 2: "preto", 4: "pardo", 5: "indigena"}
+
 
 def build_formality(df: pd.DataFrame) -> pd.Series:
     formal = pd.Series(np.nan, index=df.index, dtype="float")
@@ -40,6 +61,10 @@ def main() -> None:
     occupied["formal"] = build_formality(occupied)
     occupied["mulher"] = (occupied["V2007"] == 2).astype(int)
     occupied["preto_pardo"] = occupied["V2010"].isin([2, 4]).astype(int)
+    occupied["raca_grupo"] = occupied["V2010"].map(RACA_GRUPO_LABELS)
+    occupied["setor_publico"] = occupied["VD4009"].isin(PUBLICO_VD4009).astype(int)
+    occupied["posicao_ocupacao_grupo"] = occupied["VD4009"].map(POSICAO_OCUPACAO_LABELS)
+    occupied["empregado_restrito"] = occupied["VD4009"].isin(EMPREGADOS_VD4009).astype(int)
     occupied["idade"] = occupied["V2009"]
     occupied["idade2"] = occupied["idade"] ** 2
     occupied["peso"] = occupied["V1028"]
@@ -78,6 +103,9 @@ def main() -> None:
     print(f"rows with valid formality: {occupied['formal'].notna().sum()}")
     print(f"rows with valid hourly income: {occupied['renda_hora'].notna().sum()}")
     print(f"rows with valid real hourly income: {occupied['renda_hora_real'].notna().sum()}")
+    print(f"rows with valid raca_grupo (amarelo excluded): {occupied['raca_grupo'].notna().sum()}")
+    print(f"rows setor_publico=1: {occupied['setor_publico'].sum()}")
+    print(f"rows empregado_restrito=1: {occupied['empregado_restrito'].sum()}")
 
 
 if __name__ == "__main__":

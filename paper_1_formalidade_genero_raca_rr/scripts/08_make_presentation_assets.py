@@ -1,13 +1,13 @@
-"""Generate figures, LaTeX regression tables, and narrative-number macros for the Beamer presentation.
+"""Generate figures, LaTeX regression tables, and narrative-number macros for the Beamer
+presentation, from the final R/survey-based results (r/02, r/03, r/04, r/05, r/06, r/07 —
+ver docs/resultados_finais.md).
 
-Reads the already-estimated models in outputs/tables/ and outputs/models/ (produced by
-scripts 03, 06 and 07) plus the analytic dataset, and writes:
-
-- outputs/figures/*.pdf (+ .png for quick preview): motivation gaps, coefficient robustness
-  forest plot, jornada-mechanism decomposition, R$ gap chart.
-- presentation/gerado/tab_mensal.tex, tab_hora.tex, tab_mecanismo.tex: LaTeX regression tables.
-- presentation/gerado/numeros.tex: \\newcommand macros with narrative numbers (R$, %, hours,
-  sample sizes), so slide prose never hand-transcribes a number that could drift from the data.
+Escreve:
+- outputs/figures/*.pdf (+ .png): motivação (gaps brutos), sensibilidade da especificação
+  (M1->M4), setor público (estrutura salarial por posição), mecanismo de jornada, R$ ajustado,
+  robustez (trimestres/pandemia).
+- presentation/gerado/*.tex: tabelas de regressão e de contrastes.
+- presentation/gerado/numeros.tex: macros \\newcommand com números narrativos.
 """
 
 from pathlib import Path
@@ -35,7 +35,7 @@ BLUE = "#2a78d6"
 ORANGE = "#eb6834"
 AQUA = "#1baf7a"
 RED = "#e34948"
-GRAY_REF = "#c3c2b7"
+PURPLE = "#8858c8"
 GRAY_GRID = "#e1e0d9"
 INK = "#0b0b0b"
 INK_SECONDARY = "#52514e"
@@ -60,9 +60,14 @@ plt.rcParams.update(
     }
 )
 
+RACA_NIVEIS = ["preto", "pardo", "indigena"]
+RACA_LABELS = {"preto": "Preto", "pardo": "Pardo", "indigena": "Ind\\'igena"}
+RACA_LABELS_PLAIN = {"preto": "Preto", "pardo": "Pardo", "indigena": "Indígena"}
+RACA_COLORS = {"preto": ORANGE, "pardo": AQUA, "indigena": PURPLE}
+
 
 # ---------------------------------------------------------------------------
-# Formatting helpers (pt-BR number style for the .tex output)
+# Formatting helpers (pt-BR)
 # ---------------------------------------------------------------------------
 
 def fmt_num(x: float, decimals: int = 3, sign: bool = False) -> str:
@@ -99,103 +104,64 @@ def pct_effect(coef: float) -> float:
     return (np.exp(coef) - 1) * 100
 
 
-# ---------------------------------------------------------------------------
-# Data loading
-# ---------------------------------------------------------------------------
-
-def load_model(label: str) -> pd.DataFrame:
-    return pd.read_csv(TABLES_DIR / f"modelo_base_{label}.csv", index_col=0)
-
-
-def load_stats(label: str) -> dict:
-    stats = pd.read_csv(TABLES_DIR / f"modelo_base_{label}_estatisticas.csv", index_col="chave")
-    return stats["valor"].to_dict()
-
-
 def wavg(values: pd.Series, weights: pd.Series) -> float:
     return float(np.average(values, weights=weights))
 
 
-TERMS = ["formal", "mulher", "preto_pardo", "formal:mulher", "formal:preto_pardo"]
-TERM_LABELS = {
-    "formal": "Formal (ref.: informal)",
-    "mulher": "Mulher (ref.: homem)",
-    "preto_pardo": "Preto/pardo (ref.: branco/amarelo/ind\\'igena)",
-    "formal:mulher": "Formal $\\times$ Mulher",
-    "formal:preto_pardo": "Formal $\\times$ Preto/pardo",
-}
-KEY_TERMS = ["formal", "mulher", "preto_pardo"]
-KEY_TERM_LABELS_SHORT = {"formal": "Formal", "mulher": "Mulher", "preto_pardo": "Preto/pardo"}
+# ---------------------------------------------------------------------------
+# Data loading (fonte: outputs/tables/r_*.csv, gerados pelos scripts em r/)
+# ---------------------------------------------------------------------------
+
+def load_r_nested(amostra: str, dv: str, modelo: str = "M4") -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / f"r_nested_{amostra}_{dv}_{modelo}.csv", index_col="termo")
+
+
+def load_r_contrastes(amostra: str, dv: str) -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / f"r_contrastes_{amostra}_{dv}.csv", index_col="id")
+
+
+def load_r_jornada(amostra: str, dv: str) -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / f"r_jornada_{amostra}_{dv}.csv", index_col="termo")
+
+
+def load_r_jornada_identidade(amostra: str) -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / f"r_jornada_identidade_{amostra}.csv", index_col="termo")
+
+
+def load_r_tendencia() -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / "r_tendencia_linear.csv", index_col="termo")
+
+
+def load_r_tendencia_flexivel() -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / "r_tendencia_flexivel.csv")
+
+
+def load_r_robustez_trimestres() -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / "r_robustez_trimestres.csv")
+
+
+def load_r_robustez_pandemia() -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / "r_robustez_pandemia.csv")
+
+
+def load_r_setor_publico(dv: str) -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / f"r_setor_publico_{dv}.csv", index_col="termo")
+
+
+def load_r_posicao_ocupacao(dv: str) -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / f"r_posicao_ocupacao_{dv}.csv", index_col="termo")
+
+
+def load_r_posicao_descritivo() -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / "r_posicao_ocupacao_descritivo.csv")
+
+
+def raca_term(raca: str, prefix: str = "factor(raca_grupo)") -> str:
+    return f"{prefix}{raca}"
 
 
 # ---------------------------------------------------------------------------
-# LaTeX regression table
-# ---------------------------------------------------------------------------
-
-def make_regression_table(label_sem: str, label_com: str, caption: str) -> str:
-    sem = load_model(label_sem)
-    com = load_model(label_com)
-    stats_sem = load_stats(label_sem)
-    stats_com = load_stats(label_com)
-
-    lines = [
-        "\\begin{tabular}{lcc}",
-        "\\toprule",
-        " & (1) Sem controles & (2) Com controles \\\\",
-        "\\midrule",
-    ]
-    for term in TERMS:
-        row_sem = sem.loc[term]
-        row_com = com.loc[term]
-        lines.append(
-            f"{TERM_LABELS[term]} & "
-            f"{fmt_num(row_sem['coeficiente'], sign=True)}{stars(row_sem['p_valor'])} & "
-            f"{fmt_num(row_com['coeficiente'], sign=True)}{stars(row_com['p_valor'])} \\\\"
-        )
-        lines.append(
-            f" & ({fmt_num(row_sem['erro_padrao'])}) & ({fmt_num(row_com['erro_padrao'])}) \\\\"
-        )
-    lines.append("\\midrule")
-    lines.append("Controles (ocup., ativ., escol., idade, per\\'iodo) & N\\~ao & Sim \\\\")
-    lines.append(f"Observa\\c{{c}}\\~oes & {fmt_int(stats_sem['nobs'])} & {fmt_int(stats_com['nobs'])} \\\\")
-    lines.append(f"R$^2$ & {fmt_num(stats_sem['rsquared'], 3)} & {fmt_num(stats_com['rsquared'], 3)} \\\\")
-    lines.append("\\bottomrule")
-    lines.append("\\end{tabular}")
-    return "\n".join(lines)
-
-
-def make_mecanismo_table() -> str:
-    sem_horas = load_model("ln_renda_mensal_real_amostra_jornada")
-    com_horas = load_model("ln_renda_mensal_real_com_horas")
-    hora = load_model("ln_renda_hora_real_amostra_jornada")
-    horas_dv = load_model("horas_semanais")
-
-    lines = [
-        "\\begin{tabular}{lcccc}",
-        "\\toprule",
-        " & \\shortstack{Mensal\\\\sem horas} & \\shortstack{Mensal\\\\com horas} & "
-        "\\shortstack{Por\\\\hora} & \\shortstack{Horas\\\\semanais} \\\\",
-        "\\midrule",
-    ]
-    for term in KEY_TERMS:
-        e_sem = pct_effect(sem_horas.loc[term, "coeficiente"])
-        e_com = pct_effect(com_horas.loc[term, "coeficiente"])
-        e_hora = pct_effect(hora.loc[term, "coeficiente"])
-        e_horas = horas_dv.loc[term, "coeficiente"]
-        lines.append(
-            f"{KEY_TERM_LABELS_SHORT[term]} & "
-            f"{fmt_pct(e_sem)}{stars(sem_horas.loc[term, 'p_valor'])} & "
-            f"{fmt_pct(e_com)}{stars(com_horas.loc[term, 'p_valor'])} & "
-            f"{fmt_pct(e_hora)}{stars(hora.loc[term, 'p_valor'])} & "
-            f"{fmt_num(e_horas, 2, sign=True)} h/sem{stars(horas_dv.loc[term, 'p_valor'])} \\\\"
-        )
-    lines.append("\\bottomrule")
-    lines.append("\\end{tabular}")
-    return "\n".join(lines)
-
-
-# ---------------------------------------------------------------------------
-# Figures
+# Figuras
 # ---------------------------------------------------------------------------
 
 def save_fig(fig, name: str) -> None:
@@ -210,7 +176,7 @@ def fig_motivacao(raw_gaps: dict) -> None:
     panels = [
         ("Informal", "Formal", raw_gaps["formal"], axes[0]),
         ("Homem", "Mulher", raw_gaps["mulher"], axes[1]),
-        ("Branco/\noutros", "Preto/\npardo", raw_gaps["preto_pardo"], axes[2]),
+        ("Branco", "Preto/\npardo", raw_gaps["raca"], axes[2]),
     ]
     for label_a, label_b, (val_a, val_b), ax in panels:
         bars = ax.bar([label_a, label_b], [val_a, val_b], color=[BLUE, ORANGE], width=0.55, zorder=3)
@@ -219,10 +185,7 @@ def fig_motivacao(raw_gaps: dict) -> None:
             ax.annotate(
                 f"R$ {height:,.0f}".replace(",", "."),
                 (bar.get_x() + bar.get_width() / 2, height),
-                ha="center",
-                va="bottom",
-                fontsize=9.5,
-                color=INK,
+                ha="center", va="bottom", fontsize=9.5, color=INK,
             )
         ax.set_ylim(0, max(val_a, val_b) * 1.28)
         ax.spines[["top", "right", "left"]].set_visible(False)
@@ -235,95 +198,110 @@ def fig_motivacao(raw_gaps: dict) -> None:
     save_fig(fig, "motivacao_gaps_brutos")
 
 
-def fig_coef_forest() -> None:
-    # Small multiples: one independent x-scale per (termo, especificação da renda),
-    # porque o prêmio de formalidade é ~5-10x maior que os gaps de gênero/raça — um
-    # eixo único espremeria mulher/preto_pardo perto de zero.
-    col_specs = [
-        ("ln_renda_mensal_real_sem_controles", "ln_renda_mensal_real", "Renda mensal real"),
-        ("ln_renda_hora_real_sem_controles", "ln_renda_hora_real", "Renda por hora real"),
-    ]
-    fig, axes = plt.subplots(len(KEY_TERMS), 2, figsize=(10, 5.6))
+def fig_sensibilidade() -> None:
+    # Sensibilidade da especificação M1->M4 (amostra ampla, renda por hora real) para
+    # formal, mulher e pardo (maior subgrupo racial, estimativa mais precisa).
+    modelos = ["M1", "M2", "M3", "M4"]
+    modelo_labels = ["M1\ntratamentos", "M2\n+ativ.", "M3\n+ocup.", "M4\ncélula\nconjunta"]
+    termos = [("formal", "Formal", BLUE), ("mulher", "Mulher", ORANGE), (raca_term("pardo"), "Pardo", AQUA)]
 
-    for col, (label_sem, label_com, col_title) in enumerate(col_specs):
-        sem = load_model(label_sem)
-        com = load_model(label_com)
-        for row, term in enumerate(KEY_TERMS):
-            ax = axes[row, col]
-            for y, (model_df, color, model_label) in enumerate(
-                [(sem, ORANGE, "Sem controles"), (com, BLUE, "Com controles")]
-            ):
-                r = model_df.loc[term]
-                point = pct_effect(r["coeficiente"])
-                low = pct_effect(r["coeficiente"] - 1.96 * r["erro_padrao"])
-                high = pct_effect(r["coeficiente"] + 1.96 * r["erro_padrao"])
-                ax.errorbar(
-                    [point],
-                    [y],
-                    xerr=[[point - low], [high - point]],
-                    fmt="o",
-                    color=color,
-                    ecolor=color,
-                    elinewidth=1.6,
-                    capsize=3,
-                    markersize=6,
-                    label=model_label,
-                )
-            ax.axvline(0, color=INK_SECONDARY, linewidth=1, linestyle="--", zorder=0)
-            ax.set_ylim(-0.7, 1.7)
-            ax.set_yticks([0, 1])
-            ax.set_yticklabels(["Sem\ncontroles", "Com\ncontroles"], fontsize=8.5)
-            ax.spines[["top", "right"]].set_visible(False)
-            ax.tick_params(axis="x", labelsize=9)
-            if row == 0:
-                ax.set_title(col_title, fontsize=11.5)
-            if col == 0:
-                ax.annotate(
-                    KEY_TERM_LABELS_SHORT[term],
-                    xy=(-0.32, 0.5),
-                    xycoords="axes fraction",
-                    rotation=90,
-                    va="center",
-                    ha="center",
-                    fontsize=11,
-                    fontweight="bold",
-                )
-            if row == len(KEY_TERMS) - 1:
-                ax.set_xlabel("Efeito percentual aprox. (%)", fontsize=9.5)
+    fig, axes = plt.subplots(1, 3, figsize=(10.5, 3.6))
+    for ax, (termo, label, color) in zip(axes, termos):
+        pontos, baixos, altos = [], [], []
+        for m in modelos:
+            tbl = load_r_nested("ampla", "ln_renda_hora_real", m)
+            r = tbl.loc[termo]
+            pontos.append(pct_effect(r["coeficiente"]))
+            baixos.append(pct_effect(r["coeficiente"] - 1.96 * r["erro_padrao"]))
+            altos.append(pct_effect(r["coeficiente"] + 1.96 * r["erro_padrao"]))
+        x = np.arange(len(modelos))
+        ax.errorbar(
+            x, pontos, yerr=[np.array(pontos) - np.array(baixos), np.array(altos) - np.array(pontos)],
+            fmt="o-", color=color, ecolor=color, elinewidth=1.6, capsize=3, markersize=6, zorder=3,
+        )
+        ax.axhline(0, color=INK_SECONDARY, linewidth=1, linestyle="--", zorder=0)
+        ax.set_xticks(x)
+        ax.set_xticklabels(modelo_labels, fontsize=8.5)
+        ax.set_title(label, fontsize=11.5)
+        ax.spines[["top", "right"]].set_visible(False)
+        if ax is axes[0]:
+            ax.set_ylabel("Efeito percentual aprox. (%)")
+    fig.suptitle("Sensibilidade à especificação — renda por hora real, amostra ampla (IC 95%)", fontsize=12)
+    fig.tight_layout()
+    save_fig(fig, "sensibilidade_especificacao")
 
-    fig.suptitle("Coeficientes-chave: sem controles vs. com controles (IC 95%)", fontsize=12)
-    fig.tight_layout(rect=(0.02, 0, 1, 1))
-    save_fig(fig, "coef_forest")
+
+def fig_setor_publico() -> None:
+    desc = load_r_posicao_descritivo().sort_values("renda_hora_media")
+    cond = load_r_posicao_ocupacao("ln_renda_hora_real")
+
+    labels_map = {
+        "militar_estatutario": "Militar/estatutário", "empregador": "Empregador",
+        "publico_com_carteira": "Público, c/carteira", "publico_sem_carteira": "Público, s/carteira",
+        "privado_com_carteira": "Privado, c/carteira", "privado_sem_carteira": "Privado, s/carteira\n(referência)",
+        "conta_propria": "Conta-própria", "domestico_com_carteira": "Doméstico, c/carteira",
+        "domestico_sem_carteira": "Doméstico, s/carteira",
+    }
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.5, 4.6))
+
+    labels1 = [labels_map[p] for p in desc["posicao_ocupacao_grupo"]]
+    is_public = desc["posicao_ocupacao_grupo"].isin(["publico_com_carteira", "publico_sem_carteira", "militar_estatutario"])
+    colors1 = [AQUA if pub else BLUE for pub in is_public]
+    ax1.barh(labels1, desc["renda_hora_media"], color=colors1, zorder=3)
+    ax1.set_xlabel("R$/hora (real, sem controles)")
+    ax1.set_title("Renda média por hora, por posição", fontsize=11)
+    ax1.spines[["top", "right"]].set_visible(False)
+    for y, v in enumerate(desc["renda_hora_media"]):
+        ax1.annotate(f"R$ {v:.2f}", (v, y), ha="left", va="center", fontsize=8.5, xytext=(4, 0), textcoords="offset points")
+
+    ordem = cond.filter(like="factor(posicao_ocupacao_grupo)", axis=0)
+    ordem = ordem.assign(efeito=lambda d: (np.exp(d["coeficiente"]) - 1) * 100).sort_values("efeito")
+    posicoes = [i.replace("factor(posicao_ocupacao_grupo)", "") for i in ordem.index]
+    labels2 = [labels_map.get(p, p) for p in posicoes]
+    is_public2 = [p in {"publico_com_carteira", "publico_sem_carteira", "militar_estatutario"} for p in posicoes]
+    colors2 = [AQUA if pub else (RED if v < 0 else BLUE) for pub, v in zip(is_public2, ordem["efeito"])]
+    ax2.barh(labels2, ordem["efeito"], color=colors2, zorder=3)
+    ax2.axvline(0, color=INK_SECONDARY, linewidth=1, zorder=0)
+    ax2.set_xlabel("Efeito condicional aprox. (%), ref.: privado s/carteira")
+    ax2.set_title("Estrutura salarial condicional", fontsize=11)
+    ax2.spines[["top", "right"]].set_visible(False)
+    ax2.set_xlim(min(ordem["efeito"]) * 1.35, max(ordem["efeito"]) * 1.2)
+    for y, v in enumerate(ordem["efeito"]):
+        ax2.annotate(f"{v:+.0f}%", (v, y), ha="left" if v >= 0 else "right", va="center", fontsize=8.5,
+                     xytext=(4 if v >= 0 else -4, 0), textcoords="offset points")
+
+    fig.suptitle("Setor público e estrutura salarial por posição na ocupação (renda por hora real)", fontsize=12)
+    fig.tight_layout()
+    save_fig(fig, "setor_publico")
 
 
 def fig_mecanismo() -> None:
-    sem_horas = load_model("ln_renda_mensal_real_amostra_jornada")
-    com_horas = load_model("ln_renda_mensal_real_com_horas")
-    hora = load_model("ln_renda_hora_real_amostra_jornada")
-    horas_dv = load_model("horas_semanais")
-
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11, 3.6), width_ratios=[2, 1])
-    y_positions = np.arange(len(KEY_TERMS))
-    bar_height = 0.24
-    series = [
-        (sem_horas, BLUE, "Mensal, sem horas"),
-        (com_horas, ORANGE, "Mensal, com horas"),
-        (hora, AQUA, "Por hora"),
+    termos = [("formal", "Formal", BLUE), ("mulher", "Mulher", ORANGE)] + [
+        (raca_term(r), RACA_LABELS_PLAIN[r], RACA_COLORS[r]) for r in RACA_NIVEIS
     ]
+    mensal = load_r_jornada("ampla", "ln_renda_mensal_real")
+    hora = load_r_jornada("ampla", "ln_renda_hora_real")
+    horas_dv = load_r_jornada("ampla", "ln_horas_semanais_principal")
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.5, 4.4), width_ratios=[2, 1])
+    y_positions = np.arange(len(termos))
+    bar_height = 0.24
+    series = [(mensal, BLUE, "Mensal"), (hora, AQUA, "Por hora (preço)")]
     for i, (model_df, color, series_label) in enumerate(series):
-        values = [pct_effect(model_df.loc[t, "coeficiente"]) for t in KEY_TERMS]
-        offset = (1 - i) * bar_height
+        values = [pct_effect(model_df.loc[t, "coeficiente"]) for t, _, _ in termos]
+        offset = (0.5 - i) * bar_height
         ax1.barh(y_positions + offset, values, height=bar_height, color=color, label=series_label, zorder=3)
     ax1.axvline(0, color=INK_SECONDARY, linewidth=1, zorder=0)
     ax1.set_yticks(y_positions)
-    ax1.set_yticklabels([KEY_TERM_LABELS_SHORT[t] for t in KEY_TERMS])
+    ax1.set_yticklabels([lbl for _, lbl, _ in termos])
     ax1.set_xlabel("Efeito percentual aprox. (%)")
     ax1.invert_yaxis()
     ax1.spines[["top", "right"]].set_visible(False)
     ax1.legend(loc="lower right", frameon=False, fontsize=9)
-    ax1.set_title("Renda: efeito-preço vs. efeito-jornada", fontsize=11)
+    ax1.set_title("Renda mensal vs. por hora (preço)", fontsize=11)
 
-    horas_values = [horas_dv.loc[t, "coeficiente"] for t in KEY_TERMS]
+    horas_values = [horas_dv.loc[t, "coeficiente"] * 100 for t, _, _ in termos]
     colors = [BLUE if v >= 0 else RED for v in horas_values]
     ax2.barh(y_positions, horas_values, height=0.5, color=colors, zorder=3)
     ax2.axvline(0, color=INK_SECONDARY, linewidth=1, zorder=0)
@@ -331,44 +309,40 @@ def fig_mecanismo() -> None:
     ax2.set_yticklabels([])
     ax2.tick_params(left=False)
     ax2.invert_yaxis()
-    ax2.set_xlabel("Horas/semana")
+    ax2.set_xlabel("Efeito aprox. em horas (%)")
     ax2.spines[["top", "right"]].set_visible(False)
-    ax2.set_title("Horas semanais\n(var. dependente)", fontsize=11)
-    span = max(abs(v) for v in horas_values) * 1.6
+    ax2.set_title("Jornada (quantidade)", fontsize=11)
+    span = max(abs(v) for v in horas_values) * 1.5
     ax2.set_xlim(-span, span)
     for y, v in zip(y_positions, horas_values):
-        ax2.annotate(
-            fmt_num(v, 2, sign=True).replace("\\", ""),
-            (v, y),
-            ha="left" if v >= 0 else "right",
-            va="center",
-            fontsize=9,
-            xytext=(6 if v >= 0 else -6, 0),
-            textcoords="offset points",
-        )
+        ax2.annotate(f"{v:+.1f}%", (v, y), ha="left" if v >= 0 else "right", va="center", fontsize=9,
+                     xytext=(6 if v >= 0 else -6, 0), textcoords="offset points")
 
-    fig.suptitle("Decomposição do mecanismo de jornada (mesma amostra nas 4 colunas)", fontsize=12)
+    fig.suptitle("Decomposição exata: efeito-preço vs. efeito-jornada (amostra ampla)", fontsize=12)
     fig.tight_layout()
     save_fig(fig, "mecanismo_jornada")
 
 
 def fig_gap_reais(mean_mensal: float, mean_hora: float) -> None:
-    com_mensal = load_model("ln_renda_mensal_real")
-    com_hora = load_model("ln_renda_hora_real")
+    termos = [("formal", "Formal", BLUE), ("mulher", "Mulher", ORANGE)] + [
+        (raca_term(r), RACA_LABELS_PLAIN[r], RACA_COLORS[r]) for r in RACA_NIVEIS
+    ]
+    com_mensal = load_r_nested("ampla", "ln_renda_mensal_real", "M4")
+    com_hora = load_r_nested("ampla", "ln_renda_hora_real", "M4")
 
-    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(9.5, 3.4))
-    y_positions = np.arange(len(KEY_TERMS))
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(10, 4.2))
+    y_positions = np.arange(len(termos))
 
     for ax, model_df, base, title in [
         (ax1, com_mensal, mean_mensal, "R$/mês (na renda média real)"),
         (ax2, com_hora, mean_hora, "R$/hora (na renda média real)"),
     ]:
-        values = [(np.exp(model_df.loc[t, "coeficiente"]) - 1) * base for t in KEY_TERMS]
-        colors = [BLUE if v >= 0 else RED for v in values]
+        values = [(np.exp(model_df.loc[t, "coeficiente"]) - 1) * base for t, _, _ in termos]
+        colors = [RED if v < 0 else BLUE for v in values]
         ax.barh(y_positions, values, color=colors, height=0.55, zorder=3)
         ax.axvline(0, color=INK_SECONDARY, linewidth=1, zorder=0)
         ax.set_yticks(y_positions)
-        ax.set_yticklabels([KEY_TERM_LABELS_SHORT[t] for t in KEY_TERMS])
+        ax.set_yticklabels([lbl for _, lbl, _ in termos])
         ax.invert_yaxis()
         ax.spines[["top", "right"]].set_visible(False)
         ax.set_title(title, fontsize=11)
@@ -376,128 +350,385 @@ def fig_gap_reais(mean_mensal: float, mean_hora: float) -> None:
         ax.set_xlim(-span, span)
         for y, v in zip(y_positions, values):
             ax.annotate(
-                f"R$ {v:,.0f}".replace(",", ".").replace("R$ -", "-R$ "),
-                (v, y),
-                ha="left" if v >= 0 else "right",
-                va="center",
-                fontsize=9,
-                xytext=(5 if v >= 0 else -5, 0),
-                textcoords="offset points",
+                f"R$ {v:,.0f}".replace(",", ".").replace("R$ -", "-R$ "), (v, y),
+                ha="left" if v >= 0 else "right", va="center", fontsize=9,
+                xytext=(5 if v >= 0 else -5, 0), textcoords="offset points",
             )
 
-    fig.suptitle("Diferencial ajustado, convertido em R$ (com controles)", fontsize=12)
+    fig.suptitle("Diferencial condicional, convertido em R$ (amostra ampla, especificação M4)", fontsize=12)
     fig.tight_layout()
     save_fig(fig, "gap_reais")
 
 
+def fig_robustez() -> None:
+    trimestres = load_r_robustez_trimestres()
+    pandemia = load_r_robustez_pandemia()
+    termos = ["formal", "mulher", raca_term("pardo")]
+    termo_labels = {"formal": "Formal", "mulher": "Mulher", raca_term("pardo"): "Pardo"}
+
+    fig, axes = plt.subplots(1, 2, figsize=(11, 4.0))
+
+    ax = axes[0]
+    sub = trimestres[(trimestres["dv"] == "ln_renda_hora_real") & (trimestres["termo"].isin(termos))]
+    x = np.arange(len(termos))
+    width = 0.35
+    for i, esp in enumerate(["q4_only", "todos_trimestres"]):
+        vals = [sub[(sub["termo"] == t) & (sub["especificacao"] == esp)]["efeito_percentual_aprox"].iloc[0] for t in termos]
+        ax.bar(x + (i - 0.5) * width, vals, width, label="Q4-only" if esp == "q4_only" else "Todos os trimestres",
+               color=BLUE if esp == "q4_only" else ORANGE, zorder=3)
+    ax.axhline(0, color=INK_SECONDARY, linewidth=1, zorder=0)
+    ax.set_xticks(x)
+    ax.set_xticklabels([termo_labels[t] for t in termos])
+    ax.set_ylabel("Efeito percentual aprox. (%)")
+    ax.set_title("Q4-only vs. todos os trimestres", fontsize=11)
+    ax.legend(frameon=False, fontsize=9)
+    ax.spines[["top", "right"]].set_visible(False)
+
+    ax = axes[1]
+    sub = pandemia[(pandemia["dv"] == "ln_renda_hora_real") & (pandemia["termo"].isin(termos))]
+    recortes = ["pre_pandemia_2016_2019", "excl_2020_2021", "pos_pandemia_2022_2025"]
+    recorte_labels = ["2016-2019", "Excl.\n2020-2021", "2022-2025"]
+    width = 0.25
+    colors = [BLUE, AQUA, ORANGE]
+    for i, esp in enumerate(recortes):
+        vals = [sub[(sub["termo"] == t) & (sub["especificacao"] == esp)]["efeito_percentual_aprox"].iloc[0] for t in termos]
+        ax.bar(x + (i - 1) * width, vals, width, label=recorte_labels[i], color=colors[i], zorder=3)
+    ax.axhline(0, color=INK_SECONDARY, linewidth=1, zorder=0)
+    ax.set_xticks(x)
+    ax.set_xticklabels([termo_labels[t] for t in termos])
+    ax.set_title("Split de pandemia", fontsize=11)
+    ax.legend(frameon=False, fontsize=8.5)
+    ax.spines[["top", "right"]].set_visible(False)
+
+    fig.suptitle("Robustez temporal (renda por hora real, especificação M4)", fontsize=12)
+    fig.tight_layout()
+    save_fig(fig, "robustez_temporal")
+
+
+def fig_tendencia_flexivel() -> None:
+    # Evolução ano a ano, raça desagregada (branco = referência). Substitui a figura antiga
+    # (Python/WLS, preto_pardo agregado com referência branco/amarelo/indígena) -- mesma
+    # especificação M4, desenho amostral completo (ver r/09_tendencia_flexivel.R).
+    flex = load_r_tendencia_flexivel()
+    termos = [
+        ("formal", "Prêmio de formalidade\n(ref.: informal)", BLUE),
+        ("mulher", "Diferencial de gênero\n(ref.: homem)", ORANGE),
+        (raca_term("preto"), "Diferencial racial: preto\n(ref.: branco)", RACA_COLORS["preto"]),
+        (raca_term("pardo"), "Diferencial racial: pardo\n(ref.: branco)", RACA_COLORS["pardo"]),
+        (raca_term("indigena"), "Diferencial racial: indígena\n(ref.: branco)", RACA_COLORS["indigena"]),
+    ]
+
+    fig, axes = plt.subplots(1, 5, figsize=(15, 3.6))
+    for ax, (termo, titulo, color) in zip(axes, termos):
+        sub = flex.loc[flex["termo"] == termo].sort_values("ano")
+        ax.fill_between(sub["ano"], sub["ic95_inf"], sub["ic95_sup"], color=color, alpha=0.18, zorder=1)
+        ax.plot(sub["ano"], sub["efeito_percentual_aprox"], color=color, linewidth=2, zorder=3)
+        ax.scatter(sub["ano"], sub["efeito_percentual_aprox"], color=color, s=24, zorder=4)
+        ax.axhline(0, color=INK_SECONDARY, linewidth=1, linestyle="--", zorder=0)
+        ax.set_title(titulo, fontsize=9.5)
+        ax.set_xticks(sub["ano"].tolist()[::2])
+        ax.set_xticklabels(sub["ano"].tolist()[::2], rotation=45, ha="right", fontsize=7.5)
+        ax.spines[["top", "right"]].set_visible(False)
+        ax.tick_params(axis="y", labelsize=8)
+        if ax is axes[0]:
+            ax.set_ylabel("Efeito percentual aprox. (%)", fontsize=9)
+
+    fig.suptitle(
+        "Evolução anual dos diferenciais condicionais — renda por hora real, raça desagregada (IC 95%)",
+        fontsize=11.5,
+    )
+    fig.tight_layout()
+    save_fig(fig, "tendencia_temporal")
+
+
 # ---------------------------------------------------------------------------
-# Macro file
+# Tabelas LaTeX
+# ---------------------------------------------------------------------------
+
+def make_tab_modelo(dv: str, convergencia: pd.DataFrame) -> str:
+    ampla = load_r_nested("ampla", dv, "M4")
+    restrita = load_r_nested("restrita", dv, "M4")
+    termos = [("formal", "Formal (ref.: informal)")] + [
+        (raca_term(r), f"{RACA_LABELS[r]} (ref.: branco)") for r in RACA_NIVEIS
+    ] + [("mulher", "Mulher (ref.: homem)"), ("formal:mulher", "Formal $\\times$ Mulher")]
+
+    lines = ["\\begin{tabular}{lcc}", "\\toprule", " & Amostra ampla & Amostra restrita \\\\", "\\midrule"]
+    for termo, label in termos:
+        ra = ampla.loc[termo]
+        rr = restrita.loc[termo]
+        lines.append(
+            f"{label} & {fmt_num(ra['coeficiente'], sign=True)}{stars(ra['p_valor'])} & "
+            f"{fmt_num(rr['coeficiente'], sign=True)}{stars(rr['p_valor'])} \\\\"
+        )
+        lines.append(f" & ({fmt_num(ra['erro_padrao'])}) & ({fmt_num(rr['erro_padrao'])}) \\\\")
+    lines.append("\\midrule")
+    n_ampla = convergencia.loc[convergencia["especificacao"] == f"ampla_{dv}_M4", "n_obs"].iloc[0]
+    n_restrita = convergencia.loc[convergencia["especificacao"] == f"restrita_{dv}_M4", "n_obs"].iloc[0]
+    lines.append(f"Observa\\c{{c}}\\~oes & {fmt_int(n_ampla)} & {fmt_int(n_restrita)} \\\\")
+    lines.append("\\bottomrule")
+    lines.append("\\end{tabular}")
+    return "\n".join(lines)
+
+
+def make_tab_contrastes() -> str:
+    hora_ampla = load_r_contrastes("ampla", "ln_renda_hora_real")
+
+    def row(id_, label):
+        r = hora_ampla.loc[id_]
+        return f"{label} & {fmt_pct(r['efeito_percentual_aprox'])}{stars(r['p_valor'])} \\\\"
+
+    lines = [
+        "\\begin{tabular}{lc}", "\\toprule", " & Efeito \\% (renda/hora) \\\\", "\\midrule",
+        "\\multicolumn{2}{l}{\\textit{G\\^enero (ref.: homem)}} \\\\",
+        row("genero_gap_informal", "\\quad Mulher, entre informais"),
+        row("genero_gap_formal", "\\quad Mulher, entre formais"),
+        "\\midrule",
+        "\\multicolumn{2}{l}{\\textit{Ra\\c{c}a/cor (ref.: branco)}} \\\\",
+    ]
+    for r in RACA_NIVEIS:
+        lines.append(row(f"raca_{r}_gap_informal", f"\\quad {RACA_LABELS[r]}, entre informais"))
+        lines.append(row(f"raca_{r}_gap_formal", f"\\quad {RACA_LABELS[r]}, entre formais"))
+    lines += [
+        "\\midrule",
+        "\\multicolumn{2}{l}{\\textit{Pr\\^emio de formalidade}} \\\\",
+        row("formal_homem_branco", "\\quad Homem branco"),
+        row("formal_mulher_preto", "\\quad Mulher preta"),
+        row("formal_mulher_pardo", "\\quad Mulher parda"),
+        row("formal_mulher_indigena", "\\quad Mulher ind\\'igena"),
+        "\\bottomrule", "\\end{tabular}",
+    ]
+    return "\n".join(lines)
+
+
+def make_tab_setor_publico() -> str:
+    mensal = load_r_setor_publico("ln_renda_mensal_real")
+    hora = load_r_setor_publico("ln_renda_hora_real")
+    termos = [("formal", "Formal (privado/dom\\'estico)"), ("setor_publico", "Setor p\\'ublico"),
+              ("formal:setor_publico", "Formal $\\times$ Setor p\\'ublico")]
+    lines = ["\\begin{tabular}{lcc}", "\\toprule", " & Renda mensal & Renda por hora \\\\", "\\midrule"]
+    for termo, label in termos:
+        rm = mensal.loc[termo]
+        rh = hora.loc[termo]
+        lines.append(
+            f"{label} & {fmt_pct(pct_effect(rm['coeficiente']))}{stars(rm['p_valor'])} & "
+            f"{fmt_pct(pct_effect(rh['coeficiente']))}{stars(rh['p_valor'])} \\\\"
+        )
+    lines.append("\\midrule")
+    lines.append("Observa\\c{c}\\~oes & \\multicolumn{2}{c}{16.135 (amostra restrita)} \\\\")
+    lines.append("\\bottomrule")
+    lines.append("\\end{tabular}")
+    return "\n".join(lines)
+
+
+def make_tab_posicao() -> str:
+    hora = load_r_posicao_ocupacao("ln_renda_hora_real")
+    desc = load_r_posicao_descritivo().set_index("posicao_ocupacao_grupo")
+    labels_map = {
+        "militar_estatutario": "Militar/estatut\\'ario", "empregador": "Empregador",
+        "publico_com_carteira": "P\\'ublico, c/carteira", "publico_sem_carteira": "P\\'ublico, s/carteira",
+        "privado_com_carteira": "Privado, c/carteira", "conta_propria": "Conta-pr\\'opria",
+        "domestico_com_carteira": "Dom\\'estico, c/carteira", "domestico_sem_carteira": "Dom\\'estico, s/carteira",
+    }
+    ordem = hora.filter(like="factor(posicao_ocupacao_grupo)", axis=0)
+    ordem = ordem.assign(efeito=lambda d: (np.exp(d["coeficiente"]) - 1) * 100).sort_values("efeito", ascending=False)
+
+    lines = [
+        "\\begin{tabular}{lcc}", "\\toprule",
+        " & R\\$/h m\\'edio & Efeito condicional \\\\", "\\midrule",
+    ]
+    for idx, row_ in ordem.iterrows():
+        pos = idx.replace("factor(posicao_ocupacao_grupo)", "")
+        media = desc.loc[pos, "renda_hora_media"] if pos in desc.index else float("nan")
+        lines.append(
+            f"{labels_map.get(pos, pos)} & R\\$\\,{fmt_num(media, 2)} & "
+            f"{fmt_pct(row_['efeito'])}{stars(row_['p_valor'])} \\\\"
+        )
+    media_ref = desc.loc["privado_sem_carteira", "renda_hora_media"]
+    lines.append(f"Privado, s/carteira (refer\\^encia) & R\\$\\,{fmt_num(media_ref, 2)} & --- \\\\")
+    lines.append("\\bottomrule")
+    lines.append("\\end{tabular}")
+    return "\n".join(lines)
+
+
+def make_tab_mecanismo() -> str:
+    mensal = load_r_jornada("ampla", "ln_renda_mensal_real")
+    hora = load_r_jornada("ampla", "ln_renda_hora_real")
+    horas_dv = load_r_jornada("ampla", "ln_horas_semanais_principal")
+    termos = [("formal", "Formal"), ("mulher", "Mulher")] + [
+        (raca_term(r), RACA_LABELS[r]) for r in RACA_NIVEIS
+    ]
+    lines = [
+        "\\begin{tabular}{lccc}", "\\toprule",
+        " & Mensal & Por hora (pre\\c{c}o) & Horas (\\%) \\\\", "\\midrule",
+    ]
+    for termo, label in termos:
+        m = mensal.loc[termo]
+        h = hora.loc[termo]
+        hd = horas_dv.loc[termo]
+        lines.append(
+            f"{label} & {fmt_pct(pct_effect(m['coeficiente']))}{stars(m['p_valor'])} & "
+            f"{fmt_pct(pct_effect(h['coeficiente']))}{stars(h['p_valor'])} & "
+            f"{fmt_pct(pct_effect(hd['coeficiente']))}{stars(hd['p_valor'])} \\\\"
+        )
+    lines.append("\\bottomrule")
+    lines.append("\\end{tabular}")
+    return "\n".join(lines)
+
+
+# ---------------------------------------------------------------------------
+# Macros e main
 # ---------------------------------------------------------------------------
 
 def main() -> None:
     ensure_project_dirs()
 
     df = pd.read_parquet(PROCESSED_DIR / "pnadc_rr_analitica.parquet")
-    common = df.loc[
-        df["formal"].notna() & df["mulher"].notna() & df["preto_pardo"].notna() & df["peso"].notna()
-    ].copy()
-
+    common = df.loc[df["formal"].notna() & df["mulher"].notna() & df["peso"].notna()].copy()
     hourly = common.loc[common["renda_hora_real"] > 0].copy()
     monthly = common.loc[common["renda_mensal_real"] > 0].copy()
-    hours_valid = common.loc[common["horas_semanais_principal"] > 0].copy()
 
     mean_hora = wavg(hourly["renda_hora_real"], hourly["peso"])
     mean_mensal = wavg(monthly["renda_mensal_real"], monthly["peso"])
-    mean_horas = wavg(hours_valid["horas_semanais_principal"], hours_valid["peso"])
 
-    def group_pair(data: pd.DataFrame, col: str) -> tuple:
-        g0 = data.loc[data[col] == 0]
-        g1 = data.loc[data[col] == 1]
+    def group_pair(data: pd.DataFrame, col: str, val0=0, val1=1) -> tuple:
+        g0 = data.loc[data[col] == val0]
+        g1 = data.loc[data[col] == val1]
         return wavg(g0["renda_hora_real"], g0["peso"]), wavg(g1["renda_hora_real"], g1["peso"])
 
-    raw_gaps = {term: group_pair(hourly, term) for term in KEY_TERMS}
+    raw_gaps = {
+        "formal": group_pair(hourly, "formal"),
+        "mulher": group_pair(hourly, "mulher"),
+        "raca": group_pair(hourly, "raca_grupo", "branco", None) if False else (
+            wavg(hourly.loc[hourly["raca_grupo"] == "branco", "renda_hora_real"], hourly.loc[hourly["raca_grupo"] == "branco", "peso"]),
+            wavg(hourly.loc[hourly["preto_pardo"] == 1, "renda_hora_real"], hourly.loc[hourly["preto_pardo"] == 1, "peso"]),
+        ),
+    }
 
     audit_totais = pd.read_csv(TABLES_DIR / "auditoria_totais.csv").iloc[0]
 
-    # --- figures ---
+    # --- figuras ---
     fig_motivacao(raw_gaps)
-    fig_coef_forest()
+    fig_sensibilidade()
+    fig_setor_publico()
     fig_mecanismo()
     fig_gap_reais(mean_mensal, mean_hora)
+    fig_robustez()
+    fig_tendencia_flexivel()
 
-    # --- regression tables ---
-    tab_mensal = make_regression_table(
-        "ln_renda_mensal_real_sem_controles", "ln_renda_mensal_real", "Rendimento mensal real"
-    )
-    tab_hora = make_regression_table(
-        "ln_renda_hora_real_sem_controles", "ln_renda_hora_real", "Rendimento por hora real"
-    )
-    tab_mecanismo = make_mecanismo_table()
+    # --- tabelas ---
+    convergencia = pd.read_csv(TABLES_DIR / "r_nested_convergencia.csv")
+    tabelas = {
+        "tab_hora.tex": make_tab_modelo("ln_renda_hora_real", convergencia),
+        "tab_mensal.tex": make_tab_modelo("ln_renda_mensal_real", convergencia),
+        "tab_contrastes.tex": make_tab_contrastes(),
+        "tab_setor_publico.tex": make_tab_setor_publico(),
+        "tab_posicao.tex": make_tab_posicao(),
+        "tab_mecanismo.tex": make_tab_mecanismo(),
+    }
+    for name, content in tabelas.items():
+        (PRESENTATION_GERADO_DIR / name).write_text(content, encoding="utf-8")
+        print(f"saved: {PRESENTATION_GERADO_DIR / name}")
 
-    (PRESENTATION_GERADO_DIR / "tab_mensal.tex").write_text(tab_mensal, encoding="utf-8")
-    (PRESENTATION_GERADO_DIR / "tab_hora.tex").write_text(tab_hora, encoding="utf-8")
-    (PRESENTATION_GERADO_DIR / "tab_mecanismo.tex").write_text(tab_mecanismo, encoding="utf-8")
-    print(f"saved: {PRESENTATION_GERADO_DIR / 'tab_mensal.tex'}")
-    print(f"saved: {PRESENTATION_GERADO_DIR / 'tab_hora.tex'}")
-    print(f"saved: {PRESENTATION_GERADO_DIR / 'tab_mecanismo.tex'}")
-
-    # --- narrative macros ---
-    com_mensal = load_model("ln_renda_mensal_real")
-    com_hora = load_model("ln_renda_hora_real")
-    stats_mensal = load_stats("ln_renda_mensal_real")
-    stats_hora = load_stats("ln_renda_hora_real")
-    sem_horas_j = load_model("ln_renda_mensal_real_amostra_jornada")
-    com_horas_j = load_model("ln_renda_mensal_real_com_horas")
-    hora_j = load_model("ln_renda_hora_real_amostra_jornada")
-    horas_dv = load_model("horas_semanais")
-    stats_jornada = load_stats("horas_semanais")
-
+    # --- macros narrativas ---
     macros = {}
     macros["NTotal"] = fmt_int(audit_totais["n_total"])
     macros["NQuatorzeMais"] = fmt_int(audit_totais["n_14_mais"])
     macros["NOcupados"] = fmt_int(audit_totais["n_ocupados"])
     macros["NRendaValida"] = fmt_int(audit_totais["n_ocupados_renda_valida"])
-    macros["NMensal"] = fmt_int(stats_mensal["nobs"])
-    macros["NHora"] = fmt_int(stats_hora["nobs"])
-    macros["NJornada"] = fmt_int(stats_jornada["nobs"])
-    macros["RdoisMensal"] = fmt_num(stats_mensal["rsquared"], 3)
-    macros["RdoisHora"] = fmt_num(stats_hora["rsquared"], 3)
-
+    macros["NAmpla"] = "23.938"
+    macros["NRestrita"] = "16.135"
+    macros["NSetorPublico"] = "5.791"
+    macros["PctSetorPublico"] = fmt_pct(5791 / 24414 * 100, 1, sign=False)
     macros["MediaMensal"] = fmt_brl(mean_mensal)
     macros["MediaHora"] = fmt_brl(mean_hora, 2)
-    macros["MediaHoras"] = fmt_num(mean_horas, 1)
 
-    for term, key in [("formal", "Formal"), ("mulher", "Mulher"), ("preto_pardo", "PretoPardo")]:
-        row_mensal = com_mensal.loc[term]
-        row_hora = com_hora.loc[term]
-        pct_mensal = pct_effect(row_mensal["coeficiente"])
-        pct_hora = pct_effect(row_hora["coeficiente"])
-        macros[f"Pct{key}Mensal"] = fmt_pct(pct_mensal)
-        macros[f"Pct{key}Hora"] = fmt_pct(pct_hora)
-        macros[f"Reais{key}Mensal"] = fmt_brl(pct_mensal / 100 * mean_mensal)
-        macros[f"Reais{key}Hora"] = fmt_brl(pct_hora / 100 * mean_hora, 2)
-
-        row_sem_j = sem_horas_j.loc[term]
-        row_com_j = com_horas_j.loc[term]
-        row_hora_j = hora_j.loc[term]
-        row_horas_dv = horas_dv.loc[term]
-        macros[f"Pct{key}MensalSemHorasJornada"] = fmt_pct(pct_effect(row_sem_j["coeficiente"]))
-        macros[f"Pct{key}MensalComHorasJornada"] = fmt_pct(pct_effect(row_com_j["coeficiente"]))
-        macros[f"Pct{key}HoraJornada"] = fmt_pct(pct_effect(row_hora_j["coeficiente"]))
-        macros[f"Horas{key}"] = fmt_num(row_horas_dv["coeficiente"], 2, sign=True)
-
-        g0, g1 = raw_gaps[term]
+    for termo_dv_key, (g0, g1) in raw_gaps.items():
+        key = {"formal": "Formal", "mulher": "Mulher", "raca": "Raca"}[termo_dv_key]
         macros[f"Bruto{key}GrupoRef"] = fmt_brl(g0, 2)
         macros[f"Bruto{key}GrupoComp"] = fmt_brl(g1, 2)
         macros[f"BrutoGap{key}Pct"] = fmt_pct((g1 / g0 - 1) * 100)
 
-    for term, key in [("formal:mulher", "FormalMulher"), ("formal:preto_pardo", "FormalPretoPardo")]:
-        row_mensal = com_mensal.loc[term]
-        row_hora = com_hora.loc[term]
-        macros[f"Pct{key}Mensal"] = fmt_pct(pct_effect(row_mensal["coeficiente"]))
-        macros[f"Pct{key}Hora"] = fmt_pct(pct_effect(row_hora["coeficiente"]))
-        macros[f"PValor{key}Mensal"] = fmt_num(row_mensal["p_valor"], 3)
-        macros[f"PValor{key}Hora"] = fmt_num(row_hora["p_valor"], 3)
+    for amostra, amostra_key in [("ampla", "Ampla"), ("restrita", "Restrita")]:
+        for dv, dv_key in [("ln_renda_mensal_real", "Mensal"), ("ln_renda_hora_real", "Hora")]:
+            tbl = load_r_nested(amostra, dv, "M4")
+            for termo, termo_key in [("formal", "Formal"), ("mulher", "Mulher")] + [
+                (raca_term(r), r.capitalize()) for r in RACA_NIVEIS
+            ]:
+                row_ = tbl.loc[termo]
+                macros[f"Pct{termo_key}{dv_key}{amostra_key}"] = fmt_pct(pct_effect(row_["coeficiente"]))
+                macros[f"Reais{termo_key}{dv_key}{amostra_key}"] = fmt_brl(
+                    pct_effect(row_["coeficiente"]) / 100 * (mean_mensal if dv_key == "Mensal" else mean_hora),
+                    0 if dv_key == "Mensal" else 2,
+                )
+
+    contrastes_ampla_hora = load_r_contrastes("ampla", "ln_renda_hora_real")
+    for id_, key in [
+        ("genero_gap_informal", "GeneroInformal"), ("genero_gap_formal", "GeneroFormal"),
+        ("genero_diferenca_formal_informal", "GeneroDiferenca"),
+    ]:
+        r = contrastes_ampla_hora.loc[id_]
+        macros[f"Pct{key}"] = fmt_pct(r["efeito_percentual_aprox"])
+        macros[f"PValor{key}"] = fmt_num(r["p_valor"], 3)
+    for raca in RACA_NIVEIS:
+        raca_key = raca.capitalize()
+        for suf, key in [("gap_informal", "Informal"), ("gap_formal", "Formal"), ("diferenca_formal_informal", "Diferenca")]:
+            r = contrastes_ampla_hora.loc[f"raca_{raca}_{suf}"]
+            macros[f"Pct{raca_key}{key}"] = fmt_pct(r["efeito_percentual_aprox"])
+            macros[f"PValor{raca_key}{key}"] = fmt_num(r["p_valor"], 3)
+    for raca in RACA_NIVEIS:
+        r = contrastes_ampla_hora.loc[f"formal_mulher_{raca}"]
+        macros[f"PctFormalMulher{raca.capitalize()}"] = fmt_pct(r["efeito_percentual_aprox"])
+    r = contrastes_ampla_hora.loc["formal_homem_branco"]
+    macros["PctFormalHomemBranco"] = fmt_pct(r["efeito_percentual_aprox"])
+
+    # setor público
+    for dv, dv_key in [("ln_renda_mensal_real", "Mensal"), ("ln_renda_hora_real", "Hora")]:
+        tbl = load_r_setor_publico(dv)
+        for termo, key in [("formal", "Formal"), ("setor_publico", "SetorPublico"), ("formal:setor_publico", "FormalSetorPublico")]:
+            r = tbl.loc[termo]
+            macros[f"Pct{key}{dv_key}Restrita"] = fmt_pct(pct_effect(r["coeficiente"]))
+            macros[f"PValor{key}{dv_key}Restrita"] = fmt_num(r["p_valor"], 3)
+        soma = tbl.loc["formal", "coeficiente"] + tbl.loc["setor_publico", "coeficiente"] + tbl.loc["formal:setor_publico", "coeficiente"]
+        macros[f"PctFormalPublicoCombinado{dv_key}"] = fmt_pct(pct_effect(soma))
+
+    # posição na ocupação: melhor e pior
+    hora_pos = load_r_posicao_ocupacao("ln_renda_hora_real")
+    ordem = hora_pos.filter(like="factor(posicao_ocupacao_grupo)", axis=0)
+    ordem = ordem.assign(efeito=lambda d: (np.exp(d["coeficiente"]) - 1) * 100).sort_values("efeito")
+    pior = ordem.iloc[0]
+    melhor = ordem.iloc[-1]
+    macros["PosicaoPiorNome"] = "trabalhador dom\\'estico sem carteira"
+    macros["PosicaoPiorPct"] = fmt_pct(pior["efeito"])
+    macros["PosicaoMelhorNome"] = "militar ou servidor estatut\\'ario"
+    macros["PosicaoMelhorPct"] = fmt_pct(melhor["efeito"])
+
+    # mecanismo de jornada
+    identidade_ampla = load_r_jornada_identidade("ampla")
+    for termo, key in [("formal", "Formal"), ("mulher", "Mulher"), ("formal:mulher", "FormalMulher")] + [
+        (raca_term(r), r.capitalize()) for r in RACA_NIVEIS
+    ]:
+        r = identidade_ampla.loc[termo]
+        pct_jornada = r["beta_ln_horas"] / r["beta_mensal"] * 100 if r["beta_mensal"] != 0 else float("nan")
+        macros[f"PctJornada{key}"] = fmt_num(pct_jornada, 0, sign=False)
+        macros[f"HorasEfeito{key}"] = fmt_pct(pct_effect(r["beta_ln_horas"]))
+
+    # evolução temporal (tendência linear, R/survey)
+    trend = load_r_tendencia()
+    for termo, key in [("formal:Ano", "Formal"), ("mulher:Ano", "Mulher")] + [
+        (f"{raca_term(r)}:Ano", r.capitalize()) for r in RACA_NIVEIS
+    ]:
+        r = trend.loc[termo]
+        macros[f"Incl{key}PctAno"] = fmt_pct(r["efeito_percentual_aprox_por_ano"], 2)
+        macros[f"PValorIncl{key}"] = fmt_num(r["p_valor"], 3)
+
+    # robustez
+    trimestres = load_r_robustez_trimestres()
+    macros["NTodosTrimestres"] = "97.187"
+    for termo, key in [("formal", "Formal"), ("mulher", "Mulher")] + [(raca_term(r), r.capitalize()) for r in RACA_NIVEIS]:
+        for esp, esp_key in [("q4_only", "QuartoTri"), ("todos_trimestres", "Todos")]:
+            row_ = trimestres[(trimestres["termo"] == termo) & (trimestres["dv"] == "ln_renda_hora_real") & (trimestres["especificacao"] == esp)]
+            if not row_.empty:
+                macros[f"Pct{key}Hora{esp_key}"] = fmt_pct(row_["efeito_percentual_aprox"].iloc[0])
 
     lines = ["% Gerado automaticamente por scripts/08_make_presentation_assets.py. Não editar à mão.", ""]
     for name, value in macros.items():

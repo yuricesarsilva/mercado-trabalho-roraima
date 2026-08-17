@@ -13,6 +13,8 @@ BASE_LABELS = {
     "idade": "Idade",
     "idade2": "Idade ao quadrado",
     "horas_semanais_principal": "Horas semanais habituais (trabalho principal)",
+    "setor_publico": "Setor público",
+    "empregado_restrito": "Empregado (amostra restrita)",
 }
 
 BASE_SHORT_LABELS = {
@@ -25,6 +27,35 @@ BASE_SHORT_LABELS = {
     "idade": "idade",
     "idade2": "idade2",
     "horas_semanais_principal": "horas_semanais",
+    "setor_publico": "setor_publico",
+    "empregado_restrito": "empregado_restrito",
+}
+
+# raca_grupo: branco é a referência (não entra como dummy). amarelo é excluído do
+# modelo (N=69, ~0,3% da amostra) -- ver docs/definicao_raca.md.
+RACA_GRUPO_LABELS = {
+    "preto": "Pessoa preta",
+    "pardo": "Pessoa parda",
+    "indigena": "Pessoa indígena",
+}
+
+RACA_GRUPO_SHORT_LABELS = {
+    "preto": "preto",
+    "pardo": "pardo",
+    "indigena": "indigena",
+}
+
+POSICAO_OCUPACAO_LABELS = {
+    "privado_com_carteira": "Empregado privado, com carteira",
+    "privado_sem_carteira": "Empregado privado, sem carteira",
+    "domestico_com_carteira": "Trabalhador doméstico, com carteira",
+    "domestico_sem_carteira": "Trabalhador doméstico, sem carteira",
+    "publico_com_carteira": "Empregado público, com carteira",
+    "publico_sem_carteira": "Empregado público, sem carteira",
+    "militar_estatutario": "Militar ou servidor estatutário",
+    "empregador": "Empregador",
+    "conta_propria": "Conta-própria",
+    "familiar_auxiliar": "Trabalhador familiar auxiliar",
 }
 
 ESCOLARIDADE_LABELS = {
@@ -129,6 +160,10 @@ def coefficient_label(term: str) -> str:
         return f"Ocupação: {OCUPACAO_LABELS.get(value, value)}"
     if variable == "atividade_grupo":
         return f"Atividade: {ATIVIDADE_LABELS.get(value, value)}"
+    if variable == "raca_grupo":
+        return RACA_GRUPO_LABELS.get(value, value)
+    if variable == "posicao_ocupacao_grupo":
+        return POSICAO_OCUPACAO_LABELS.get(value, value)
     if variable == "periodo":
         return f"Período: {value}"
     return f"{variable}: {value}"
@@ -151,6 +186,10 @@ def coefficient_short_label(term: str) -> str:
         return OCUPACAO_SHORT_LABELS.get(value, f"ocup_{value}")
     if variable == "atividade_grupo":
         return ATIVIDADE_SHORT_LABELS.get(value, f"ativ_{value}")
+    if variable == "raca_grupo":
+        return RACA_GRUPO_SHORT_LABELS.get(value, f"raca_{value}")
+    if variable == "posicao_ocupacao_grupo":
+        return f"posicao_{value}"
     if variable == "periodo":
         return f"ano{value}"
     return f"{variable}_{value}"
@@ -165,12 +204,20 @@ def reference_label(term: str) -> str:
         return f"Referência: {ATIVIDADE_LABELS['1']}"
     if term.startswith("C(periodo)"):
         return "Referência: primeiro período da amostra"
+    if term.startswith("C(raca_grupo)"):
+        return "Referência: pessoa branca (amarelo excluído da estimação, N insuficiente)"
+    if term.startswith("C(posicao_ocupacao_grupo)"):
+        return "Referência: empregado privado com carteira"
     if term == "formal":
         return "Referência: trabalhador informal"
     if term == "mulher":
         return "Referência: homem"
     if term == "preto_pardo":
         return "Referência: branco, amarelo ou indígena"
+    if term == "setor_publico":
+        return "Referência: setor privado/doméstico/conta-própria"
+    if term == "empregado_restrito":
+        return "Referência: empregador, conta-própria ou familiar auxiliar"
     if term == "formal:mulher":
         return "Diferença adicional para mulheres formais"
     if term == "formal:preto_pardo":
