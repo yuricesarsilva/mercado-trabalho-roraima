@@ -22,6 +22,7 @@ import pandas as pd
 
 sys.path.insert(0, str(Path(__file__).resolve().parents[1] / "src"))
 
+from pnadc_rr.labels import ATIVIDADE_LABELS, OCUPACAO_LABELS
 from pnadc_rr.paths import (
     FIGURES_DIR,
     PRESENTATION_GERADO_DIR,
@@ -276,6 +277,60 @@ def fig_setor_publico() -> None:
     save_fig(fig, "setor_publico")
 
 
+def fig_informalidade_publica(common: pd.DataFrame) -> dict:
+    # Caracteriza quem são os "público sem carteira" (VD4009=6) -- não é o padrão intuitivo
+    # de informalidade (elementar/braçal); ver docs/definicao_formalidade.md.
+    sub = common.loc[common["posicao_ocupacao_grupo"] == "publico_sem_carteira"].copy()
+
+    ocup_pct = sub.groupby("ocupacao_grupo")["peso"].sum().sort_values(ascending=False)
+    ocup_pct = (ocup_pct / ocup_pct.sum()) * 100
+    ativ_pct_full = sub.groupby("atividade_grupo")["peso"].sum().sort_values(ascending=False)
+    ativ_pct_full = (ativ_pct_full / ativ_pct_full.sum()) * 100
+    # Só duas atividades concentram quase tudo (administração pública, educação/saúde);
+    # o restante vira "Outras" para não poluir o painel com rótulos longos e fatias residuais.
+    ativ_pct = ativ_pct_full[ativ_pct_full >= 3].copy()
+    if ativ_pct_full[ativ_pct_full < 3].sum() > 0:
+        ativ_pct["outras"] = ativ_pct_full[ativ_pct_full < 3].sum()
+
+    fig, (ax1, ax2) = plt.subplots(1, 2, figsize=(11.5, 3.4))
+
+    labels1 = [OCUPACAO_LABELS.get(c, c) for c in ocup_pct.index]
+    ax1.barh(labels1, ocup_pct.values, color=BLUE, zorder=3)
+    ax1.invert_yaxis()
+    ax1.set_xlabel("% dos ocupados \"público sem carteira\"", fontsize=9)
+    ax1.set_title("Por grupo ocupacional", fontsize=11)
+    ax1.spines[["top", "right"]].set_visible(False)
+    ax1.tick_params(axis="both", labelsize=8.5)
+    ax1.set_xlim(0, max(ocup_pct.values) * 1.22)
+    for y, v in enumerate(ocup_pct.values):
+        ax1.annotate(f"{v:.1f}%", (v, y), ha="left", va="center", fontsize=8,
+                     xytext=(4, 0), textcoords="offset points")
+
+    labels2 = ["Outras atividades" if c == "outras" else ATIVIDADE_LABELS.get(c, c) for c in ativ_pct.index]
+    ax2.barh(labels2, ativ_pct.values, color=ORANGE, zorder=3)
+    ax2.invert_yaxis()
+    ax2.set_xlabel("% dos ocupados \"público sem carteira\"", fontsize=9)
+    ax2.set_title("Por atividade econômica", fontsize=11)
+    ax2.spines[["top", "right"]].set_visible(False)
+    ax2.tick_params(axis="both", labelsize=8.5)
+    ax2.set_xlim(0, max(ativ_pct.values) * 1.22)
+    for y, v in enumerate(ativ_pct.values):
+        ax2.annotate(f"{v:.1f}%", (v, y), ha="left", va="center", fontsize=8,
+                     xytext=(4, 0), textcoords="offset points")
+
+    fig.suptitle("Composição da informalidade no setor público (posição = público sem carteira)", fontsize=12)
+    fig.tight_layout()
+    save_fig(fig, "informalidade_publica")
+
+    return {
+        "n_naopond": len(sub),
+        "n_pond": sub["peso"].sum(),
+        "ocup_top3_pct": ocup_pct.iloc[:3].sum(),
+        "ativ_admpub_pct": ativ_pct_full.get("8", 0.0),
+        "ativ_educsaude_pct": ativ_pct_full.get("9", 0.0),
+    }
+
+
 def fig_mecanismo() -> None:
     termos = [("formal", "Formal", BLUE), ("mulher", "Mulher", ORANGE)] + [
         (raca_term(r), RACA_LABELS_PLAIN[r], RACA_COLORS[r]) for r in RACA_NIVEIS
@@ -450,17 +505,18 @@ def make_tab_modelo(dv: str, convergencia: pd.DataFrame) -> str:
     restrita = load_r_nested("restrita", dv, "M4")
     termos = [("formal", "Formal (ref.: informal)")] + [
         (raca_term(r), f"{RACA_LABELS[r]} (ref.: branco)") for r in RACA_NIVEIS
-    ] + [("mulher", "Mulher (ref.: homem)"), ("formal:mulher", "Formal $\\times$ Mulher")]
+    ] + [("mulher", "Mulher (ref.: homem)"), ("formal:mulher", "Formal $\\times$ Mulher")] + [
+        (f"formal:{raca_term(r)}", f"Formal $\\times$ {RACA_LABELS[r]}") for r in RACA_NIVEIS
+    ]
 
     lines = ["\\begin{tabular}{lcc}", "\\toprule", " & Amostra ampla & Amostra restrita \\\\", "\\midrule"]
     for termo, label in termos:
         ra = ampla.loc[termo]
         rr = restrita.loc[termo]
         lines.append(
-            f"{label} & {fmt_num(ra['coeficiente'], sign=True)}{stars(ra['p_valor'])} & "
-            f"{fmt_num(rr['coeficiente'], sign=True)}{stars(rr['p_valor'])} \\\\"
+            f"{label} & {fmt_num(ra['coeficiente'], sign=True)}{stars(ra['p_valor'])} ({fmt_num(ra['erro_padrao'])}) & "
+            f"{fmt_num(rr['coeficiente'], sign=True)}{stars(rr['p_valor'])} ({fmt_num(rr['erro_padrao'])}) \\\\"
         )
-        lines.append(f" & ({fmt_num(ra['erro_padrao'])}) & ({fmt_num(rr['erro_padrao'])}) \\\\")
     lines.append("\\midrule")
     n_ampla = convergencia.loc[convergencia["especificacao"] == f"ampla_{dv}_M4", "n_obs"].iloc[0]
     n_restrita = convergencia.loc[convergencia["especificacao"] == f"restrita_{dv}_M4", "n_obs"].iloc[0]
@@ -610,6 +666,7 @@ def main() -> None:
     fig_motivacao(raw_gaps)
     fig_sensibilidade()
     fig_setor_publico()
+    info_publica = fig_informalidade_publica(common)
     fig_mecanismo()
     fig_gap_reais(mean_mensal, mean_hora)
     fig_robustez()
@@ -690,6 +747,15 @@ def main() -> None:
             macros[f"PValor{key}{dv_key}Restrita"] = fmt_num(r["p_valor"], 3)
         soma = tbl.loc["formal", "coeficiente"] + tbl.loc["setor_publico", "coeficiente"] + tbl.loc["formal:setor_publico", "coeficiente"]
         macros[f"PctFormalPublicoCombinado{dv_key}"] = fmt_pct(pct_effect(soma))
+
+    # informalidade dentro do setor público: composição ocupacional/setorial
+    macros["NInformalPublicoNaoPond"] = fmt_int(info_publica["n_naopond"])
+    macros["NInformalPublicoPond"] = fmt_int(info_publica["n_pond"])
+    n_ocupados = audit_totais["n_ocupados"]
+    macros["PctInformalPublicoDoOcupados"] = fmt_pct(info_publica["n_naopond"] / n_ocupados * 100, 1, sign=False)
+    macros["PctInformalPublicoOcupPrincipais"] = fmt_pct(info_publica["ocup_top3_pct"], 1, sign=False)
+    macros["PctInformalPublicoAtivAdmPub"] = fmt_pct(info_publica["ativ_admpub_pct"], 1, sign=False)
+    macros["PctInformalPublicoAtivEducSaude"] = fmt_pct(info_publica["ativ_educsaude_pct"], 1, sign=False)
 
     # posição na ocupação: melhor e pior
     hora_pos = load_r_posicao_ocupacao("ln_renda_hora_real")
