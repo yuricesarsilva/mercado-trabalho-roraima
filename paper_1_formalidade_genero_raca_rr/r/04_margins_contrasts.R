@@ -6,6 +6,12 @@
 # (contrast_combo() em lib_pnadc.R, mesma técnica de soma de coeficientes com covariância já
 # usada em scripts/09_estimate_trends.py::year_effects()), para a especificação M4 (FE
 # ocupação x atividade) de cada amostra x variável dependente.
+#
+# O modelo também tem Mulher:Raça e Formal:Raça -- por isso `mulher` sozinho é o gap de
+# gênero só para a raça de referência (branco), e `factor(raca_grupo)r` é o gap racial só
+# para homens. Os contrastes de gênero e raça abaixo usam contrast_weighted() (average
+# marginal contrast, ponderado pela distribuição observada de raça/gênero na amostra) para
+# reportar um gap populacional, não o de um subgrupo específico -- ver revisão de slides 19/38.
 
 suppressPackageStartupMessages({
   library(survey)
@@ -71,27 +77,72 @@ for (amostra in names(designs)) {
     model <- svyglm_capture_convergence(as.formula(formula_str), design_dv)
     cat(sprintf("[convergência bootstrap] %s (M4): svyglm descartou %d/200 réplicas\n", key, attr(model, "n_replicas_na")))
 
+    # Shares populacionais (ponderadas, amarelo excluído) da amostra efetivamente estimada --
+    # usadas para os "average marginal contrasts" abaixo. Como o modelo tem Mulher:Raça e
+    # Formal:Raça, o coeficiente de `mulher` sozinho é o gap de gênero só para a raça de
+    # referência (branco), e o de `factor(raca_grupo)r` é o gap racial só para homens (mulher
+    # de referência); sem essa ponderação, "gap de gênero"/"gap racial" mistura a estimativa de
+    # um subgrupo com uma manchete que soa geral -- ver revisão de slides 19/38.
+    data_dv <- data_amostra[idx, ]
+    data_dv_raca <- data_dv[!is.na(data_dv$raca_grupo), ]
+    peso_total <- sum(data_dv_raca$peso)
+    share_raca <- stats::setNames(
+      sapply(RACA_NIVEIS, function(r) sum(data_dv_raca$peso[data_dv_raca$raca_grupo == r]) / peso_total),
+      RACA_NIVEIS
+    )
+    share_mulher <- sum(data_dv_raca$peso[data_dv_raca$mulher == 1]) / peso_total
+    cat(sprintf(
+      "  shares (ponderados): mulher=%.3f, preto=%.3f, pardo=%.3f, indigena=%.3f\n",
+      share_mulher, share_raca["preto"], share_raca["pardo"], share_raca["indigena"]
+    ))
+
     rows <- list()
 
-    # Gênero: gap entre informais vs. gap entre formais
-    rows[["genero_gap_informal"]] <- contrast_combo(model, c("mulher"), "Mulher vs. homem, entre informais")
-    rows[["genero_gap_formal"]] <- contrast_combo(model, c("mulher", "formal:mulher"), "Mulher vs. homem, entre formais")
+    # Gênero: gap entre informais vs. gap entre formais, MÉDIA ponderada pela distribuição
+    # racial observada (average marginal contrast) -- não só o gap para brancos.
+    pesos_raca_mulher <- stats::setNames(
+      as.numeric(share_raca), sprintf("mulher:factor(raca_grupo)%s", names(share_raca))
+    )
+    rows[["genero_gap_informal"]] <- contrast_weighted(
+      model, c(mulher = 1, pesos_raca_mulher),
+      "Mulher vs. homem, entre informais (média ponderada por raça)"
+    )
+    rows[["genero_gap_formal"]] <- contrast_weighted(
+      model, c(mulher = 1, `formal:mulher` = 1, pesos_raca_mulher),
+      "Mulher vs. homem, entre formais (média ponderada por raça)"
+    )
     rows[["genero_diferenca_formal_informal"]] <- contrast_combo(model, c("formal:mulher"), "Diferença do gap de gênero (formal - informal)")
 
-    # Raça: gap entre informais vs. gap entre formais, por categoria (ref.: branco)
+    # Raça: gap entre informais vs. gap entre formais, por categoria (ref.: branco), MÉDIA
+    # ponderada pela distribuição de gênero observada -- não só o gap para homens.
     for (raca in RACA_NIVEIS) {
       termo_raca <- sprintf("factor(raca_grupo)%s", raca)
       termo_inter <- sprintf("formal:factor(raca_grupo)%s", raca)
-      rows[[sprintf("raca_%s_gap_informal", raca)]] <- contrast_combo(
-        model, c(termo_raca), sprintf("%s vs. branco, entre informais", raca)
+      termo_mulher_raca <- sprintf("mulher:factor(raca_grupo)%s", raca)
+      rows[[sprintf("raca_%s_gap_informal", raca)]] <- contrast_weighted(
+        model, stats::setNames(c(1, share_mulher), c(termo_raca, termo_mulher_raca)),
+        sprintf("%s vs. branco, entre informais (média ponderada por gênero)", raca)
       )
-      rows[[sprintf("raca_%s_gap_formal", raca)]] <- contrast_combo(
-        model, c(termo_raca, termo_inter), sprintf("%s vs. branco, entre formais", raca)
+      rows[[sprintf("raca_%s_gap_formal", raca)]] <- contrast_weighted(
+        model, stats::setNames(c(1, 1, share_mulher), c(termo_raca, termo_inter, termo_mulher_raca)),
+        sprintf("%s vs. branco, entre formais (média ponderada por gênero)", raca)
       )
       rows[[sprintf("raca_%s_diferenca_formal_informal", raca)]] <- contrast_combo(
         model, c(termo_inter), sprintf("Diferença do gap de %s (formal - informal)", raca)
       )
     }
+
+    # Prêmio de formalidade populacional: `formal` sozinho interage com Mulher e Raça também,
+    # então seu coeficiente puro é o prêmio só para homem branco -- média ponderada pelas
+    # distribuições de gênero e raça observadas (sem termo triplo formal:mulher:raça no
+    # modelo, os pesos marginais de gênero e raça se somam independentemente ao termo-base).
+    pesos_raca_formal <- stats::setNames(
+      as.numeric(share_raca), sprintf("formal:factor(raca_grupo)%s", names(share_raca))
+    )
+    rows[["formal_gap_geral"]] <- contrast_weighted(
+      model, c(formal = 1, `formal:mulher` = share_mulher, pesos_raca_formal),
+      "Formal vs. informal (média ponderada por gênero e raça)"
+    )
 
     # Formalidade: prêmio para homem branco vs. mulher preta/parda/indígena (interseccional)
     rows[["formal_homem_branco"]] <- contrast_combo(model, c("formal"), "Prêmio de formalidade, homem branco")

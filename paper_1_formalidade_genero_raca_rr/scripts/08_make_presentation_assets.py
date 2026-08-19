@@ -149,12 +149,24 @@ def load_r_setor_publico(dv: str) -> pd.DataFrame:
     return pd.read_csv(TABLES_DIR / f"r_setor_publico_{dv}.csv", index_col="termo")
 
 
+def load_r_setor_publico_combinado(dv: str) -> pd.Series:
+    return pd.read_csv(TABLES_DIR / f"r_setor_publico_combinado_{dv}.csv").iloc[0]
+
+
 def load_r_posicao_ocupacao(dv: str) -> pd.DataFrame:
     return pd.read_csv(TABLES_DIR / f"r_posicao_ocupacao_{dv}.csv", index_col="termo")
 
 
 def load_r_posicao_descritivo() -> pd.DataFrame:
     return pd.read_csv(TABLES_DIR / "r_posicao_ocupacao_descritivo.csv")
+
+
+def load_r_prob_formal_ame(amostra: str) -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / f"r_prob_formal_ame_{amostra}.csv", index_col="termo")
+
+
+def load_r_decomposicao_genero() -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / "r_decomposicao_genero.csv", index_col="modelo")
 
 
 def raca_term(raca: str, prefix: str = "factor(raca_grupo)") -> str:
@@ -496,6 +508,69 @@ def fig_tendencia_flexivel() -> None:
     save_fig(fig, "tendencia_temporal")
 
 
+def fig_prob_formal_ame() -> None:
+    # Efeitos marginais médios (AME, p.p.) da probabilidade de estar em posição formal --
+    # "quem acessa a formalidade", em contraste com o modelo de renda ("quanto formalidade
+    # está associada ao rendimento"). Ver r/10_probabilidade_formalizacao.R.
+    termos = [("mulher", "Mulher\n(ref.: homem)"), ("preto", "Preto\n(ref.: branco)"),
+              ("pardo", "Pardo\n(ref.: branco)"), ("indigena", "Indígena\n(ref.: branco)")]
+    y_positions = np.arange(len(termos))
+    bar_offset = 0.14
+
+    fig, ax = plt.subplots(figsize=(7.5, 4.2))
+    for i, (amostra, color, label) in enumerate([
+        ("ampla", BLUE, "Todos os ocupados"), ("restrita", ORANGE, "Empregados"),
+    ]):
+        tbl = load_r_prob_formal_ame(amostra)
+        offset = (0.5 - i) * bar_offset
+        pontos = [tbl.loc[t, "ame_pp"] for t, _ in termos]
+        erros = [1.96 * tbl.loc[t, "erro_padrao_pp"] for t, _ in termos]
+        ax.errorbar(
+            pontos, y_positions + offset, xerr=erros, fmt="o", color=color, ecolor=color,
+            elinewidth=1.6, capsize=3, markersize=6, zorder=3, label=label,
+        )
+    ax.axvline(0, color=INK_SECONDARY, linewidth=1, linestyle="--", zorder=0)
+    ax.set_yticks(y_positions)
+    ax.set_yticklabels([lbl for _, lbl in termos])
+    ax.invert_yaxis()
+    ax.set_xlabel("Efeito marginal médio na prob. de ser formal (p.p.)")
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.legend(loc="lower right", frameon=False, fontsize=9)
+    fig.suptitle("Quem acessa a formalidade? Efeitos marginais médios (IC 95%)", fontsize=12)
+    fig.tight_layout()
+    save_fig(fig, "prob_formal_ame")
+
+
+def fig_decomposicao_genero() -> None:
+    # Accounting exercise: qual dimensão de composição revela o gap de gênero bruto (~+3%,
+    # log) ao condicional (~-15/-18%)? Passos principais (M0->M6); M4 (ocupação, FE separado)
+    # e M7 (+horas) ficam de fora do gráfico principal -- robustez, ver r_decomposicao_genero.csv.
+    tbl = load_r_decomposicao_genero()
+    passos = ["M0", "M1", "M2", "M3", "M5", "M6"]
+    labels = [tbl.loc[m, "rotulo"] for m in passos]
+    valores = [tbl.loc[m, "efeito_percentual_aprox"] for m in passos]
+    cores = [BLUE if v >= 0 else RED for v in valores]
+
+    fig, ax = plt.subplots(figsize=(9.5, 4.6))
+    x = np.arange(len(passos))
+    ax.plot(x, valores, color=INK_SECONDARY, linewidth=1.4, linestyle="--", zorder=2)
+    ax.bar(x, valores, color=cores, width=0.55, zorder=3)
+    ax.axhline(0, color=INK_SECONDARY, linewidth=1, zorder=1)
+    ax.set_xticks(x)
+    ax.set_xticklabels(labels, fontsize=9.5)
+    ax.set_ylabel("Efeito de \"mulher\" aprox. (%), renda/hora")
+    ax.spines[["top", "right"]].set_visible(False)
+    for xi, v in zip(x, valores):
+        ax.annotate(f"{v:+.1f}%", (xi, v), ha="center", va="bottom" if v >= 0 else "top",
+                     fontsize=9.5, fontweight="bold",
+                     xytext=(0, 4 if v >= 0 else -4), textcoords="offset points")
+    span = max(abs(v) for v in valores) * 1.35
+    ax.set_ylim(-span, span * 0.55)
+    fig.suptitle("Decomposição sequencial do gap de gênero (renda por hora real)", fontsize=12)
+    fig.tight_layout()
+    save_fig(fig, "decomposicao_genero")
+
+
 # ---------------------------------------------------------------------------
 # Tabelas LaTeX
 # ---------------------------------------------------------------------------
@@ -553,6 +628,29 @@ def make_tab_contrastes() -> str:
         row("formal_mulher_indigena", "\\quad Mulher ind\\'igena"),
         "\\bottomrule", "\\end{tabular}",
     ]
+    return "\n".join(lines)
+
+
+def make_tab_prob_formal() -> str:
+    # AME (p.p.) da probabilidade de estar em posição formal -- "quem acessa a formalidade",
+    # não "quanto formalidade paga" (esse é o modelo de renda, tab_hora/tab_mensal). Nenhum
+    # termo é significativo a 10% em nenhuma amostra -- ver r/10_probabilidade_formalizacao.R.
+    ampla = load_r_prob_formal_ame("ampla")
+    restrita = load_r_prob_formal_ame("restrita")
+    termos = [("mulher", "Mulher (ref.: homem)")] + [
+        (r, f"{RACA_LABELS[r]} (ref.: branco)") for r in RACA_NIVEIS
+    ]
+
+    lines = ["\\begin{tabular}{lcc}", "\\toprule", " & Todos os ocupados & Empregados \\\\", "\\midrule"]
+    for termo, label in termos:
+        ra = ampla.loc[termo]
+        rr = restrita.loc[termo]
+        lines.append(
+            f"{label} & {fmt_num(ra['ame_pp'], 1, sign=True)}{stars(ra['p_valor'])} p.p. ({fmt_num(ra['erro_padrao_pp'], 1)}) & "
+            f"{fmt_num(rr['ame_pp'], 1, sign=True)}{stars(rr['p_valor'])} p.p. ({fmt_num(rr['erro_padrao_pp'], 1)}) \\\\"
+        )
+    lines.append("\\bottomrule")
+    lines.append("\\end{tabular}")
     return "\n".join(lines)
 
 
@@ -671,6 +769,8 @@ def main() -> None:
     fig_gap_reais(mean_mensal, mean_hora)
     fig_robustez()
     fig_tendencia_flexivel()
+    fig_prob_formal_ame()
+    fig_decomposicao_genero()
 
     # --- tabelas ---
     convergencia = pd.read_csv(TABLES_DIR / "r_nested_convergencia.csv")
@@ -681,6 +781,7 @@ def main() -> None:
         "tab_setor_publico.tex": make_tab_setor_publico(),
         "tab_posicao.tex": make_tab_posicao(),
         "tab_mecanismo.tex": make_tab_mecanismo(),
+        "tab_prob_formal.tex": make_tab_prob_formal(),
     }
     for name, content in tabelas.items():
         (PRESENTATION_GERADO_DIR / name).write_text(content, encoding="utf-8")
@@ -738,13 +839,39 @@ def main() -> None:
     r = contrastes_ampla_hora.loc["formal_homem_branco"]
     macros["PctFormalHomemBranco"] = fmt_pct(r["efeito_percentual_aprox"])
 
-    # setor público
+    # gap de gênero/formal em R$ (conversão do contraste ponderado, não do coeficiente bruto)
+    r = contrastes_ampla_hora.loc["genero_gap_informal"]
+    macros["ReaisGeneroInformal"] = fmt_brl(r["efeito_percentual_aprox"] / 100 * mean_hora, 2)
+
+    # prêmio de formalidade populacional (ponderado por gênero e raça, não só homem branco)
+    for amostra, amostra_key in [("ampla", "Ampla"), ("restrita", "Restrita")]:
+        for dv, dv_key in [("ln_renda_mensal_real", "Mensal"), ("ln_renda_hora_real", "Hora")]:
+            contrastes = load_r_contrastes(amostra, dv)
+            r = contrastes.loc["formal_gap_geral"]
+            macros[f"PctFormalGeral{dv_key}{amostra_key}"] = fmt_pct(r["efeito_percentual_aprox"])
+            macros[f"ReaisFormalGeral{dv_key}{amostra_key}"] = fmt_brl(
+                r["efeito_percentual_aprox"] / 100 * (mean_mensal if dv_key == "Mensal" else mean_hora),
+                0 if dv_key == "Mensal" else 2,
+            )
+
+    # efeito combinado formal+setor público, com IC 95% design-based (não soma ingênua de SEs)
+    for dv, dv_key in [("ln_renda_mensal_real", "Mensal"), ("ln_renda_hora_real", "Hora")]:
+        r = load_r_setor_publico_combinado(dv)
+        macros[f"PctFormalPublicoCombinadoIC{dv_key}Inf"] = fmt_pct(r["ic95_inf"])
+        macros[f"PctFormalPublicoCombinadoIC{dv_key}Sup"] = fmt_pct(r["ic95_sup"])
+
+    # setor público -- termo "Formal" aqui vem de uma especificação DIFERENTE do M4 principal
+    # (inclui setor_publico + formal:setor_publico), então o coeficiente de "formal" não é o
+    # mesmo do modelo principal (referência passa a ser privado/doméstico especificamente).
+    # Sufixo "SP" evita colidir com Pct{termo_key}{dv_key}{amostra_key} do modelo principal
+    # (mesma combinação Formal+Hora/Mensal+Restrita) -- collision silenciosa detectada em
+    # revisão: \PctFormalHoraRestrita estava sendo sobrescrito por este bloco.
     for dv, dv_key in [("ln_renda_mensal_real", "Mensal"), ("ln_renda_hora_real", "Hora")]:
         tbl = load_r_setor_publico(dv)
         for termo, key in [("formal", "Formal"), ("setor_publico", "SetorPublico"), ("formal:setor_publico", "FormalSetorPublico")]:
             r = tbl.loc[termo]
-            macros[f"Pct{key}{dv_key}Restrita"] = fmt_pct(pct_effect(r["coeficiente"]))
-            macros[f"PValor{key}{dv_key}Restrita"] = fmt_num(r["p_valor"], 3)
+            macros[f"Pct{key}{dv_key}RestritaSP"] = fmt_pct(pct_effect(r["coeficiente"]))
+            macros[f"PValor{key}{dv_key}RestritaSP"] = fmt_num(r["p_valor"], 3)
         soma = tbl.loc["formal", "coeficiente"] + tbl.loc["setor_publico", "coeficiente"] + tbl.loc["formal:setor_publico", "coeficiente"]
         macros[f"PctFormalPublicoCombinado{dv_key}"] = fmt_pct(pct_effect(soma))
 
@@ -768,9 +895,12 @@ def main() -> None:
     macros["PosicaoMelhorNome"] = "militar ou servidor estatut\\'ario"
     macros["PosicaoMelhorPct"] = fmt_pct(melhor["efeito"])
 
-    # mecanismo de jornada
+    # mecanismo de jornada -- formal/mulher usam as versões "_pop" (média ponderada por
+    # gênero/raça via contrast_weighted em r/03_jornada_decomposicao.R): o modelo tem
+    # Mulher×Raça e Formal×Raça, então os coeficientes puros "formal"/"mulher" são específicos
+    # de homem branco/mulher branca, não a média populacional que o slide de mecanismo relata.
     identidade_ampla = load_r_jornada_identidade("ampla")
-    for termo, key in [("formal", "Formal"), ("mulher", "Mulher"), ("formal:mulher", "FormalMulher")] + [
+    for termo, key in [("formal_pop", "Formal"), ("mulher_pop", "Mulher"), ("formal:mulher", "FormalMulher")] + [
         (raca_term(r), r.capitalize()) for r in RACA_NIVEIS
     ]:
         r = identidade_ampla.loc[termo]
@@ -795,6 +925,24 @@ def main() -> None:
             row_ = trimestres[(trimestres["termo"] == termo) & (trimestres["dv"] == "ln_renda_hora_real") & (trimestres["especificacao"] == esp)]
             if not row_.empty:
                 macros[f"Pct{key}Hora{esp_key}"] = fmt_pct(row_["efeito_percentual_aprox"].iloc[0])
+
+    # probabilidade de formalização (AME, p.p.) -- acesso à formalidade, não retorno
+    for amostra, amostra_key in [("ampla", "Ampla"), ("restrita", "Restrita")]:
+        tbl = load_r_prob_formal_ame(amostra)
+        for termo, termo_key in [("mulher", "Mulher")] + [(r, r.capitalize()) for r in RACA_NIVEIS]:
+            row_ = tbl.loc[termo]
+            macros[f"AmePp{termo_key}{amostra_key}"] = fmt_num(row_["ame_pp"], 1, sign=True)
+            macros[f"PValorAme{termo_key}{amostra_key}"] = fmt_num(row_["p_valor"], 3)
+
+    # decomposição sequencial do gap de gênero
+    decomp = load_r_decomposicao_genero()
+    for m, key in [
+        ("M0", "Bruto"), ("M1", "Demografia"), ("M2", "Educacao"), ("M3", "Atividade"),
+        ("M4", "Ocupacao"), ("M5", "OcupAtiv"), ("M6", "SetorPublico"), ("M7", "Horas"),
+    ]:
+        r = decomp.loc[m]
+        macros[f"DecompGenero{key}"] = fmt_pct(r["efeito_percentual_aprox"])
+        macros[f"PValorDecompGenero{key}"] = fmt_num(r["p_valor"], 3)
 
     lines = ["% Gerado automaticamente por scripts/08_make_presentation_assets.py. Não editar à mão.", ""]
     for name, value in macros.items():

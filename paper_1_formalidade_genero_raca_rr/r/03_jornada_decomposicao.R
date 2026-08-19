@@ -59,9 +59,10 @@ RHS <- paste(
 )
 
 DVS <- c("ln_renda_mensal_real", "ln_renda_hora_real", "ln_horas_semanais_principal")
+RACA_NIVEIS <- c("preto", "pardo", "indigena")
 
 KEY_TERMS <- c(
-  "formal", "mulher", "formal:mulher",
+  "formal", "mulher", "formal:mulher", "mulher_pop", "formal_pop",
   "factor(raca_grupo)preto", "factor(raca_grupo)pardo", "factor(raca_grupo)indigena"
 )
 
@@ -84,12 +85,42 @@ for (amostra in names(designs)) {
   data_v <- data_amostra[valid, ]
   cat(sprintf("\n=== %s: N (amostra jornada) = %d ===\n", amostra, nrow(data_v)))
 
+  # Shares populacionais (ponderadas, amarelo excluído) -- mesma lógica de
+  # r/04_margins_contrasts.R: `mulher` e `formal` sozinhos interagem com raça (e `formal` com
+  # mulher também), então seus coeficientes puros são específicos de um subgrupo (branco/homem
+  # branco), não a média populacional que "mulheres trabalham X horas em relação a homens
+  # comparáveis" (slide de mecanismo) precisa representar.
+  data_v_raca <- data_v[!is.na(data_v$raca_grupo), ]
+  peso_total <- sum(data_v_raca$peso)
+  share_raca <- stats::setNames(
+    sapply(RACA_NIVEIS, function(r) sum(data_v_raca$peso[data_v_raca$raca_grupo == r]) / peso_total),
+    RACA_NIVEIS
+  )
+  share_mulher <- sum(data_v_raca$peso[data_v_raca$mulher == 1]) / peso_total
+
   coefs_by_dv <- list()
+  pop_by_dv <- list()
   for (dv in DVS) {
     formula_str <- paste(dv, "~", RHS)
     model <- svyglm_capture_convergence(as.formula(formula_str), design_v)
     coef_table <- extract_coef_table(model)
     coefs_by_dv[[dv]] <- coef_table
+
+    pesos_raca_mulher <- stats::setNames(
+      as.numeric(share_raca), sprintf("mulher:factor(raca_grupo)%s", names(share_raca))
+    )
+    pesos_raca_formal <- stats::setNames(
+      as.numeric(share_raca), sprintf("formal:factor(raca_grupo)%s", names(share_raca))
+    )
+    mulher_pop <- contrast_weighted(model, c(mulher = 1, pesos_raca_mulher), "mulher (média ponderada por raça)")
+    formal_pop <- contrast_weighted(
+      model, c(formal = 1, `formal:mulher` = share_mulher, pesos_raca_formal),
+      "formal (média ponderada por gênero e raça)"
+    )
+    pop_by_dv[[dv]] <- rbind(
+      data.frame(termo = "mulher_pop", coeficiente = mulher_pop$estimativa, erro_padrao = mulher_pop$erro_padrao, p_valor = mulher_pop$p_valor),
+      data.frame(termo = "formal_pop", coeficiente = formal_pop$estimativa, erro_padrao = formal_pop$erro_padrao, p_valor = formal_pop$p_valor)
+    )
 
     out_csv <- file.path(tables_dir, sprintf("r_jornada_%s_%s.csv", amostra, dv))
     write.csv(coef_table, out_csv, row.names = FALSE)
@@ -97,6 +128,12 @@ for (amostra in names(designs)) {
       "saved: %s (réplicas descartadas pelo svyglm: %d/200)\n",
       out_csv, attr(model, "n_replicas_na")
     ))
+  }
+
+  # Anexa mulher_pop/formal_pop (ponderados) às tabelas de coeficientes por termo, para que a
+  # checagem de identidade e o CSV final os tratem exatamente como qualquer outro termo.
+  for (dv in DVS) {
+    coefs_by_dv[[dv]] <- rbind(coefs_by_dv[[dv]], pop_by_dv[[dv]])
   }
 
   mensal <- coefs_by_dv[["ln_renda_mensal_real"]][, c("termo", "coeficiente", "erro_padrao", "p_valor")]

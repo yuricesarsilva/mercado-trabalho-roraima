@@ -82,6 +82,18 @@ for (dv_info in list(
 
   destaque <- coef_table[coef_table$termo %in% c("formal", "setor_publico", "formal:setor_publico"), ]
   print(destaque, digits = 4, row.names = FALSE)
+
+  # Efeito combinado (formal + setor_publico + formal:setor_publico) com erro-padrão
+  # design-based via contrast_combo() (covariância completa do modelo, não soma ingênua de
+  # erros-padrão individuais) -- ver docs/definicao_formalidade.md e revisão de slide 27.
+  combinado <- contrast_combo(
+    model, c("formal", "setor_publico", "formal:setor_publico"),
+    label = "Formal + Setor público + Formal×Setor público"
+  )
+  out_combinado <- file.path(tables_dir, sprintf("r_setor_publico_combinado_%s.csv", dv_info$dv))
+  write.csv(combinado, out_combinado, row.names = FALSE)
+  cat(sprintf("saved: %s\n", out_combinado))
+  print(combinado[, c("efeito_percentual_aprox", "ic95_inf", "ic95_sup", "p_valor")], digits = 4, row.names = FALSE)
 }
 
 # ---------------------------------------------------------------------------

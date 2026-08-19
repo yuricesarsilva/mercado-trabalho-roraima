@@ -290,21 +290,35 @@ load_or_build_common <- function(project_dir, years, quarter, rr_uf_code = 14,
 # ---------------------------------------------------------------------------
 
 contrast_combo <- function(model, terms, label = paste(terms, collapse = " + ")) {
+  weights <- stats::setNames(rep(1, length(terms)), terms)
+  contrast_weighted(model, weights, label)
+}
+
+# Generalização de contrast_combo() com pesos arbitrários por termo (não só 0/1) -- necessário
+# para "average marginal contrasts": quando o modelo tem Mulher:Raça (ou Formal:Raça), o
+# coeficiente de `mulher` sozinho é o gap SÓ para a raça de referência (branco), não uma média
+# populacional. Para obter o gap médio de gênero sobre a distribuição racial observada:
+#   E_r[gap(r)] = mulher + Σ_r share_r * (mulher:raça_r)
+# i.e. peso 1 no termo-base e peso = share populacional em cada termo de interação -- ver
+# revisão de slides 19/38 (o coeficiente puro superestimava a precisão ao ocultar que é
+# específico de uma subpopulação).
+contrast_weighted <- function(model, weights, label = NULL) {
   coefs <- stats::coef(model)
   V <- stats::vcov(model)
+  terms <- names(weights)
   missing_terms <- setdiff(terms, names(coefs))
   if (length(missing_terms) > 0) {
     stop(sprintf("Termos não encontrados no modelo: %s", paste(missing_terms, collapse = ", ")))
   }
   a <- rep(0, length(coefs))
   names(a) <- names(coefs)
-  a[terms] <- 1
-  estimate <- sum(coefs[terms])
+  a[terms] <- weights
+  estimate <- sum(coefs[terms] * weights)
   se <- sqrt(as.numeric(t(a) %*% V %*% a))
   z <- estimate / se
   p_valor <- 2 * (1 - stats::pnorm(abs(z)))
   data.frame(
-    contraste = label,
+    contraste = if (is.null(label)) paste(terms, collapse = " + ") else label,
     termos = paste(terms, collapse = " + "),
     estimativa = estimate,
     erro_padrao = se,

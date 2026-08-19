@@ -304,11 +304,24 @@
       \bottomrule
     \end{tabular}
   \end{center}
-  \vspace{3mm}
+  {\scriptsize M\'edia ponderada pela distribui\c{c}\~ao racial observada (modelo tem Mulher$\times$Ra\c{c}a).}
+  \footnotesize
   \begin{itemize}
     \item O gap \highlight{bruto} de renda por hora era pequeno (\BrutoGapMulherPct) -- mascarava um gap condicional muito maior, pr\'oximo de \PctGeneroInformal\ a \PctGeneroFormal.
-    \item A diferen\c{c}a entre os dois gaps \'e \negativo{\PctGeneroDiferenca} e \highlight{n\~ao \'e estatisticamente significativa} ($p=\PValorGeneroDiferenca$): \highlight{o gap de g\^enero por hora \'e essencialmente constante entre formais e informais}. O diferencial de pre\c{c}o da hora entre mulheres e homens n\~ao difere conforme o status de formalidade.
+    \item A diferen\c{c}a entre os dois gaps \'e \negativo{\PctGeneroDiferenca} e \highlight{n\~ao \'e estatisticamente significativa} ($p=\PValorGeneroDiferenca$): \highlight{o gap de g\^enero por hora \'e essencialmente constante entre formais e informais}.
     \item Isso contrasta com a renda \highlight{mensal}, onde \texttt{Formal$\times$Mulher} \'e positivo e significativo -- efeito inteiramente de jornada, n\~ao de pre\c{c}o (ver mecanismo, adiante).
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Por que o gap bruto de g\^enero \'e t\~ao pequeno?}
+  \begin{center}
+    \includegraphics[width=0.8\linewidth,height=0.4\textheight,keepaspectratio]{decomposicao_genero.pdf}
+  \end{center}
+  \footnotesize
+  \begin{itemize}
+    \item \highlight{Accounting exercise}: mesma vari\'avel dependente (renda/hora), s\'o \texttt{mulher} como tratamento, um controle adicionado por vez -- isola qual dimens\~ao de composi\c{c}\~ao inverte o sinal.
+    \item A invers\~ao acontece quase inteiramente ao entrar \highlight{escolaridade} (\DecompGeneroDemografia\ $\to$ \DecompGeneroEducacao); os demais controles movem pouco depois disso (\DecompGeneroSetorPublico\ ap\'os setor p\'ublico).
+    \item Mulheres t\^em, em m\'edia, escolaridade mais alta em Roraima -- essa vantagem composicional \highlight{mascara} um gap de pre\c{c}o grande dentro da mesma faixa de escolaridade, ocupa\c{c}\~ao e setor.
   \end{itemize}
 \end{frame}
 
@@ -326,10 +339,11 @@
       \bottomrule
     \end{tabular}
   \end{center}
-  \vspace{3mm}
+  {\scriptsize M\'edias ponderadas pela distribui\c{c}\~ao de g\^enero observada (modelo tem Mulher$\times$Ra\c{c}a).}
+  \footnotesize
   \begin{itemize}
-    \item \alert{Os gaps raciais n\~ao s\~ao reduzidos entre formais} -- para pessoas ind\'igenas, tornam-se \highlight{estatisticamente significativos e maiores} (quase dobra); h\'a evid\^encia mais fraca na mesma dire\c{c}\~ao para pretos ($p=0{,}071$), e nenhuma evid\^encia significativa para pardos ($p=0{,}152$). Padr\~ao oposto ao de g\^enero.
-    \item O gap racial \highlight{bruto} (\BrutoGapRacaPct, preto/pardo vs. branco) \'e bem maior que o condicional -- grande parte da desigualdade racial bruta em Roraima opera via composi\c{c}\~ao (escolaridade, aloca\c{c}\~ao ocupacional/setorial), n\~ao s\'o via pre\c{c}o dentro da mesma posi\c{c}\~ao.
+    \item \alert{Os gaps raciais n\~ao s\~ao reduzidos entre formais} -- para pessoas ind\'igenas, tornam-se \highlight{estatisticamente significativos e maiores} (quase dobra); evid\^encia mais fraca na mesma dire\c{c}\~ao para pretos ($p=0{,}071$), nenhuma para pardos ($p=0{,}152$). Padr\~ao oposto ao de g\^enero.
+    \item O gap racial \highlight{bruto} (\BrutoGapRacaPct, preto/pardo vs. branco) \'e bem maior que o condicional -- grande parte da desigualdade racial bruta opera via composi\c{c}\~ao (escolaridade, aloca\c{c}\~ao ocupacional/setorial), n\~ao s\'o via pre\c{c}o dentro da mesma posi\c{c}\~ao.
   \end{itemize}
 \end{frame}
 
@@ -354,6 +368,54 @@
   \end{itemize}
 \end{frame}
 
+\begin{frame}{Uma pergunta complementar: quem acessa a formalidade?}
+  \begin{itemize}
+    \item At\'e aqui, todo o resultado responde \highlight{``quanto a formalidade est\'a associada ao rendimento''} -- o \highlight{retorno} condicional da formalidade.
+    \item Mas a literatura de segmenta\c{c}\~ao/sele\c{c}\~ao do mercado de trabalho (Dalberto \& Cirino; Curi \& Menezes-Filho; Hirata \& Machado, 2010) enfatiza que a aloca\c{c}\~ao entre postos formais e informais \'e ela pr\'opria potencialmente desigual -- \highlight{acesso} \`a formalidade \'e uma dimens\~ao distinta de retorno.
+    \item G\^enero e ra\c{c}a podem operar nas duas dimens\~oes ao mesmo tempo: um grupo pode ter menor probabilidade de estar em posi\c{c}\~ao formal \highlight{e}, mesmo entrando na formalidade, um pr\^emio menor.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Modelo de acesso \`a formalidade}
+  \begin{itemize}
+    \item Especifica\c{c}\~ao complementar e mais simples, sem intera\c{c}\~oes:
+  \end{itemize}
+  \small
+  \begin{align*}
+    P(Formal_i = 1) = {} & F(Mulher_i,\ \text{Ra\c{c}a}_i,\ Escolaridade_i,\ Idade_i, \\
+                          & \phantom{F(} FE_{c\acute{e}lula\ ocup.\times ativ.},\ FE_{per\acute{i}odo})
+  \end{align*}
+  \normalsize
+  \begin{itemize}
+    \item Logit ponderado; reportamos \highlight{efeitos marginais m\'edios} (AME, em pontos percentuais), n\~ao coeficientes em log-odds.
+    \item Erro-padr\~ao design-based: o AME \'e recalculado nas 200 r\'eplicas bootstrap oficiais (mesmo desenho amostral usado em todo o trabalho).
+    \item N\~ao \'e leitura causal -- escolaridade, ocupa\c{c}\~ao e setor seguem potencialmente end\'ogenos \`a pr\'opria decis\~ao de formaliza\c{c}\~ao.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Quem acessa a formalidade? Efeitos marginais m\'edios}
+  \begin{center}
+    \small
+    \renewcommand{\arraystretch}{1.1}
+    \input{gerado/tab_prob_formal.tex}
+  \end{center}
+  \vspace{3mm}
+  \footnotesize
+  \begin{itemize}
+    \item \alert{Nenhum termo \'e estatisticamente significativo a 10\%} em nenhuma das duas amostras -- diferente do retorno associado \`a formalidade (altamente significativo para mulher e para os tr\^es grupos raciais, slides anteriores).
+    \item Sinal sistematicamente negativo na amostra ampla, mas IC largos (ex.: mulher, AME \AmePpMulherAmpla\ p.p., EP\,6,7) -- \highlight{n\~ao excluem} diferen\c{c}as de acesso relevantes.
+    \item Leitura correta: \highlight{n\~ao detectamos} diferen\c{c}a significativa no acesso -- diferente de concluir que ela \highlight{n\~ao existe}. Os diferenciais de retorno, em contraste, s\~ao bem mais precisos.
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Acesso \`a formalidade por g\^enero e ra\c{c}a (IC 95\%)}
+  \begin{center}
+    \includegraphics[width=0.85\linewidth,height=0.6\textheight,keepaspectratio]{prob_formal_ame.pdf}
+  \end{center}
+  \vspace{1mm}
+  {\scriptsize Efeito marginal m\'edio (AME) na probabilidade de estar em posi\c{c}\~ao formal, com IC 95\% do desenho bootstrap (200 r\'eplicas). Todos os intervalos cruzam zero.}
+\end{frame}
+
 \begin{frame}{Setor p\'ublico: dimens\~ao distinta da formalidade}
   \begin{center}
     \scriptsize
@@ -364,7 +426,7 @@
   \begin{itemize}
     \item Amostra restrita (empregados): setor p\'ublico e formalidade constituem \highlight{dimens\~oes distintas e conjuntamente associadas aos rendimentos}, n\~ao uma explicando a outra.
     \item H\'a informalidade \highlight{dentro} do setor p\'ublico (1.493 dos 5.791 postos p\'ublicos s\~ao sem carteira) -- por isso os dois termos n\~ao s\~ao colineares.
-    \item O diferencial associado \`a formalidade \'e \highlight{maior no setor p\'ublico} do que no privado: efeito combinado (renda/hora) $\approx$ \PctFormalPublicoCombinadoHora, contra \PctFormalHoraRestrita\ de ser s\'o formal.
+    \item O diferencial associado \`a formalidade \'e \highlight{maior no setor p\'ublico} do que no privado: efeito combinado (renda/hora) $\approx$ \PctFormalPublicoCombinadoHora\ (IC 95\%: \PctFormalPublicoCombinadoICHoraInf\ a \PctFormalPublicoCombinadoICHoraSup), contra \PctFormalHoraRestritaSP\ de ser s\'o formal (privado/dom\'estico).
   \end{itemize}
 \end{frame}
 
@@ -418,9 +480,9 @@
 
 \begin{frame}{Leitura do mecanismo}
   \begin{itemize}
-    \item \highlight{G\^enero:} \PctJornadaMulher{}\% do efeito mensal \'e efeito-jornada (mulheres trabalham \HorasEfeitoMulher\ horas em rela\c{c}\~ao a homens compar\'aveis); o restante \'e efeito-pre\c{c}o.
+    \item \highlight{G\^enero:} \PctJornadaMulher{}\% do efeito mensal \'e efeito-jornada (mulheres trabalham \HorasEfeitoMulher\ horas em rela\c{c}\~ao a homens compar\'aveis, em m\'edia ponderada por ra\c{c}a); o restante \'e efeito-pre\c{c}o.
     \item \highlight{Formal$\times$Mulher:} praticamente \PctJornadaFormalMulher{}\% do efeito mensal \'e jornada -- mulheres formais trabalham jornadas mais pr\'oximas \`as de homens formais (\HorasEfeitoFormalMulher), mas o pre\c{c}o da hora entre formais n\~ao converge (slide de g\^enero).
-    \item \highlight{Formal:} trabalhadores formais trabalham \emph{mais} horas (\HorasEfeitoFormal) e ainda ganham mais por hora -- o pr\^emio de formalidade n\~ao \'e explicado por jornada mais curta.
+    \item \highlight{Formal:} trabalhadores formais trabalham \emph{mais} horas (\HorasEfeitoFormal, em m\'edia ponderada por g\^enero e ra\c{c}a) e ainda ganham mais por hora -- o pr\^emio de formalidade n\~ao \'e explicado por jornada mais curta.
     \item \highlight{Ra\c{c}a/cor:} efeito majoritariamente de pre\c{c}o (73-77\% do efeito mensal \'e pre\c{c}o, 23-27\% jornada) para as tr\^es categorias.
   \end{itemize}
 \end{frame}
@@ -494,7 +556,7 @@
 
 \begin{frame}{S\'intese -- Formalidade}
   \begin{itemize}
-    \item Trabalhadores formais ganham \PctFormalHoraAmpla\ a mais por hora (\ReaisFormalHoraAmpla) que informais compar\'aveis -- o maior diferencial estimado no estudo. Na amostra restrita de empregados, o pr\^emio salarial estrito \'e \PctFormalHoraRestrita.
+    \item Trabalhadores formais ganham \PctFormalGeralHoraAmpla\ a mais por hora (\ReaisFormalGeralHoraAmpla), em m\'edia (ponderado pela distribui\c{c}\~ao observada de g\^enero e ra\c{c}a) que informais compar\'aveis -- o maior diferencial estimado no estudo. Na amostra restrita de empregados, o pr\^emio salarial estrito \'e \PctFormalGeralHoraRestrita.
     \item N\~ao \'e explicado por jornada mais curta (formais trabalham \emph{mais} horas) nem \'e artefato do peso do setor p\'ublico (setor p\'ublico e formalidade s\~ao dimens\~oes independentes que se somam).
     \item O pr\^emio varia por grupo: de \PctFormalHomemBranco\ (homens brancos) a \PctFormalMulherIndigena\ (mulheres ind\'igenas).
   \end{itemize}
@@ -502,17 +564,19 @@
 
 \begin{frame}{S\'intese -- G\^enero}
   \begin{itemize}
-    \item Mulheres ganham \negativo{\PctMulherHoraAmpla} a menos por hora (\ReaisMulherHoraAmpla) que homens compar\'aveis -- gap \highlight{constante} entre formais e informais (diferen\c{c}a n\~ao significativa).
+    \item Mulheres ganham \negativo{\PctGeneroInformal} a menos por hora (\ReaisGeneroInformal), em m\'edia (ponderado por ra\c{c}a) que homens compar\'aveis -- gap \highlight{constante} entre formais e informais (diferen\c{c}a n\~ao significativa).
     \item O gap \highlight{bruto} (sem controles) era pequeno (\BrutoGapMulherPct) -- a desigualdade s\'o aparece claramente ao comparar mulheres e homens \emph{dentro da mesma ocupa\c{c}\~ao e setor}.
     \item Parte do gap \highlight{mensal} (n\~ao do por hora) \'e jornada mais curta -- efeito misto, preponderantemente de pre\c{c}o.
+    \item N\~ao encontramos evid\^encia estatisticamente significativa de diferen\c{c}a condicional no \highlight{acesso} \`a formalidade entre mulheres e homens (AME \AmePpMulherAmpla\ p.p., $p=$\PValorAmeMulherAmpla) -- IC amplo, n\~ao ``sem diferen\c{c}a''. Em contraste, o diferencial de \highlight{retorno} \'e preciso e significativo.
   \end{itemize}
 \end{frame}
 
 \begin{frame}{S\'intese -- Ra\c{c}a/cor}
   \begin{itemize}
-    \item Pessoas pretas, pardas e ind\'igenas ganham entre \PctPretoHoraAmpla\ e \PctIndigenaHoraAmpla\ a menos por hora que pessoas brancas compar\'aveis, mantendo os mesmos controles.
+    \item Pessoas pretas, pardas e ind\'igenas ganham entre \PctPretoInformal\ e \PctIndigenaInformal\ a menos por hora que pessoas brancas compar\'aveis, em m\'edia (ponderado por g\^enero), mantendo os mesmos controles.
     \item Diferente do g\^enero, o gap racial \'e vis\'ivel mesmo na compara\c{c}\~ao bruta (\BrutoGapRacaPct); os gaps \highlight{n\~ao s\~ao reduzidos entre formais} e, para pessoas ind\'igenas, tornam-se estatisticamente significativos e maiores -- evid\^encia mais fraca na mesma dire\c{c}\~ao para pretos.
     \item Efeito majoritariamente de pre\c{c}o (n\~ao de jornada); tend\^encia de queda ao longo do tempo, significativa para pardos.
+    \item Tamb\'em aqui n\~ao encontramos evid\^encia estatisticamente significativa de diferen\c{c}a condicional no \highlight{acesso} \`a formalidade entre ra\c{c}as (nenhum AME significativo a 10\%) -- os diferenciais de \highlight{retorno}, em contraste, s\~ao estimados com mais precis\~ao.
   \end{itemize}
 \end{frame}
 
@@ -530,21 +594,25 @@
 % =============================================================================
 
 \begin{frame}{S\'intese dos achados}
-  \footnotesize
-  \begin{enumerate}
-    \item Pr\^emio de formalidade \'e grande, robusto e n\~ao explicado por jornada ou pelo peso do setor p\'ublico -- mas o setor p\'ublico concentra os maiores pr\^emios de formaliza\c{c}\~ao da economia local.
-    \item Gap de g\^enero \'e pequeno na compara\c{c}\~ao bruta mas grande quando condicionamos \`a composi\c{c}\~ao, e \highlight{constante} entre formais e informais -- o diferencial de pre\c{c}o de g\^enero n\~ao difere conforme o status de formalidade.
-    \item Gap racial \'e vis\'ivel mesmo sem controles, majoritariamente efeito-pre\c{c}o; \highlight{n\~ao \'e reduzido entre formais} e, para pessoas ind\'igenas, torna-se estatisticamente significativo e maior -- padr\~ao oposto ao de g\^enero.
-    \item Trabalho dom\'estico \'e a posi\c{c}\~ao com menor rendimento condicional entre as categorias analisadas, com ou sem carteira -- ter carteira quase n\~ao altera o rendimento bruto m\'edio (R\$\,8,39 vs.\ R\$\,8,65/hora), e a diferen\c{c}a associada \`a carteira assinada n\~ao aproxima essa categoria do patamar salarial de nenhuma outra.
-    \item Todos os achados centrais s\~ao est\'aveis a todos os trimestres da d\'ecada e ao per\'iodo pand\^emico.
-  \end{enumerate}
+  \scriptsize
+  \begin{itemize}
+    \item \highlight{I. Formalidade} -- associada a um grande diferencial de rendimento (\PctFormalGeralHoraAmpla, em m\'edia); parte reflete composi\c{c}\~ao ocupacional/setorial (cai de M1 a M4 na sensibilidade), mas parcela substancial permanece dentro de c\'elulas compar\'aveis -- n\~ao \'e jornada nem artefato do setor p\'ublico.
+    \item \highlight{II. G\^enero} -- o gap bruto praticamente inexistente (\BrutoGapMulherPct) \'e mascarado pela vantagem educacional feminina (decomposi\c{c}\~ao sequencial); condicionando composi\c{c}\~ao, emerge um gap por hora de \PctGeneroInformal\ a \PctGeneroFormal.
+    \item \highlight{III. Formalidade $\times$ g\^enero} -- formalidade n\~ao reduz o gap no pre\c{c}o da hora (diferen\c{c}a n\~ao significativa), mas reduz parte da diferen\c{c}a de jornada no efeito mensal.
+    \item \highlight{IV. Ra\c{c}a} -- o gap bruto (\BrutoGapRacaPct) \'e muito maior que o condicional, indicando forte papel da composi\c{c}\~ao; mas diferen\c{c}as de pre\c{c}o permanecem e s\~ao particularmente intensas para ind\'igenas no segmento formal.
+    \item \highlight{Acesso \`a formalidade} vira uma qualifica\c{c}\~ao importante: n\~ao detectamos diferen\c{c}as condicionais de acesso precisas o suficiente para explicar esses padr\~oes (nenhum AME significativo a 10\%, g\^enero ou ra\c{c}a).
+    \item Trabalho dom\'estico \'e a posi\c{c}\~ao com menor rendimento condicional -- ter carteira quase n\~ao altera o rendimento m\'edio (R\$\,8,39 vs.\ R\$\,8,65/hora) nem aproxima essa categoria do patamar de nenhuma outra.
+    \item Achados centrais s\~ao est\'aveis a todos os trimestres da d\'ecada e ao per\'iodo pand\^emico.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Extens\~oes futuras}
+  \footnotesize
   \begin{itemize}
-    \item Aprofundar a revis\~ao de literatura com foco no contexto de fronteira/fluxo migrat\'orio venezuelano e mercado de trabalho da regi\~ao Norte.
+    \item Aprofundar a revis\~ao de literatura (fronteira/fluxo migrat\'orio venezuelano, mercado de trabalho da regi\~ao Norte) e completar as refer\^encias da literatura de acesso/segmenta\c{c}\~ao (Dalberto \& Cirino; Curi \& Menezes-Filho; Hirata \& Machado), citadas aqui de forma preliminar.
     \item Investigar mecanismos adicionais do gap de g\^enero (segrega\c{c}\~ao ocupacional fina, trabalho de cuidado n\~ao remunerado como hip\'otese para a diferen\c{c}a de jornada).
     \item Estrat\'egias de identifica\c{c}\~ao causal (ex.: descontinuidades em regras de formaliza\c{c}\~ao) para complementar os diferenciais condicionais aqui reportados.
+    \item Ampliar o modelo de acesso \`a formalidade com intera\c{c}\~oes (g\^enero$\times$ra\c{c}a) e especifica\c{c}\~oes alternativas de efeitos fixos -- a amostra atual pode ter poder estat\'istico limitado para gaps de acesso moderados.
   \end{itemize}
 \end{frame}
 
