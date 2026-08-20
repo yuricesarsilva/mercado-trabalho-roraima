@@ -351,6 +351,57 @@ def fig_informalidade_publica(common: pd.DataFrame) -> dict:
     }
 
 
+POSICOES_PUBLICAS = ["publico_sem_carteira", "publico_com_carteira", "militar_estatutario"]
+POSICOES_PUBLICAS_LABELS = {
+    "publico_sem_carteira": "Público\nsem carteira", "publico_com_carteira": "Público\ncom carteira",
+    "militar_estatutario": "Militar/\nestatutário",
+}
+RACA_TODAS = ["branco", "preto", "pardo", "indigena"]
+RACA_TODAS_LABELS = {"branco": "Branco", "preto": "Preto", "pardo": "Pardo", "indigena": "Indígena"}
+RACA_TODAS_COLORS = {"branco": BLUE, "preto": ORANGE, "pardo": AQUA, "indigena": PURPLE}
+
+
+def fig_composicao_racial_publico(common: pd.DataFrame) -> dict:
+    # Checagem direcionada (sem regressão nova): quem são racialmente os trabalhadores nas
+    # diferentes posições públicas? Testa se a composição racial das posições públicas de
+    # maior rendimento (militar/estatutário, ver setor_publico.pdf) já explica boa parte do
+    # gap racial "entre formais" documentado em raca_setor_publico.pdf -- ou se o gap é
+    # sobretudo "preço" (mesma posição, remuneração diferente por raça).
+    sub = common.loc[common["posicao_ocupacao_grupo"].isin(POSICOES_PUBLICAS) & common["raca_grupo"].notna()].copy()
+
+    n_naopond = sub.groupby(["posicao_ocupacao_grupo", "raca_grupo"]).size().unstack(fill_value=0)
+    n_naopond = n_naopond.reindex(index=POSICOES_PUBLICAS, columns=RACA_TODAS)
+
+    composicao = {}
+    for pos in POSICOES_PUBLICAS:
+        s = sub.loc[sub["posicao_ocupacao_grupo"] == pos]
+        w = s.groupby("raca_grupo")["peso"].sum()
+        composicao[pos] = (w / w.sum() * 100).reindex(RACA_TODAS).fillna(0.0)
+    comp_df = pd.DataFrame(composicao)
+
+    fig, ax = plt.subplots(figsize=(8.5, 4.4))
+    x = np.arange(len(POSICOES_PUBLICAS))
+    width = 0.19
+    for i, r in enumerate(RACA_TODAS):
+        offset = (i - 1.5) * width
+        valores = [comp_df.loc[r, pos] for pos in POSICOES_PUBLICAS]
+        ax.bar(x + offset, valores, width, color=RACA_TODAS_COLORS[r], label=RACA_TODAS_LABELS[r], zorder=3)
+        for xi, v in zip(x + offset, valores):
+            ax.annotate(f"{v:.0f}%", (xi, v), ha="center", va="bottom", fontsize=8, xytext=(0, 2),
+                         textcoords="offset points")
+    ax.set_xticks(x)
+    ax.set_xticklabels([POSICOES_PUBLICAS_LABELS[p] for p in POSICOES_PUBLICAS], fontsize=10)
+    ax.set_ylabel("% da posição (composição racial ponderada)")
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.legend(loc="upper right", frameon=False, fontsize=9.5, ncol=4)
+    ax.set_ylim(0, 75)
+    fig.suptitle("Composição racial por posição no setor público", fontsize=12)
+    fig.tight_layout()
+    save_fig(fig, "composicao_racial_publico")
+
+    return {"comp": comp_df, "n": n_naopond}
+
+
 def fig_mecanismo() -> None:
     termos = [("formal", "Formal", BLUE), ("mulher", "Mulher", ORANGE)] + [
         (raca_term(r), RACA_LABELS_PLAIN[r], RACA_COLORS[r]) for r in RACA_NIVEIS
@@ -864,6 +915,7 @@ def main() -> None:
     fig_sensibilidade()
     fig_setor_publico()
     info_publica = fig_informalidade_publica(common)
+    comp_racial_publico = fig_composicao_racial_publico(common)
     fig_mecanismo()
     fig_gap_reais(mean_mensal, mean_hora)
     fig_robustez()
@@ -985,6 +1037,17 @@ def main() -> None:
     macros["PctInformalPublicoOcupPrincipais"] = fmt_pct(info_publica["ocup_top3_pct"], 1, sign=False)
     macros["PctInformalPublicoAtivAdmPub"] = fmt_pct(info_publica["ativ_admpub_pct"], 1, sign=False)
     macros["PctInformalPublicoAtivEducSaude"] = fmt_pct(info_publica["ativ_educsaude_pct"], 1, sign=False)
+
+    # composição racial por posição pública -- checagem de sorting vs. preço
+    comp = comp_racial_publico["comp"]
+    n_comp = comp_racial_publico["n"]
+    for pos, key in [("publico_sem_carteira", "PubSemCarteira"), ("publico_com_carteira", "PubComCarteira"),
+                      ("militar_estatutario", "Militar")]:
+        for r in RACA_TODAS:
+            macros[f"PctComp{r.capitalize()}{key}"] = fmt_pct(comp.loc[r, pos], 1, sign=False)
+        macros[f"NComp{key}"] = fmt_int(n_comp.loc[pos].sum())
+    macros["NCompIndigenaMilitar"] = fmt_int(n_comp.loc["militar_estatutario", "indigena"])
+    macros["NCompIndigenaPubComCarteira"] = fmt_int(n_comp.loc["publico_com_carteira", "indigena"])
 
     # posição na ocupação: melhor e pior
     hora_pos = load_r_posicao_ocupacao("ln_renda_hora_real")
