@@ -169,6 +169,14 @@ def load_r_decomposicao_genero() -> pd.DataFrame:
     return pd.read_csv(TABLES_DIR / "r_decomposicao_genero.csv", index_col="modelo")
 
 
+def load_r_decomposicao_raca() -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / "r_decomposicao_raca.csv")
+
+
+def load_r_raca_setor_publico_contrastes(dv: str) -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / f"r_raca_setor_publico_contrastes_{dv}.csv", index_col="id")
+
+
 def raca_term(raca: str, prefix: str = "factor(raca_grupo)") -> str:
     return f"{prefix}{raca}"
 
@@ -571,6 +579,75 @@ def fig_decomposicao_genero() -> None:
     save_fig(fig, "decomposicao_genero")
 
 
+def fig_decomposicao_raca() -> None:
+    # Accounting exercise racial (equivalente ao de gênero, mas testa a hipótese oposta): qual
+    # dimensão de composição explica a queda do gap bruto (~-30/-40%) ao condicional (~-10/-14%)?
+    # Diferente do gênero (onde a vantagem educacional das mulheres MASCARA o gap), a expectativa
+    # da literatura é que desigualdade educacional AMPLIE o gap racial bruto -- i.e., educação
+    # deveria REDUZIR o coeficiente ao entrar, não revelar um gap maior.
+    tbl = load_r_decomposicao_raca()
+    passos = ["M0", "M1", "M2", "M3", "M5", "M6"]
+    passo_labels = ["Bruto\n(só raça)", "+ Demografia", "+ Educação", "+ Atividade",
+                     "+ Ocup.×Ativ.", "+ Setor\npúblico"]
+
+    fig, ax = plt.subplots(figsize=(9.5, 4.8))
+    x = np.arange(len(passos))
+    # deslocamentos verticais alternados para o rótulo do último ponto -- as três linhas
+    # convergem nos passos finais (~-10 a -14%) e ficariam sobrepostas com o mesmo offset.
+    offset_final = {"preto": -10, "pardo": 10, "indigena": -24}
+    for r in RACA_NIVEIS:
+        sub = tbl[tbl["raca"] == r].set_index("modelo")
+        valores = [sub.loc[m, "efeito_percentual_aprox"] for m in passos]
+        ax.plot(x, valores, color=RACA_COLORS[r], linewidth=2, marker="o", markersize=6,
+                 label=RACA_LABELS_PLAIN[r], zorder=3)
+        # só rotula primeiro e último ponto -- as três linhas convergem nos passos finais.
+        ax.annotate(f"{valores[0]:+.0f}%", (x[0], valores[0]), ha="center", va="top", fontsize=9,
+                     color=RACA_COLORS[r], fontweight="bold", xytext=(0, -10), textcoords="offset points")
+        va_final = "bottom" if offset_final[r] > 0 else "top"
+        ax.annotate(f"{valores[-1]:+.0f}%", (x[-1], valores[-1]), ha="center", va=va_final, fontsize=9,
+                     color=RACA_COLORS[r], fontweight="bold", xytext=(0, offset_final[r]), textcoords="offset points")
+    ax.axhline(0, color=INK_SECONDARY, linewidth=1, zorder=1)
+    ax.set_xticks(x)
+    ax.set_xticklabels(passo_labels, fontsize=9.5)
+    ax.set_ylabel("Efeito racial aprox. (%), renda/hora")
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.legend(loc="lower left", frameon=False, fontsize=9.5)
+    ax.set_ylim(-46, 6)
+    fig.suptitle("Decomposição sequencial do gap racial (renda por hora real)", fontsize=12)
+    fig.tight_layout()
+    save_fig(fig, "decomposicao_raca")
+
+
+def fig_raca_setor_publico() -> None:
+    # O gap racial "entre formais" é maior porque a formalidade em si discrimina mais, ou
+    # porque formais estão mais concentrados no setor público -- que tem gap racial muito
+    # maior? Compara o gap racial (mantendo formal fixo) dentro de privado vs. público.
+    hora = load_r_raca_setor_publico_contrastes("ln_renda_hora_real")
+
+    fig, ax = plt.subplots(figsize=(8, 4.4))
+    y_positions = np.arange(len(RACA_NIVEIS))
+    bar_height = 0.32
+    for i, (setor, color, label) in enumerate([("privado", BLUE, "Privado/doméstico"), ("publico", ORANGE, "Público")]):
+        offset = (0.5 - i) * bar_height
+        pontos, erros = [], []
+        for r in RACA_NIVEIS:
+            row_ = hora.loc[f"{r}_formal_{setor}"]
+            pontos.append(row_["efeito_percentual_aprox"])
+            erros.append(1.96 * row_["erro_padrao"] * 100)
+        ax.barh(y_positions + offset, pontos, xerr=erros, height=bar_height, color=color,
+                label=label, zorder=3, error_kw={"elinewidth": 1.3, "capsize": 3})
+    ax.axvline(0, color=INK_SECONDARY, linewidth=1, zorder=1)
+    ax.set_yticks(y_positions)
+    ax.set_yticklabels([RACA_LABELS_PLAIN[r] for r in RACA_NIVEIS])
+    ax.invert_yaxis()
+    ax.set_xlabel("Gap racial aprox. (%) entre formais, ref.: branco")
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.legend(loc="upper left", frameon=False, fontsize=9.5)
+    fig.suptitle("Gap racial entre formais, por setor (renda por hora real)", fontsize=12)
+    fig.tight_layout()
+    save_fig(fig, "raca_setor_publico")
+
+
 # ---------------------------------------------------------------------------
 # Tabelas LaTeX
 # ---------------------------------------------------------------------------
@@ -648,6 +725,28 @@ def make_tab_prob_formal() -> str:
         lines.append(
             f"{label} & {fmt_num(ra['ame_pp'], 1, sign=True)}{stars(ra['p_valor'])} p.p. ({fmt_num(ra['erro_padrao_pp'], 1)}) & "
             f"{fmt_num(rr['ame_pp'], 1, sign=True)}{stars(rr['p_valor'])} p.p. ({fmt_num(rr['erro_padrao_pp'], 1)}) \\\\"
+        )
+    lines.append("\\bottomrule")
+    lines.append("\\end{tabular}")
+    return "\n".join(lines)
+
+
+def make_tab_raca_setor_publico() -> str:
+    # Gap racial (entre formais, ref.: branco) por setor -- privado vs. público -- e teste de
+    # diferença design-based. Ver r/13_raca_setor_publico.R.
+    hora = load_r_raca_setor_publico_contrastes("ln_renda_hora_real")
+    lines = [
+        "\\begin{tabular}{lccc}", "\\toprule",
+        "Ref.: branco, formal & Privado/dom\\'estico & P\\'ublico & Diferen\\c{c}a \\\\", "\\midrule",
+    ]
+    for r in RACA_NIVEIS:
+        priv = hora.loc[f"{r}_formal_privado"]
+        pub = hora.loc[f"{r}_formal_publico"]
+        dif = hora.loc[f"{r}_diferenca_publico_privado"]
+        lines.append(
+            f"{RACA_LABELS[r]} & {fmt_pct(priv['efeito_percentual_aprox'])}{stars(priv['p_valor'])} & "
+            f"{fmt_pct(pub['efeito_percentual_aprox'])}{stars(pub['p_valor'])} & "
+            f"{fmt_pct(dif['efeito_percentual_aprox'])}{stars(dif['p_valor'])} \\\\"
         )
     lines.append("\\bottomrule")
     lines.append("\\end{tabular}")
@@ -771,6 +870,8 @@ def main() -> None:
     fig_tendencia_flexivel()
     fig_prob_formal_ame()
     fig_decomposicao_genero()
+    fig_decomposicao_raca()
+    fig_raca_setor_publico()
 
     # --- tabelas ---
     convergencia = pd.read_csv(TABLES_DIR / "r_nested_convergencia.csv")
@@ -782,6 +883,7 @@ def main() -> None:
         "tab_posicao.tex": make_tab_posicao(),
         "tab_mecanismo.tex": make_tab_mecanismo(),
         "tab_prob_formal.tex": make_tab_prob_formal(),
+        "tab_raca_setor_publico.tex": make_tab_raca_setor_publico(),
     }
     for name, content in tabelas.items():
         (PRESENTATION_GERADO_DIR / name).write_text(content, encoding="utf-8")
@@ -943,6 +1045,30 @@ def main() -> None:
         r = decomp.loc[m]
         macros[f"DecompGenero{key}"] = fmt_pct(r["efeito_percentual_aprox"])
         macros[f"PValorDecompGenero{key}"] = fmt_num(r["p_valor"], 3)
+
+    # decomposição sequencial do gap racial
+    decomp_raca = load_r_decomposicao_raca().set_index(["modelo", "raca"])
+    for m, key in [
+        ("M0", "Bruto"), ("M1", "Demografia"), ("M2", "Educacao"), ("M3", "Atividade"),
+        ("M4", "Ocupacao"), ("M5", "OcupAtiv"), ("M6", "SetorPublico"),
+    ]:
+        for raca in RACA_NIVEIS:
+            r = decomp_raca.loc[(m, raca)]
+            macros[f"DecompRaca{key}{raca.capitalize()}"] = fmt_pct(r["efeito_percentual_aprox"])
+            macros[f"PValorDecompRaca{key}{raca.capitalize()}"] = fmt_num(r["p_valor"], 3)
+
+    # raça x setor público: gap racial entre formais, por setor
+    hora_rsp = load_r_raca_setor_publico_contrastes("ln_renda_hora_real")
+    for raca in RACA_NIVEIS:
+        raca_key = raca.capitalize()
+        for suf, key in [
+            ("formal_privado", "FormalPrivado"), ("formal_publico", "FormalPublico"),
+            ("informal_privado", "InformalPrivado"), ("informal_publico", "InformalPublico"),
+            ("diferenca_publico_privado", "DiferencaPublicoPrivado"),
+        ]:
+            r = hora_rsp.loc[f"{raca}_{suf}"]
+            macros[f"PctRacaSP{key}{raca_key}"] = fmt_pct(r["efeito_percentual_aprox"])
+            macros[f"PValorRacaSP{key}{raca_key}"] = fmt_num(r["p_valor"], 3)
 
     lines = ["% Gerado automaticamente por scripts/08_make_presentation_assets.py. Não editar à mão.", ""]
     for name, value in macros.items():
