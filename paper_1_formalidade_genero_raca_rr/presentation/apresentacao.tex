@@ -367,7 +367,7 @@
   \footnotesize
   \begin{itemize}
     \item \highlight{Puramente descritivo}: mat\'eria-prima para \emph{por que} educa\c{c}\~ao domina a decomposi\c{c}\~ao -- \PctSuperiorBranco\ dos brancos t\^em superior completo, contra \PctSuperiorIndigena\ dos ind\'igenas.
-    \item Confirma a associa\c{c}\~ao ind\'igena-ruralidade/agricultura da literatura (Souza; Atal, \~Nopo \& Winder; Canedo, 2019): \PctAgricolaIndigena\ dos ind\'igenas em atividade agr\'icola, quase o dobro de \PctAgricolaBranco\ entre brancos.
+    \item \'E consistente com a associa\c{c}\~ao entre inser\c{c}\~ao ind\'igena e atividades agr\'icolas documentada na literatura (Souza; Atal, \~Nopo \& Winder; Canedo, 2019): \PctAgricolaIndigena\ dos ind\'igenas em atividade agr\'icola, quase o dobro de \PctAgricolaBranco\ entre brancos.
     \item Ind\'igenas t\^em a menor formalidade bruta (\PctFormalBrutoIndigena\ vs.\ \PctFormalBrutoBranco\ entre brancos) -- consistente com menor \highlight{acesso} bruto, mesmo sem controles.
   \end{itemize}
 \end{frame}
@@ -386,7 +386,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Interseccionalidade: pr\^emio de formalidade por ra\c{c}a e g\^enero}
+\begin{frame}{Heterogeneidade do pr\^emio de formalidade por ra\c{c}a e g\^enero}
   \begin{center}
     \small
     \renewcommand{\arraystretch}{1.05}
@@ -407,7 +407,7 @@
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Mulher $\times$ ra\c{c}a: a desvantagem \'e mais que aditiva?}
+\begin{frame}{Interseccionalidade: g\^enero e ra\c{c}a se somam linearmente?}
   \begin{center}
     \scriptsize
     \renewcommand{\arraystretch}{1.15}
@@ -416,21 +416,21 @@
   \end{center}
   \footnotesize
   \begin{itemize}
-    \item O modelo principal j\'a tem \texttt{Mulher$\times$Ra\c{c}a} -- sem reestimar nada, comparamos o efeito \highlight{observado} ao que a \highlight{soma aditiva} (sem intera\c{c}\~ao) implicaria.
-    \item Pretas/pardas: diferen\c{c}a n\~ao significativa ($p=\PValorInterseccInteracaoPreto$/$\PValorInterseccInteracaoPardo$) -- leitura aditiva simples \'e adequada.
-    \item Ind\'igenas: efeito observado (\PctInterseccMulherIndigena) \'e \highlight{significativamente menor} em m\'odulo que a soma aditiva (\PctInterseccAditivoIndigena) -- intera\c{c}\~ao \PctInterseccInteracaoIndigena\ ($p=\PValorInterseccInteracaoIndigena$).
+    \item O modelo principal j\'a tem \texttt{Mulher$\times$Ra\c{c}a} -- sem reestimar nada, comparamos o efeito \highlight{observado} ao contrafactual \highlight{sem o termo de intera\c{c}\~ao} (soma dos coeficientes de mulher e ra\c{c}a na escala logar\'itmica, depois exponenciada).
+    \item Pretas/pardas: diferen\c{c}a n\~ao significativa ($p=\PValorInterseccInteracaoPreto$/$\PValorInterseccInteracaoPardo$) -- os diferenciais se acumulam de forma aditiva.
+    \item Ind\'igenas: a penalidade condicional observada (\PctInterseccMulherIndigena) \'e menor, em m\'odulo, que a soma dos diferenciais de g\^enero e pertencimento ind\'igena estimados separadamente (\PctInterseccAditivoIndigena) -- intera\c{c}\~ao \PctInterseccInteracaoIndigena, positiva e precisa ($p=\PValorInterseccInteracaoIndigena$).
   \end{itemize}
 \end{frame}
 
 \begin{frame}{Isso contradiz a literatura internacional?}
   \begin{center}
-    \includegraphics[width=0.58\linewidth,height=0.34\textheight,keepaspectratio]{interseccionalidade_genero_raca.pdf}
+    \includegraphics[width=0.5\linewidth,height=0.28\textheight,keepaspectratio]{interseccionalidade_genero_raca.pdf}
   \end{center}
   \footnotesize
   \begin{itemize}
-    \item Kolev \& Robles (2015) documentam, no Peru, desvantagem \highlight{composta} para mulheres ind\'igenas; Canedo (2019) e World Bank (2015) documentam sobreposi\c{c}\~ao semelhante em outros contextos.
-    \item Em Roraima, o \highlight{oposto}: mulher+ind\'igena tem penalidade \emph{menor} que a soma dos dois efeitos -- n\~ao \highlight{dupla penaliza\c{c}\~ao}, um \highlight{desconto parcial}.
-    \item Cautela: \PctInterseccMulherIndigena\ ainda \'e grande e significativo vs.\ homem branco -- s\'o os mecanismos n\~ao se acumulam multiplicativamente aqui.
+    \item Kolev \& Robles (2015) mostram que mulheres ind\'igenas ocupam posi\c{c}\~ao particularmente desfavor\'avel no Peru; Canedo (2019) e World Bank (2015) documentam sobreposi\c{c}\~ao entre g\^enero e pertencimento ind\'igena em outros contextos.
+    \item Em Roraima, mulheres ind\'igenas tamb\'em apresentam forte desvantagem condicional (\PctInterseccMulherIndigena\ frente a homens brancos), mas o efeito conjunto \'e menor que o contrafactual sem intera\c{c}\~ao (\PctInterseccAditivoIndigena).
+    \item A intera\c{c}\~ao Mulher$\times$Ind\'igena \'e positiva e significativa (\PctInterseccInteracaoIndigena; $p=\PValorInterseccInteracaoIndigena$): g\^enero e pertencimento ind\'igena se sobrep\~oem, mas n\~ao de forma simplesmente aditiva. Os dados n\~ao permitem identificar o mecanismo respons\'avel por essa atenua\c{c}\~ao.
   \end{itemize}
 \end{frame}
 
@@ -657,6 +657,7 @@
     \item Os gaps \highlight{n\~ao s\~ao reduzidos entre formais}; sua maior magnitude est\'a fortemente concentrada no \highlight{setor p\'ublico}, onde os diferenciais condicionais alcan\c{c}am 17--27\%, frente a valores substancialmente menores no privado/dom\'estico.
     \item Efeito majoritariamente de pre\c{c}o; tend\^encia de queda ao longo do tempo, significativa para pardos.
     \item N\~ao encontramos evid\^encia significativa de diferen\c{c}a no \highlight{acesso} \`a formalidade por ra\c{c}a -- os diferenciais de \highlight{retorno}, em contraste, s\~ao precisos.
+    \item Entre ind\'igenas, g\^enero e pertencimento racial \highlight{n\~ao se acumulam aditivamente}: a intera\c{c}\~ao Mulher$\times$Ind\'igena \'e positiva, embora mulheres ind\'igenas permane\c{c}am com diferencial negativo de \PctInterseccMulherIndigena\ frente a homens brancos.
   \end{itemize}
 \end{frame}
 

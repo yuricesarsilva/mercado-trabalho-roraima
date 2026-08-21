@@ -844,13 +844,15 @@ def make_tab_raca_setor_publico() -> str:
 
 
 def make_tab_interseccionalidade() -> str:
-    # Mulher X: soma aditiva (contrafactual sem Mulher×Raça) vs. efeito observado (com a
-    # interação já presente no modelo M4) -- e o teste direto da interação (heterogeneidade
-    # além do aditivo). Ver r/14_interseccionalidade_genero_raca.R.
+    # Mulher X: contrafactual sem o termo de interação (soma dos coeficientes de mulher e raça
+    # na escala logarítmica, depois exponenciada -- NÃO é a soma ingênua dos dois efeitos
+    # percentuais) vs. efeito observado (com a interação já presente no modelo M4) -- e o teste
+    # direto da interação (heterogeneidade além do implicado pela soma dos coeficientes em log).
+    # Ver r/14_interseccionalidade_genero_raca.R.
     tbl = load_r_interseccionalidade()
     lines = [
         "\\begin{tabular}{lcccc}", "\\toprule",
-        "Ref.: homem branco & Homem X & Mulher X (aditivo) & Mulher X (observado) & Intera\\c{c}\\~ao \\\\",
+        "Ref.: homem branco & Homem X & Mulher X (sem intera\\c{c}\\~ao) & Mulher X (observado) & Intera\\c{c}\\~ao \\\\",
         "\\midrule",
     ]
     for r in RACA_NIVEIS:
