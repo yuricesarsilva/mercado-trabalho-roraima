@@ -177,6 +177,10 @@ def load_r_raca_setor_publico_contrastes(dv: str) -> pd.DataFrame:
     return pd.read_csv(TABLES_DIR / f"r_raca_setor_publico_contrastes_{dv}.csv", index_col="id")
 
 
+def load_r_interseccionalidade() -> pd.DataFrame:
+    return pd.read_csv(TABLES_DIR / "r_interseccionalidade_genero_raca.csv", index_col="id")
+
+
 def raca_term(raca: str, prefix: str = "factor(raca_grupo)") -> str:
     return f"{prefix}{raca}"
 
@@ -699,6 +703,41 @@ def fig_raca_setor_publico() -> None:
     save_fig(fig, "raca_setor_publico")
 
 
+def fig_interseccionalidade_genero_raca() -> None:
+    # Mulher preta/parda/indígena: o efeito combinado observado (com a interação Mulher×Raça
+    # já presente no modelo M4) é igual à soma aditiva simples dos efeitos de gênero e raça
+    # isolados, ou existe heterogeneidade adicional? Compara "soma aditiva" (contrafactual sem
+    # interação) com "mulher X" (efeito realmente estimado, com interação).
+    tbl = load_r_interseccionalidade()
+
+    fig, ax = plt.subplots(figsize=(8, 4.4))
+    y_positions = np.arange(len(RACA_NIVEIS))
+    bar_height = 0.32
+    for i, (suf, color, label) in enumerate([
+        ("soma_aditiva_implicaria", INK_SECONDARY, "Soma aditiva (sem interação)"),
+        ("mulher", ORANGE, "Mulher X (observado, com interação)"),
+    ]):
+        offset = (0.5 - i) * bar_height
+        pontos, erros = [], []
+        for r in RACA_NIVEIS:
+            row_ = tbl.loc[f"{r}_{suf}"]
+            pontos.append(row_["efeito_percentual_aprox"])
+            erros.append(1.96 * row_["erro_padrao"] * 100)
+        ax.barh(y_positions + offset, pontos, xerr=erros, height=bar_height, color=color,
+                label=label, zorder=3, error_kw={"elinewidth": 1.3, "capsize": 3})
+    ax.axvline(0, color=INK_SECONDARY, linewidth=1, zorder=1)
+    ax.set_yticks(y_positions)
+    ax.set_yticklabels([f"Mulher {RACA_LABELS_PLAIN[r]}" for r in RACA_NIVEIS])
+    ax.invert_yaxis()
+    ax.set_xlabel("Efeito aprox. (%) vs. homem branco, renda/hora")
+    ax.spines[["top", "right"]].set_visible(False)
+    ax.set_xlim(left=ax.get_xlim()[0] * 1.1)
+    ax.legend(loc="lower left", bbox_to_anchor=(0, 1.02), ncol=2, frameon=False, fontsize=9)
+    fig.suptitle("Mulher × raça: soma aditiva vs. efeito observado", fontsize=12)
+    fig.tight_layout()
+    save_fig(fig, "interseccionalidade_genero_raca")
+
+
 # ---------------------------------------------------------------------------
 # Tabelas LaTeX
 # ---------------------------------------------------------------------------
@@ -798,6 +837,67 @@ def make_tab_raca_setor_publico() -> str:
             f"{RACA_LABELS[r]} & {fmt_pct(priv['efeito_percentual_aprox'])}{stars(priv['p_valor'])} & "
             f"{fmt_pct(pub['efeito_percentual_aprox'])}{stars(pub['p_valor'])} & "
             f"{fmt_pct(dif['efeito_percentual_aprox'])}{stars(dif['p_valor'])} \\\\"
+        )
+    lines.append("\\bottomrule")
+    lines.append("\\end{tabular}")
+    return "\n".join(lines)
+
+
+def make_tab_interseccionalidade() -> str:
+    # Mulher X: soma aditiva (contrafactual sem Mulher×Raça) vs. efeito observado (com a
+    # interação já presente no modelo M4) -- e o teste direto da interação (heterogeneidade
+    # além do aditivo). Ver r/14_interseccionalidade_genero_raca.R.
+    tbl = load_r_interseccionalidade()
+    lines = [
+        "\\begin{tabular}{lcccc}", "\\toprule",
+        "Ref.: homem branco & Homem X & Mulher X (aditivo) & Mulher X (observado) & Intera\\c{c}\\~ao \\\\",
+        "\\midrule",
+    ]
+    for r in RACA_NIVEIS:
+        homem = tbl.loc[f"{r}_homem"]
+        aditivo = tbl.loc[f"{r}_soma_aditiva_implicaria"]
+        observado = tbl.loc[f"{r}_mulher"]
+        inter = tbl.loc[f"{r}_interacao"]
+        lines.append(
+            f"{RACA_LABELS[r]} & {fmt_pct(homem['efeito_percentual_aprox'])}{stars(homem['p_valor'])} & "
+            f"{fmt_pct(aditivo['efeito_percentual_aprox'])}{stars(aditivo['p_valor'])} & "
+            f"{fmt_pct(observado['efeito_percentual_aprox'])}{stars(observado['p_valor'])} & "
+            f"{fmt_pct(inter['efeito_percentual_aprox'])}{stars(inter['p_valor'])} \\\\"
+        )
+    lines.append("\\bottomrule")
+    lines.append("\\end{tabular}")
+    return "\n".join(lines)
+
+
+def make_tab_composicao_racial(common: pd.DataFrame) -> str:
+    # Tabela puramente descritiva (sem regressão) -- dá ao leitor a matéria-prima para entender
+    # POR QUE o gap bruto racial é tão grande e por que educação domina a decomposição
+    # sequencial: escolaridade, formalidade, setor público e inserção ocupacional por raça,
+    # ponderadas pelo peso amostral. Testa empiricamente a associação indígena com
+    # ruralidade/agricultura/informalidade já documentada por Souza (dissertação), Atal, Ñopo &
+    # Winder e Canedo (2019) para o contexto de Roraima especificamente.
+    def wpct(mask: pd.Series) -> pd.Series:
+        peso = common["peso"]
+        return (peso[mask].groupby(common.loc[mask, "raca_grupo"]).sum() / peso.groupby(common["raca_grupo"]).sum() * 100).reindex(RACA_TODAS)
+
+    linhas_dados = [
+        ("Superior completo", wpct(common["escolaridade"] == "7")),
+        ("Sem instr./fund.\\ incompleto", wpct(common["escolaridade"] == "1")),
+        ("Formal", wpct(common["formal"] == 1)),
+        ("Setor p\\'ublico", wpct(common["setor_publico"] == 1)),
+        ("Atividade agr\\'icola", wpct(common["atividade_grupo"] == "1")),
+        ("Conta-pr\\'opria", wpct(common["posicao_ocupacao_grupo"] == "conta_propria")),
+        ("Empregado (v\\'inculo)", wpct(common["empregado_restrito"] == 1)),
+    ]
+
+    lines = [
+        "\\begin{tabular}{lcccc}", "\\toprule",
+        " & Branco & Preto & Pardo & Ind\\'igena \\\\", "\\midrule",
+    ]
+    for label, vals in linhas_dados:
+        lines.append(
+            f"{label} & {fmt_pct(vals['branco'], 1, sign=False)} & {fmt_pct(vals['preto'], 1, sign=False)} & "
+            f"{fmt_pct(vals['pardo'], 1, sign=False)} & {fmt_pct(vals['indigena'], 1, sign=False)} \\\\"
         )
     lines.append("\\bottomrule")
     lines.append("\\end{tabular}")
@@ -924,6 +1024,7 @@ def main() -> None:
     fig_decomposicao_genero()
     fig_decomposicao_raca()
     fig_raca_setor_publico()
+    fig_interseccionalidade_genero_raca()
 
     # --- tabelas ---
     convergencia = pd.read_csv(TABLES_DIR / "r_nested_convergencia.csv")
@@ -936,6 +1037,8 @@ def main() -> None:
         "tab_mecanismo.tex": make_tab_mecanismo(),
         "tab_prob_formal.tex": make_tab_prob_formal(),
         "tab_raca_setor_publico.tex": make_tab_raca_setor_publico(),
+        "tab_interseccionalidade.tex": make_tab_interseccionalidade(),
+        "tab_composicao_racial.tex": make_tab_composicao_racial(common),
     }
     for name, content in tabelas.items():
         (PRESENTATION_GERADO_DIR / name).write_text(content, encoding="utf-8")
@@ -1132,6 +1235,32 @@ def main() -> None:
             r = hora_rsp.loc[f"{raca}_{suf}"]
             macros[f"PctRacaSP{key}{raca_key}"] = fmt_pct(r["efeito_percentual_aprox"])
             macros[f"PValorRacaSP{key}{raca_key}"] = fmt_num(r["p_valor"], 3)
+
+    # interseccionalidade gênero x raça: soma aditiva vs. observado (interação Mulher×Raça)
+    intersecc = load_r_interseccionalidade()
+    for raca in RACA_NIVEIS:
+        raca_key = raca.capitalize()
+        for suf, key in [
+            ("homem", "Homem"), ("mulher", "Mulher"),
+            ("soma_aditiva_implicaria", "Aditivo"), ("interacao", "Interacao"),
+        ]:
+            r = intersecc.loc[f"{raca}_{suf}"]
+            macros[f"PctIntersecc{key}{raca_key}"] = fmt_pct(r["efeito_percentual_aprox"])
+            macros[f"PValorIntersecc{key}{raca_key}"] = fmt_num(r["p_valor"], 3)
+    macros["PctInterseccMulherBranca"] = fmt_pct(intersecc.loc["preto_mulher_branca", "efeito_percentual_aprox"])
+
+    # composição racial descritiva -- matéria-prima para "por que o gap bruto racial é grande"
+    peso_comp = common["peso"]
+    raca_comp = common["raca_grupo"]
+
+    def wpct_macro(mask: pd.Series, raca: str) -> float:
+        raca_idx = raca_comp == raca
+        return float(peso_comp[mask & raca_idx].sum() / peso_comp[raca_idx].sum() * 100)
+
+    for raca in RACA_TODAS:
+        macros[f"PctSuperior{raca.capitalize()}"] = fmt_pct(wpct_macro(common["escolaridade"] == "7", raca), 1, sign=False)
+        macros[f"PctAgricola{raca.capitalize()}"] = fmt_pct(wpct_macro(common["atividade_grupo"] == "1", raca), 1, sign=False)
+        macros[f"PctFormalBruto{raca.capitalize()}"] = fmt_pct(wpct_macro(common["formal"] == 1, raca), 1, sign=False)
 
     lines = ["% Gerado automaticamente por scripts/08_make_presentation_assets.py. Não editar à mão.", ""]
     for name, value in macros.items():
