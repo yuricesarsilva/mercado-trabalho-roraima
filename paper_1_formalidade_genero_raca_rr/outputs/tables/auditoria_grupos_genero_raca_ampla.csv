@@ -1,0 +1,9 @@
+tabela,mulher,raca_grupo,n_amostral,n_ponderado,n_upa
+genero_raca_ampla,0,pardo,9340,908580,405
+genero_raca_ampla,1,pardo,6409,630649,398
+genero_raca_ampla,0,branco,2831,288514,378
+genero_raca_ampla,1,branco,2241,230947,348
+genero_raca_ampla,0,preto,1578,148408,345
+genero_raca_ampla,1,preto,812,78545,266
+genero_raca_ampla,0,indigena,658,61092,215
+genero_raca_ampla,1,indigena,476,48015,188

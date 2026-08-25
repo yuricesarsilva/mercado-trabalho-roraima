@@ -1,0 +1,7 @@
+,rotulo,referencia,coeficiente,erro_padrao,p_valor,efeito_percentual_aprox
+Intercept,Constante,,2.3152637207108118,0.03361450466821554,0.0,912.7593422730479
+formal,Trabalhador formal,Referência: trabalhador informal,0.7155135145483085,0.05092503648931017,7.667704184270256e-45,104.5236671428639
+mulher,Mulher,Referência: homem,0.02013842230877341,0.01767865315237044,0.25464567773224145,2.034256842601101
+preto_pardo,Pessoa preta ou parda,"Referência: branco, amarelo ou indígena",-0.13620754602313379,0.026491789499016462,2.7255308826334214e-07,-12.733850373077416
+formal:mulher,Trabalhador formal x mulher,Diferença adicional para mulheres formais,-0.07567458112167573,0.026357521260213155,0.004090705607460317,-7.288214087120803
+formal:preto_pardo,Trabalhador formal x pessoa preta ou parda,Diferença adicional para pessoas pretas/pardas formais,-0.12810228018999523,0.038641945715232155,0.0009160724255511616,-12.023660782412248

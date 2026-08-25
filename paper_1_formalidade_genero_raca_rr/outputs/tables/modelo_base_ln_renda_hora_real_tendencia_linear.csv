@@ -1,0 +1,48 @@
+,rotulo,referencia,coeficiente,erro_padrao,p_valor,efeito_percentual_aprox
+Intercept,Constante,,1.7503779946200937,0.0799916366339001,3.8545329402076093e-106,475.67782960184627
+C(escolaridade)[T.2],Escolaridade: Fundamental incompleto ou equivalente,Referência: Sem instrução ou fundamental incompleto,0.15170671634266444,0.03529062811709515,1.717393017366235e-05,16.38188573231507
+C(escolaridade)[T.3],Escolaridade: Fundamental completo ou equivalente,Referência: Sem instrução ou fundamental incompleto,0.2853563502753032,0.0398148456466682,7.66119295691856e-13,33.02359736265728
+C(escolaridade)[T.4],Escolaridade: Médio incompleto ou equivalente,Referência: Sem instrução ou fundamental incompleto,0.26874772046977485,0.04037040175232642,2.7938110988556545e-11,30.832503578340777
+C(escolaridade)[T.5],Escolaridade: Médio completo ou equivalente,Referência: Sem instrução ou fundamental incompleto,0.3344463891466801,0.03735894468279562,3.483279149903581e-19,39.716668443725034
+C(escolaridade)[T.6],Escolaridade: Superior incompleto ou equivalente,Referência: Sem instrução ou fundamental incompleto,0.43089185951437786,0.038461147744276315,3.9281308452808336e-29,53.86291528561134
+C(escolaridade)[T.7],Escolaridade: Superior completo,Referência: Sem instrução ou fundamental incompleto,0.6823014957063986,0.04579520972621537,3.3469496510280605e-50,97.84258350681448
+C(ocupacao_grupo)[T.10],"Ocupação: Membros das forças armadas, policiais e bombeiros militares",Referência: Dirigentes e gerentes,-0.2614666244817016,0.053877863501884705,1.216378336355949e-06,-23.00784284729729
+C(ocupacao_grupo)[T.11],Ocupação: Ocupações mal definidas,Referência: Dirigentes e gerentes,-0.771540028311889,0.046218618983292444,1.4670279317616982e-62,-53.769943614340974
+C(ocupacao_grupo)[T.2],Ocupação: Profissionais das ciências e intelectuais,Referência: Dirigentes e gerentes,0.11500866933976023,0.03458832801269449,0.0008839581108107909,12.18831635160953
+C(ocupacao_grupo)[T.3],Ocupação: Técnicos e profissionais de nível médio,Referência: Dirigentes e gerentes,-0.24024760943343684,0.03399607491880969,1.5840794064555505e-12,-21.356689130019426
+C(ocupacao_grupo)[T.4],Ocupação: Trabalhadores de apoio administrativo,Referência: Dirigentes e gerentes,-0.4889087392836576,0.030679294898018655,3.558032208485098e-57,-38.67047057920365
+C(ocupacao_grupo)[T.5],Ocupação: Trabalhadores dos serviços e vendedores,Referência: Dirigentes e gerentes,-0.4941408059435644,0.02959738946754204,1.4152318228613489e-62,-38.99051279416942
+C(ocupacao_grupo)[T.6],"Ocupação: Trabalhadores agropecuários, florestais, da caça e pesca",Referência: Dirigentes e gerentes,-0.739636052828013,0.049624961034157464,3.0803408893205895e-50,-52.27124086161936
+C(ocupacao_grupo)[T.7],"Ocupação: Trabalhadores qualificados da indústria, construção e artes",Referência: Dirigentes e gerentes,-0.5522270522565849,0.031372892956212914,2.375911080884757e-69,-42.43336572913955
+C(ocupacao_grupo)[T.8],"Ocupação: Operadores de instalações, máquinas e montadores",Referência: Dirigentes e gerentes,-0.5387218396975687,0.03832871008530923,7.146991787235519e-45,-41.65064257245502
+C(ocupacao_grupo)[T.9],Ocupação: Ocupações elementares,Referência: Dirigentes e gerentes,-0.7337955901584793,0.03017969972054819,1.3869324234110594e-130,-51.99166720055414
+C(atividade_grupo)[T.10],Atividade: Outros serviços,Referência: Agropecuária,0.04126990626303129,0.04131482457956098,0.317836944857788,4.213334590647877
+C(atividade_grupo)[T.11],Atividade: Serviços domésticos,Referência: Agropecuária,0.053157416083148896,0.03969782559151478,0.18055404581130174,5.459564236902237
+C(atividade_grupo)[T.12],Atividade: Atividades mal definidas,Referência: Agropecuária,0.11855507000925744,0.04210597483512386,0.004868089049119004,12.586887400411628
+C(atividade_grupo)[T.2],Atividade: Indústria geral,Referência: Agropecuária,0.06626116998732548,0.03877853297142124,0.08750514482821167,6.850574235909335
+C(atividade_grupo)[T.3],Atividade: Construção,Referência: Agropecuária,0.031023111879457138,0.03474717228705305,0.37195139271529254,3.150934373064107
+C(atividade_grupo)[T.4],Atividade: Comércio e reparação,Referência: Agropecuária,0.0052212201408058006,0.03406890260146325,0.8781974066978765,0.5234874464418171
+C(atividade_grupo)[T.5],"Atividade: Transporte, armazenagem e correio",Referência: Agropecuária,0.14520961688915238,0.041880389014798534,0.0005258201677310939,15.628192108600313
+C(atividade_grupo)[T.6],Atividade: Alojamento e alimentação,Referência: Agropecuária,-0.10199257484619118,0.040409971216156665,0.011604583751099047,-9.696374317291479
+C(atividade_grupo)[T.7],"Atividade: Informação, comunicação, financeiro, imobiliário, profissional e administrativo",Referência: Agropecuária,0.10637342047875313,0.03368838110673635,0.0015909005280349518,11.223713109140165
+C(atividade_grupo)[T.8],"Atividade: Administração pública, defesa e seguridade social",Referência: Agropecuária,0.5524609850896719,0.040024329510170646,2.4402614408453666e-43,73.75237806873356
+C(atividade_grupo)[T.9],"Atividade: Educação, saúde humana e serviços sociais",Referência: Agropecuária,0.16525079876513418,0.03423565495612646,1.3870081894648495e-06,17.968894614419796
+C(periodo)[T.2017T4],Período: 2017T4,Referência: primeiro período da amostra,0.03373677493480203,0.02206195749363021,0.12621903220101804,3.4312313966271324
+C(periodo)[T.2018T4],Período: 2018T4,Referência: primeiro período da amostra,0.003402794379576024,0.025186080246917632,0.8925279463923542,0.34085904567924263
+C(periodo)[T.2019T4],Período: 2019T4,Referência: primeiro período da amostra,-0.0562295693191046,0.028339451676852683,0.04723972510849127,-5.467790597118749
+C(periodo)[T.2020T4],Período: 2020T4,Referência: primeiro período da amostra,-0.03774516403510334,0.028254466607138817,0.18158170533415663,-3.7041693964986244
+C(periodo)[T.2021T4],Período: 2021T4,Referência: primeiro período da amostra,-0.08942622127688091,0.042622772574688134,0.035897592865622094,-8.554426998835341
+C(periodo)[T.2022T4],Período: 2022T4,Referência: primeiro período da amostra,-0.027243020557344507,0.04160541915045351,0.5125997483451759,-2.687527652653765
+C(periodo)[T.2023T4],Período: 2023T4,Referência: primeiro período da amostra,-0.04512892927030357,0.04264522725438677,0.28994556931093685,-4.4125766279329515
+C(periodo)[T.2024T4],Período: 2024T4,Referência: primeiro período da amostra,0.0023738730320547966,0.04189821179834111,0.9548175525195836,0.23766928995352377
+C(periodo)[T.2025T4],Período: 2025T4,Referência: primeiro período da amostra,0.03755799831585893,0.04834888827027412,0.43726967486601465,3.827221337536524
+formal,Trabalhador formal,Referência: trabalhador informal,6.3167441687256325,7.999097237433616,0.42971342835073656,55276.70819925473
+mulher,Mulher,Referência: homem,4.432554246999484,5.82634452700124,0.4467897271139567,8314.607250507452
+preto_pardo,Pessoa preta ou parda,"Referência: branco, amarelo ou indígena",-15.854753020614467,9.18296298179317,0.0842503073641185,-99.99998698727502
+formal:mulher,Trabalhador formal x mulher,Diferença adicional para mulheres formais,-0.013802287203632867,0.021919206467427545,0.528897961384771,-1.370747235945191
+formal:preto_pardo,Trabalhador formal x pessoa preta ou parda,Diferença adicional para pessoas pretas/pardas formais,-0.035771058767984566,0.025265873255622278,0.15683829572588198,-3.5138835297335413
+idade,Idade,,0.027878878908180384,0.0028440995688552837,1.0998880217915617e-22,2.8271131556447004
+idade2,Idade ao quadrado,,-0.00020756022236798988,3.633052038689561e-05,1.1093058558736238e-08,-0.020753868323530877
+formal:Ano,formal:Ano,,-0.002985677044172499,0.003959883082265337,0.45086056427279797,-0.29812243430114016
+mulher:Ano,mulher:Ano,,-0.0022686534559304026,0.002882705330118304,0.43128910337703275,-0.2266082006622261
+preto_pardo:Ano,preto_pardo:Ano,,0.007814285192715856,0.00454348259095361,0.08545264191264114,0.7844896402209756

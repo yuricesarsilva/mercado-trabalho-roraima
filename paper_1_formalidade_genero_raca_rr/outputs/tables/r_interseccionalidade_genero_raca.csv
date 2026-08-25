@@ -1,0 +1,19 @@
+"id","contraste","termos","estimativa","erro_padrao","p_valor","efeito_percentual_aprox","ic95_inf","ic95_sup"
+"preto_homem_branco","Homem branco (referência)","",0,0,NA,0,0,0
+"preto_mulher_branca","Mulher branca","mulher",-0.194347364130243,0.0264935473952974,2.20712337295481e-13,-17.6628155256672,-21.829255291904,-13.2743077672358
+"preto_homem","Homem preto","factor(raca_grupo)preto",-0.100806721928176,0.0304322041208014,0.000924656287811132,-9.58922397955461,-14.824286193363,-4.03240483342797
+"preto_mulher","Mulher preto","mulher + factor(raca_grupo)preto + mulher:factor(raca_grupo)preto",-0.242483708784392,0.0356111917084922,9.81437153768638e-12,-21.5323469190859,-26.8224601338401,-15.8598035505426
+"preto_interacao","Interação mulher×preto (heterogeneidade além do aditivo)","mulher:factor(raca_grupo)preto",0.0526703772740278,0.0390969541213334,0.177924387353666,5.40821384215846,-2.36748990563411,13.8031945983471
+"preto_soma_aditiva_implicaria","Soma aditiva (mulher + preto, sem interação)","mulher + factor(raca_grupo)preto",-0.295154086058419,0.0443165095415719,2.73570055497885e-11,-25.55831256337,-31.7514805200585,-18.8031495680782
+"pardo_homem_branco","Homem branco (referência)","",0,0,NA,0,0,0
+"pardo_mulher_branca","Mulher branca","mulher",-0.194347364130243,0.0264935473952974,2.20712337295481e-13,-17.6628155256672,-21.829255291904,-13.2743077672358
+"pardo_homem","Homem pardo","factor(raca_grupo)pardo",-0.0964055529106705,0.0235660946432084,4.29779748867265e-05,-9.19043394583731,-13.2894909945337,-4.89760259133663
+"pardo_mulher","Mulher pardo","mulher + factor(raca_grupo)pardo + mulher:factor(raca_grupo)pardo",-0.248965497684015,0.0275464968330796,0,-22.0393128836707,-26.1368870982909,-17.7144247394756
+"pardo_interacao","Interação mulher×pardo (heterogeneidade além do aditivo)","mulher:factor(raca_grupo)pardo",0.0417874193568993,0.0255610431671351,0.102089126823967,4.26728031345915,-0.827777422734866,9.62410099758877
+"pardo_soma_aditiva_implicaria","Soma aditiva (mulher + pardo, sem interação)","mulher + factor(raca_grupo)pardo",-0.290752917040914,0.041475011859884,2.37787567414216e-12,-25.229960077643,-31.0676047233072,-18.8979456241074
+"indigena_homem_branco","Homem branco (referência)","",0,0,NA,0,0,0
+"indigena_mulher_branca","Mulher branca","mulher",-0.194347364130243,0.0264935473952974,2.20712337295481e-13,-17.6628155256672,-21.829255291904,-13.2743077672358
+"indigena_homem","Homem indigena","factor(raca_grupo)indigena",-0.136844068744364,0.0399860041428357,0.00062093950507669,-12.7893795854317,-19.3633267506473,-5.67948792263731
+"indigena_mulher","Mulher indigena","mulher + factor(raca_grupo)indigena + mulher:factor(raca_grupo)indigena",-0.214955234766117,0.0444940169282895,1.3577787527641e-06,-19.342245399833,-26.0782812876029,-11.9923955982139
+"indigena_interacao","Interação mulher×indigena (heterogeneidade além do aditivo)","mulher:factor(raca_grupo)indigena",0.116236198108491,0.0405455300953008,0.00414636155884907,12.3261152962277,3.74512241205303,21.616861440761
+"indigena_soma_aditiva_implicaria","Soma aditiva (mulher + indigena, sem interação)","mulher + factor(raca_grupo)indigena",-0.331191432874607,0.0508606485803434,7.42841343992495e-11,-28.1932305880468,-35.0061999242718,-20.6660923445989

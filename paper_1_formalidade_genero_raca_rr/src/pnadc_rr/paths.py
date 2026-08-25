@@ -12,6 +12,8 @@ FIGURES_DIR = OUTPUTS_DIR / "figures"
 MODELS_DIR = OUTPUTS_DIR / "models"
 PRESENTATION_DIR = PROJECT_DIR / "presentation"
 PRESENTATION_GERADO_DIR = PRESENTATION_DIR / "gerado"
+PAPER_DIR = PROJECT_DIR / "paper"
+PAPER_FIGURES_DIR = PAPER_DIR / "figures"
 
 
 def ensure_project_dirs() -> None:
@@ -23,5 +25,6 @@ def ensure_project_dirs() -> None:
         FIGURES_DIR,
         MODELS_DIR,
         PRESENTATION_GERADO_DIR,
+        PAPER_FIGURES_DIR,
     ]:
         path.mkdir(parents=True, exist_ok=True)

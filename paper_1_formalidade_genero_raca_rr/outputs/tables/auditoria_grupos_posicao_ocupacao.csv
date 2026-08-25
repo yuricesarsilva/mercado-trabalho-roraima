@@ -1,0 +1,11 @@
+tabela,posicao_ocupacao_grupo,n_amostral,n_ponderado,n_upa
+posicao_ocupacao,conta_propria,6833,633563,402
+posicao_ocupacao,privado_com_carteira,5240,576926,383
+posicao_ocupacao,militar_estatutario,4062,413384,370
+posicao_ocupacao,privado_sem_carteira,3402,332088,380
+posicao_ocupacao,publico_sem_carteira,1493,145430,312
+posicao_ocupacao,domestico_sem_carteira,1403,129997,301
+posicao_ocupacao,empregador,970,85111,295
+posicao_ocupacao,familiar_auxiliar,460,32224,162
+posicao_ocupacao,domestico_com_carteira,315,28286,147
+posicao_ocupacao,publico_com_carteira,236,24886,134

@@ -1,0 +1,17 @@
+"especificacao","amostra","dv","modelo","n_obs","n_params","n_replicas_descartadas_svyglm","n_replicas_ok_formal_mulher"
+"ampla_ln_renda_mensal_real_M1","ampla","ln_renda_mensal_real","M1",23938,30,0,200
+"ampla_ln_renda_mensal_real_M2","ampla","ln_renda_mensal_real","M2",23938,41,32,200
+"ampla_ln_renda_mensal_real_M3","ampla","ln_renda_mensal_real","M3",23938,51,74,200
+"ampla_ln_renda_mensal_real_M4","ampla","ln_renda_mensal_real","M4",23938,95,0,200
+"ampla_ln_renda_hora_real_M1","ampla","ln_renda_hora_real","M1",23938,30,0,200
+"ampla_ln_renda_hora_real_M2","ampla","ln_renda_hora_real","M2",23938,41,32,200
+"ampla_ln_renda_hora_real_M3","ampla","ln_renda_hora_real","M3",23938,51,74,200
+"ampla_ln_renda_hora_real_M4","ampla","ln_renda_hora_real","M4",23938,95,0,200
+"restrita_ln_renda_mensal_real_M1","restrita","ln_renda_mensal_real","M1",16135,30,0,200
+"restrita_ln_renda_mensal_real_M2","restrita","ln_renda_mensal_real","M2",16135,41,32,200
+"restrita_ln_renda_mensal_real_M3","restrita","ln_renda_mensal_real","M3",16135,51,74,200
+"restrita_ln_renda_mensal_real_M4","restrita","ln_renda_mensal_real","M4",16135,95,0,200
+"restrita_ln_renda_hora_real_M1","restrita","ln_renda_hora_real","M1",16135,30,0,200
+"restrita_ln_renda_hora_real_M2","restrita","ln_renda_hora_real","M2",16135,41,32,200
+"restrita_ln_renda_hora_real_M3","restrita","ln_renda_hora_real","M3",16135,51,74,200
+"restrita_ln_renda_hora_real_M4","restrita","ln_renda_hora_real","M4",16135,95,0,200

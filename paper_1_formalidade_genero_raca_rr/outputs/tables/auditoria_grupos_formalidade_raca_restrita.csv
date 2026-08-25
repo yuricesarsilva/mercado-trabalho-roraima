@@ -1,0 +1,9 @@
+tabela,formal,raca_grupo,n_amostral,n_ponderado,n_upa
+formalidade_raca_restrita,1.0,pardo,6379,667422,386
+formalidade_raca_restrita,0.0,pardo,4018,388142,382
+formalidade_raca_restrita,1.0,branco,2196,242384,330
+formalidade_raca_restrita,0.0,branco,1184,117594,300
+formalidade_raca_restrita,1.0,preto,887,90421,280
+formalidade_raca_restrita,0.0,preto,642,60878,255
+formalidade_raca_restrita,0.0,indigena,429,38506,156
+formalidade_raca_restrita,1.0,indigena,370,40924,164

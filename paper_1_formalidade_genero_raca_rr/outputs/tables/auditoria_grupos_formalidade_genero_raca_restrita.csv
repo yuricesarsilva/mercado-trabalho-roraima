@@ -1,0 +1,17 @@
+tabela,formal,mulher,raca_grupo,n_amostral,n_ponderado,n_upa
+formalidade_genero_raca_restrita,1.0,0,pardo,3399,364092,370
+formalidade_genero_raca_restrita,1.0,1,pardo,2980,303329,367
+formalidade_genero_raca_restrita,0.0,0,pardo,2184,207120,350
+formalidade_genero_raca_restrita,0.0,1,pardo,1834,181022,332
+formalidade_genero_raca_restrita,1.0,1,branco,1106,117956,270
+formalidade_genero_raca_restrita,1.0,0,branco,1090,124428,282
+formalidade_genero_raca_restrita,0.0,0,branco,614,59105,246
+formalidade_genero_raca_restrita,0.0,1,branco,570,58490,233
+formalidade_genero_raca_restrita,1.0,0,preto,521,54750,223
+formalidade_genero_raca_restrita,0.0,0,preto,394,35953,213
+formalidade_genero_raca_restrita,1.0,1,preto,366,35671,184
+formalidade_genero_raca_restrita,0.0,1,preto,248,24925,150
+formalidade_genero_raca_restrita,0.0,0,indigena,236,20221,104
+formalidade_genero_raca_restrita,1.0,0,indigena,200,21508,121
+formalidade_genero_raca_restrita,0.0,1,indigena,193,18285,98
+formalidade_genero_raca_restrita,1.0,1,indigena,170,19416,97
