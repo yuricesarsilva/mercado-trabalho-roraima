@@ -22,6 +22,13 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage[authoryear,round]{natbib}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks,
+  citecolor=violet,
+  linkcolor=Maroon,
+  urlcolor=black}
 
 % Margens não são especificadas nas diretrizes (apenas fonte/espaço/páginas);
 % usar um padrão razoável agora e não tentar reproduzir a diagramação final da revista.
@@ -39,25 +46,29 @@
 
 \begin{center}
 \begin{minipage}{0.85\textwidth}
-\small
+    \small
 \singlespacing
 \textbf{Resumo}
+\vspace{0.2cm}
 
 Este artigo analisa como formalidade, gênero e raça/cor se associam aos
 diferenciais de rendimento no mercado de trabalho de Roraima, utilizando
 microdados da PNAD Contínua de 2016 a 2025. A formalidade permanece associada
 a maiores rendimentos após controles extensos. A escolaridade opera em sentidos
 opostos: mascara a desvantagem condicional feminina, mas responde por parcela
-importante dos elevados gaps raciais brutos. Entre trabalhadores formais, os
+importante dos elevados \textit{gaps} raciais brutos. Entre trabalhadores formais, os
 maiores diferenciais raciais estão fortemente concentrados no setor público.
 Para indígenas, a desvantagem permanece relevante, embora gênero e pertencimento
 indígena não se acumulem de forma simplesmente aditiva.
 
 \smallskip
-\textbf{Palavras-chave:} Mercado de trabalho; Formalidade; Diferenciais de rendimento; Gênero; Desigualdade racial; Roraima.
+\textbf{Palavras-chave:} Mercado de trabalho; Formalidade; Diferenciais de rendimento; 
+Gênero; Desigualdade racial; Roraima.
 
 \bigskip
+
 \textbf{Abstract}
+\vspace{0.2cm}
 
 This article examines how formality, gender, and race/color are associated
 with earnings differentials in Roraima's labor market using Brazilian
@@ -70,7 +81,8 @@ concentrated in the public sector. Indigenous workers remain disadvantaged,
 although gender and Indigenous status do not combine in a simply additive way.
 
 \smallskip
-\textbf{Keywords:} Labor market; Formality; Earnings differentials; Gender; Racial inequality; Roraima.
+\textbf{Keywords:} Labor market; Formality; Earnings differentials; Gender; Racial inequality; 
+Roraima.
 
 \bigskip
 \textbf{Classificação JEL:} J31, J46, J71, J45.
@@ -81,89 +93,338 @@ although gender and Indigenous status do not combine in a simply additive way.
 
 \section{Introdução}
 \label{sec:introducao}
-% TODO: texto a ser inserido pelo autor. Claude ajuda a organizar/formatar
-% (citações, referências cruzadas, estrutura) depois que o texto for colado aqui.
-% Revisar por último, depois de Dados/Resultados/Discussão fechados -- combinado em 2026-08-21.
 
-A formalidade constitui uma das principais dimensões de organização do mercado de trabalho brasileiro. O vínculo formal está associado a direitos trabalhistas, previdenciários e mecanismos de proteção social, mas também a diferenças relevantes de remuneração. Ainda assim, o diferencial observado entre trabalhadores formais e informais não pode ser interpretado diretamente como retorno causal à formalização. Diferenças de composição, seleção e alocação entre trabalhadores e postos contribuem para o diferencial formal–informal, ao mesmo tempo em que diferenças condicionais podem persistir entre trabalhadores observavelmente semelhantes \citep{ulyssea2006, curi2006, meghir2015, ulyssea2018}.
+A formalidade constitui uma das principais dimensões de organização do mercado de trabalho 
+brasileiro. O vínculo formal está associado a direitos trabalhistas, previdenciários e 
+mecanismos de proteção social, mas também a diferenças relevantes de remuneração. Ainda 
+assim, o diferencial observado entre trabalhadores formais e informais não pode ser 
+interpretado diretamente como retorno causal à formalização. Diferenças de composição, 
+seleção e alocação entre trabalhadores e postos contribuem para o diferencial formal–informal, 
+ao mesmo tempo em que diferenças condicionais podem persistir entre trabalhadores 
+observavelmente semelhantes \citep{ulyssea2006, curi2006, meghir2015, ulyssea2018}.
 
-A composição também é central para os diferenciais de gênero e raça/cor, embora não necessariamente opere da mesma forma entre os grupos. Características educacionais relativamente favoráveis às mulheres podem mascarar diferenciais condicionais de rendimento, enquanto desigualdades educacionais, segregação ocupacional e alocação entre posições remuneratórias contribuem para os gaps raciais \citep{giuberti2005, soares2000, campante2004, gerard2021}. Para indígenas, a evidência latino-americana acrescenta a possibilidade de interação entre desigualdades étnicas e de gênero \citep{kolev2015}.
+A composição também é central para os diferenciais de gênero e raça/cor, embora não 
+necessariamente opere da mesma forma entre os grupos. Características educacionais 
+relativamente favoráveis às mulheres podem mascarar diferenciais condicionais de 
+rendimento, enquanto desigualdades educacionais, segregação ocupacional e alocação 
+entre posições remuneratórias contribuem para os \textit{gaps} raciais 
+\citep{giuberti2005, soares2000, campante2004, gerard2021}. Para indígenas, a 
+evidência latino-americana acrescenta a possibilidade de interação entre desigualdades 
+étnicas e de gênero \citep{kolev2015}.
 
-Essa literatura coloca três questões relacionadas. Primeiro, em que medida os diferenciais de rendimento refletem composição e seleção, e em que medida permanecem depois de se compararem trabalhadores com características semelhantes? Segundo, os mecanismos de composição operam da mesma forma para gênero e raça/cor? Terceiro, a entrada no segmento formal implica convergência entre grupos ou as desigualdades permanecem e se reorganizam dentro desse segmento? Essas questões são especialmente relevantes em mercados regionais nos quais a estrutura produtiva e institucional difere substancialmente do padrão nacional.
+Essa literatura coloca três questões relacionadas. Primeiro, em que medida os 
+diferenciais de rendimento refletem composição e seleção, e em que medida permanecem 
+depois de se compararem trabalhadores com características semelhantes? Segundo, 
+os mecanismos de composição operam da mesma forma para gênero e raça/cor? Terceiro, 
+a entrada no segmento formal implica convergência entre grupos ou as desigualdades 
+ permanecem e se reorganizam dentro desse segmento? Essas questões são especialmente 
+ relevantes em mercados regionais nos quais a estrutura produtiva e institucional 
+ difere substancialmente do padrão nacional.
 
-Roraima oferece um contexto particularmente informativo para essa investigação. O estado combina um mercado de trabalho de pequena escala, elevada presença do setor público e uma composição demográfica na qual a população indígena possui relevância substantiva. A importância do Estado como empregador tampouco é recente: \citet{moriconi2009} já identificavam Roraima entre os estados com maiores diferenciais público-privado do país, enquanto estudos posteriores mostram que o setor público brasileiro apresenta forte heterogeneidade regional e diferenças significativas de remuneração entre níveis de governo \citep{mattos2022, baez2021}. O período analisado coincide ainda com a transformação demográfica associada ao influxo venezuelano, que produziu efeitos heterogêneos sobre diferentes segmentos do mercado de trabalho de Roraima \citep{ryu2022, santanna2024}. Esse processo é tratado aqui como contexto, e não como mecanismo identificado.
+Roraima oferece um contexto particularmente informativo para essa investigação. O estado 
+combina um mercado de trabalho de pequena escala, elevada presença do setor público e 
+uma composição demográfica na qual a população indígena possui relevância substantiva. 
+A importância do Estado como empregador tampouco é recente. \citet{moriconi2009} já 
+identificavam Roraima entre os estados com maiores diferenciais público-privado do país, 
+enquanto estudos posteriores mostram que o setor público brasileiro apresenta forte 
+heterogeneidade regional e diferenças significativas de remuneração entre níveis de 
+governo \citep{mattos2022, baez2021}. O período analisado coincide ainda com a 
+transformação demográfica associada ao influxo venezuelano, que produziu efeitos 
+heterogêneos sobre diferentes segmentos do mercado de trabalho de Roraima 
+\citep{ryu2022, santanna2024}. Esse processo é tratado aqui como contexto, e 
+não como mecanismo identificado.
 
-Apesar da extensa literatura sobre informalidade, diferenças de gênero, desigualdade racial e remuneração pública, essas dimensões são frequentemente analisadas de forma separada ou a partir de estimativas nacionais e de grandes mercados metropolitanos. Há menos evidência sobre como formalidade, composição e estrutura institucional se combinam em um mesmo mercado regional, especialmente quando o setor público representa parcela elevada do emprego e quando a categoria indígena pode ser identificada separadamente. A relevância do caso de Roraima, portanto, não decorre apenas da escassez de estudos estaduais, mas da possibilidade de investigar se regularidades documentadas no mercado de trabalho brasileiro se reproduzem, e por quais margens, em um ambiente institucional e demográfico particularmente distinto.
+Apesar da extensa literatura sobre informalidade, diferenças de gênero, desigualdade 
+racial e remuneração pública, essas dimensões são frequentemente analisadas de forma 
+separada ou a partir de estimativas nacionais e de grandes mercados metropolitanos. Há 
+menos evidência sobre como formalidade, composição e estrutura institucional se combinam 
+em um mesmo mercado regional, especialmente quando o setor público representa parcela 
+elevada do emprego e quando a categoria indígena pode ser identificada separadamente. 
+A relevância do caso de Roraima, portanto, não decorre apenas da escassez de estudos 
+estaduais, mas da possibilidade de investigar se regularidades documentadas no mercado 
+de trabalho brasileiro se reproduzem, e por quais margens, em um ambiente institucional 
+e demográfico particularmente distinto.
 
-Este artigo investiga os diferenciais condicionais de rendimento associados à formalidade, ao gênero e à raça/cor no mercado de trabalho de Roraima utilizando os microdados da PNAD Contínua para os quartos trimestres de 2016 a 2025. Estimam-se equações de rendimento mensal e horário com interações entre formalidade, gênero e raça/cor e controles para características individuais e inserção ocupacional, incorporando o desenho amostral da pesquisa. A análise compara ainda uma amostra ampla de ocupados com uma amostra restrita às relações de emprego e realiza exercícios sobre escolaridade, jornada, setor público e interseccionalidade.
+Este artigo investiga os diferenciais condicionais de rendimento associados à formalidade, 
+ao gênero e à raça/cor no mercado de trabalho de Roraima utilizando os microdados da PNAD 
+Contínua para os quartos trimestres de 2016 a 2025. Estimam-se equações de rendimento 
+mensal e horário com interações entre formalidade, gênero e raça/cor e controles para 
+características individuais e inserção ocupacional, incorporando o desenho amostral da 
+pesquisa. A análise compara ainda uma amostra ampla de ocupados com uma amostra restrita 
+às relações de emprego e realiza exercícios sobre escolaridade, jornada, setor público e 
+interseccionalidade.
 
-Os resultados mostram, primeiro, que a formalidade permanece associada a maiores rendimentos após controles extensos, embora a magnitude do diferencial seja sensível à composição da amostra e à forma de inserção laboral. Esse padrão é consistente com a literatura que enfatiza a coexistência entre composição, seleção e diferenças condicionais entre segmentos \citep{curi2006, meghir2015, ulyssea2018}. As estimativas devem, portanto, ser interpretadas como diferenciais condicionais associados à formalidade, e não como efeitos causais da formalização.
+Os resultados mostram, primeiro, que a formalidade permanece associada a maiores rendimentos 
+após controles extensos, embora a magnitude do diferencial seja sensível à composição da 
+amostra e à forma de inserção laboral. Esse padrão é consistente com a literatura que 
+enfatiza a coexistência entre composição, seleção e diferenças condicionais entre 
+segmentos \citep{curi2006, meghir2015, ulyssea2018}. As estimativas devem, portanto, 
+ser interpretadas como diferenciais condicionais associados à formalidade, e não como 
+efeitos causais da formalização.
 
-Segundo, as dimensões de composição operam de maneira marcadamente distinta para gênero e raça/cor. O pequeno diferencial bruto de rendimento por hora entre mulheres e homens transforma-se em uma desvantagem condicional próxima de 15\% após a inclusão de controles, sendo a escolaridade decisiva para essa mudança. A maior escolaridade feminina mascara, portanto, parte importante do diferencial condicional de gênero, em linha com a evidência de \citet{giuberti2005}. Para raça/cor ocorre o movimento oposto: a inclusão da escolaridade reduz substancialmente os diferenciais de pretos, pardos e indígenas em relação aos brancos, reforçando o papel das desigualdades educacionais destacado por \citet{soares2000} e \citet{campante2004}. Assim, a escolaridade atua em sentidos opostos na formação dos gaps observados: a vantagem educacional feminina mascara o diferencial de gênero, enquanto a desvantagem educacional racial amplia o gap racial bruto.
+Segundo, as dimensões de composição operam de maneira marcadamente distinta para gênero e 
+raça/cor. O pequeno diferencial bruto de rendimento por hora entre mulheres e homens 
+transforma-se em uma desvantagem condicional próxima de 15\% após a inclusão de controles, 
+sendo a escolaridade decisiva para essa mudança. A maior escolaridade feminina mascara, 
+portanto, parte importante do diferencial condicional de gênero, em linha com a evidência 
+de \citet{giuberti2005}. Para raça/cor ocorre o movimento oposto. A inclusão da escolaridade 
+reduz substancialmente os diferenciais de pretos, pardos e indígenas em relação aos brancos, 
+reforçando o papel das desigualdades educacionais destacado por \citet{soares2000} e
+ \citet{campante2004}. Assim, a escolaridade atua em sentidos opostos na formação dos 
+ \textit{gaps} observados. A vantagem educacional feminina mascara o diferencial de gênero, enquanto 
+ a desvantagem educacional racial amplia o \textit{gap} racial bruto.
 
-Terceiro, a formalidade não está associada a uma convergência generalizada entre os grupos. O diferencial horário entre homens e mulheres permanece praticamente inalterado entre trabalhadores formais e informais. Para raça/cor, a heterogeneidade aparece sobretudo dentro do próprio segmento formal: a maior magnitude dos gaps raciais entre trabalhadores formais está fortemente concentrada no setor público. O padrão dialoga tanto com a literatura sobre alocação desigual dentro do segmento formal quanto com a elevada heterogeneidade salarial do setor público brasileiro \citep{gerard2021, baez2021}.
+Terceiro, a formalidade não está associada a uma convergência generalizada entre os grupos. 
+O diferencial horário entre homens e mulheres permanece praticamente inalterado entre 
+trabalhadores formais e informais. Para raça/cor, a heterogeneidade aparece sobretudo dentro 
+do próprio segmento formal, onde a maior magnitude dos \textit{gaps} raciais entre trabalhadores formais 
+está fortemente concentrada no setor público. O padrão dialoga tanto com a literatura sobre 
+alocação desigual dentro do segmento formal quanto com a elevada heterogeneidade salarial 
+do setor público brasileiro \citep{gerard2021, baez2021}.
 
-A separação da categoria indígena revela ainda uma heterogeneidade que tende a desaparecer em agregações raciais mais amplas. A elevada desvantagem bruta indígena diminui de forma importante após o controle pela escolaridade, mas um diferencial condicional permanece. Mulheres indígenas também apresentam rendimento inferior ao de homens brancos observavelmente comparáveis. Contudo, a interação entre gênero e pertencimento indígena indica que as duas desvantagens não se acumulam de maneira simplesmente aditiva. Esse padrão difere da evidência encontrada por \citet{kolev2015} para o Peru, onde a sobreposição entre gênero e pertencimento indígena está associada a desvantagem particularmente intensa, sem eliminar a posição relativa desfavorável das mulheres indígenas observada em Roraima.
+A separação da categoria indígena revela ainda uma heterogeneidade que tende a desaparecer 
+em agregações raciais mais amplas. A elevada desvantagem bruta indígena diminui de forma 
+importante após o controle pela escolaridade, mas um diferencial condicional permanece. 
+Mulheres indígenas também apresentam rendimento inferior ao de homens brancos observavelmente 
+comparáveis. Contudo, a interação entre gênero e pertencimento indígena indica que as duas 
+desvantagens não se acumulam de maneira simplesmente aditiva. Esse padrão difere da 
+evidência encontrada por \citet{kolev2015} para o Peru, onde a sobreposição entre gênero 
+e pertencimento indígena está associada a desvantagem particularmente intensa, sem eliminar 
+a posição relativa desfavorável das mulheres indígenas observada em Roraima.
 
-O artigo contribui para a literatura em três dimensões. Primeiro, integra formalidade, gênero e raça/cor em uma mesma estrutura empírica, permitindo examinar conjuntamente composição e diferenciais condicionais de rendimento. Segundo, mostra que uma mesma dimensão composicional (escolaridade) opera em sentidos opostos na formação dos gaps de gênero e raça/cor: a vantagem educacional feminina mascara parte da desvantagem condicional das mulheres, enquanto a desvantagem educacional racial amplia os gaps brutos. Terceiro, documenta que a heterogeneidade existente dentro do segmento formal é central em Roraima: os maiores diferenciais raciais entre trabalhadores formais estão fortemente concentrados no setor público, ao mesmo tempo em que a separação da categoria indígena revela padrões que seriam ocultados por agregações raciais mais amplas.
+O artigo contribui para a literatura em três dimensões. Primeiro, integra formalidade, 
+gênero e raça/cor em uma mesma estrutura empírica, permitindo examinar conjuntamente 
+composição e diferenciais condicionais de rendimento. Segundo, mostra que uma mesma 
+dimensão composicional (escolaridade) opera em sentidos opostos na formação dos \textit{gaps} 
+de gênero e raça/cor. A vantagem educacional feminina mascara parte da desvantagem 
+condicional das mulheres, enquanto a desvantagem educacional racial amplia os \textit{gaps} brutos. 
+Terceiro, documenta que a heterogeneidade existente dentro do segmento formal é central 
+em Roraima, mostrando que os maiores diferenciais raciais entre trabalhadores formais estão 
+concentrados no setor público, ao mesmo tempo em que a separação da categoria indígena 
+revela padrões que seriam ocultados por agregações raciais mais amplas.
 
-Essas contribuições devem ser interpretadas dentro dos limites do desenho empírico. As estimações não identificam efeitos causais da formalidade, do gênero, da raça/cor ou do emprego público. Diferenciais residuais podem incorporar características produtivas não observadas, experiência, qualidade da educação, alocação entre firmas, carreiras e postos de trabalho, além de mecanismos discriminatórios. O objetivo é caracterizar a estrutura dos diferenciais condicionais e identificar quais dimensões observáveis estão associadas à sua composição, sem equiparar coeficientes residuais a discriminação ou retornos causais.
+Essas contribuições devem ser interpretadas dentro dos limites do desenho empírico. 
+As estimações não identificam efeitos causais da formalidade, do gênero, da raça/cor 
+ou do emprego público. Diferenciais residuais podem incorporar características produtivas 
+não observadas, experiência, qualidade da educação, alocação entre firmas, carreiras e 
+postos de trabalho, além de mecanismos discriminatórios. O objetivo é caracterizar a 
+estrutura dos diferenciais condicionais e identificar quais dimensões observáveis estão 
+associadas à sua composição, sem equiparar coeficientes residuais a discriminação ou 
+retornos causais.
 
-Além desta introdução, o artigo está organizado da seguinte forma. A Seção 2 revisa a literatura sobre formalidade e segmentação, diferenciais de gênero e raça/cor, inserção econômica indígena e heterogeneidade regional do setor público. A Seção 3 apresenta os dados, a construção das amostras e a estratégia empírica. A Seção 4 discute os resultados principais. A Seção 5 examina mecanismos e heterogeneidades. A Seção 6 apresenta os exercícios de robustez. A Seção 7 reúne as considerações finais e discute as principais implicações e limitações dos resultados.
+Além desta introdução, o artigo está organizado da seguinte forma. A Seção 2 revisa a 
+literatura sobre formalidade e segmentação, diferenciais de gênero e raça/cor, inserção 
+econômica indígena e heterogeneidade regional do setor público. A Seção 3 apresenta os 
+dados, a construção das amostras e a estratégia empírica. A Seção 4 discute os resultados 
+principais. A Seção 5 examina mecanismos e heterogeneidades. A Seção 6 apresenta os 
+exercícios de robustez. A Seção 7 reúne as considerações finais e discute as principais 
+implicações e limitações dos resultados.
 
 \section{Revisão da literatura}
 \label{sec:literatura}
-% TODO: seção própria (decisão de 2026-08-21) -- organizar por bloco de
-% achado (formalidade / gênero / raça / indígena-interseccionalidade /
-% setor público-regional), não por "eixo" de leitura.
 
 \subsection{Formalidade, seleção e segmentação}
 
-A interpretação dos diferenciais entre trabalhadores formais e informais passou por uma mudança importante na literatura de economia do trabalho. A visão tradicional de segmentação parte da possibilidade de que trabalhadores com características produtivas semelhantes recebam remunerações distintas porque estão alocados em segmentos sujeitos a instituições, barreiras à entrada e estruturas salariais diferentes. A interpretação alternativa enfatiza seleção e vantagem comparativa: trabalhadores, firmas e postos são heterogêneos, de modo que o diferencial salarial observado entre formais e informais pode refletir, ao menos parcialmente, diferenças na composição de quem alcança cada posição. \citet{ulyssea2006}, ao sistematizar a literatura brasileira, mostra que essas interpretações não são mutuamente exclusivas e que os resultados dependem também da própria definição de informalidade empregada.
+A interpretação dos diferenciais entre trabalhadores formais e informais passou por uma 
+mudança importante na literatura de economia do trabalho. A visão tradicional de segmentação 
+parte da possibilidade de que trabalhadores com características produtivas semelhantes 
+recebam remunerações distintas porque estão alocados em segmentos sujeitos a instituições, 
+barreiras à entrada e estruturas salariais diferentes. A interpretação alternativa enfatiza 
+seleção e vantagem comparativa, mostrando que trabalhadores, firmas e postos são heterogêneos, de modo 
+que o diferencial salarial observado entre formais e informais pode refletir, ao menos 
+parcialmente, diferenças na composição de quem alcança cada posição. \citet{ulyssea2006}, 
+ao sistematizar a literatura brasileira, mostra que essas interpretações não são mutuamente 
+exclusivas e que os resultados dependem também da própria definição de informalidade empregada.
 
-A evolução da evidência empírica ilustra esse problema. \citet{curi2006} exploram o caráter longitudinal da Pesquisa Mensal de Emprego (PME) e as transições individuais entre posições formais e informais nas décadas de 1980 e 1990. Ao controlar características individuais não observadas mediante efeitos fixos, os autores encontram diferenciais bastante menores que aqueles obtidos em comparações transversais (cerca de 10\% na década de 1980 e aproximadamente 5\% na de 1990) e interpretam a intensa mobilidade entre segmentos e o pequeno diferencial remanescente como evidência contrária a uma segmentação rígida. O resultado estabeleceu uma cautela importante: um prêmio formal elevado em regressões de corte transversal não pode ser automaticamente atribuído ao contrato formal, pois trabalhadores que chegam a esses postos podem apresentar características produtivas não observadas diferentes das dos informais.
+A evolução da evidência empírica ilustra esse problema. \citet{curi2006} exploram o caráter 
+longitudinal da Pesquisa Mensal de Emprego (PME) e as transições individuais entre posições 
+formais e informais nas décadas de 1980 e 1990. Ao controlar características individuais 
+não observadas mediante efeitos fixos, os autores encontram diferenciais bastante menores 
+que aqueles obtidos em comparações transversais (cerca de 10\% na década de 1980 e 
+aproximadamente 5\% na de 1990) e interpretam a intensa mobilidade entre segmentos e o 
+pequeno diferencial remanescente como evidência contrária a uma segmentação rígida. O 
+resultado estabeleceu uma cautela importante ao mostrar que um prêmio formal elevado em regressões de 
+corte transversal não pode ser automaticamente atribuído ao contrato formal, pois trabalhadores 
+que chegam a esses postos podem apresentar características produtivas não observadas 
+diferentes das dos informais.
 
-A conclusão, contudo, depende da forma como heterogeneidade e seleção são tratadas. \citet{dalberto2018}, utilizando efeitos de tratamento quantílicos sob alocação endógena, encontram diferenciais favoráveis à formalidade ao longo de grande parte da distribuição e particularmente elevados entre trabalhadores de menor rendimento. \citet{bargain2011}, comparando Brasil, México e África do Sul, também mostram que emprego assalariado informal e trabalho por conta própria não constituem posições equivalentes. Esses resultados contribuíram para deslocar a literatura de uma pergunta binária, “o mercado é ou não segmentado?”, para outra: quais tipos de trabalhadores e postos compõem a informalidade e em quais partes do mercado persistem diferenciais condicionais? Essa heterogeneidade sustenta, inclusive, a distinção entre trabalhadores por conta própria e empregados informais realizada em estudos brasileiros de escolha ocupacional, como \citet{hirata2010b}.
+A conclusão, contudo, depende da forma como heterogeneidade e seleção são tratadas. 
+\citet{dalberto2018}, utilizando efeitos de tratamento quantílicos sob alocação endógena, 
+encontram diferenciais favoráveis à formalidade ao longo de grande parte da distribuição e 
+particularmente elevados entre trabalhadores de menor rendimento. \citet{bargain2011}, 
+comparando Brasil, México e África do Sul, também mostram que emprego assalariado informal 
+e trabalho por conta própria não constituem posições equivalentes. Esses resultados 
+contribuíram para deslocar a literatura de uma pergunta binária, “o mercado é ou não 
+segmentado?”, para outra, “quais tipos de trabalhadores e postos compõem a informalidade 
+e em quais partes do mercado persistem diferenciais condicionais?”. Essa heterogeneidade 
+sustenta, inclusive, a distinção entre trabalhadores por conta própria e empregados 
+informais realizada em estudos brasileiros de escolha ocupacional, como \citet{hirata2010b}.
 
-Modelos posteriores incorporaram explicitamente essa coexistência de mecanismos. \citet{meghir2015} desenvolvem um modelo de equilíbrio com fricções de busca, trabalhadores e firmas heterogêneos, disciplinado por microdados brasileiros. Formalidade e informalidade podem coexistir mesmo entre firmas em faixas semelhantes de produtividade, enquanto diferenças salariais resultam simultaneamente de produtividade, seleção, fricções e decisões das firmas. \citet{ulyssea2018} aprofunda essa abordagem distinguindo duas margens de informalidade: firmas que operam inteiramente de maneira informal e firmas formalmente registradas que empregam trabalhadores sem vínculo formal. Essa distinção rompe a equivalência entre “trabalhador informal” e “firma informal” e mostra que o segmento informal é internamente heterogêneo.
+Modelos posteriores incorporaram explicitamente essa coexistência de mecanismos. 
+\citet{meghir2015} desenvolvem um modelo de equilíbrio com fricções de busca, trabalhadores
+e firmas heterogêneos, disciplinado por microdados da Pesquisa Mensal de Emprego (PME). Formalidade e informalidade 
+podem coexistir mesmo entre firmas em faixas semelhantes de produtividade, enquanto diferenças 
+salariais resultam simultaneamente de produtividade, seleção, fricções e decisões das 
+firmas. \citet{ulyssea2018} aprofunda essa abordagem distinguindo duas margens de 
+informalidade: firmas que operam inteiramente de maneira informal e firmas formalmente 
+registradas que empregam trabalhadores sem vínculo formal. Essa distinção rompe a 
+equivalência entre “trabalhador informal” e “firma informal” e mostra que o segmento 
+informal é internamente heterogêneo.
 
-Um resultado de \citet{ulyssea2018} é particularmente relevante para estudos de diferenciais de rendimento. Utilizando a PNAD, uma especificação com controles individuais e setoriais produz diferencial formal–informal próximo de 29\%; quando são utilizados dados empregador–empregado e controladas diferenças entre firmas, esse diferencial é drasticamente reduzido. A literatura contemporânea, portanto, não fornece suporte para interpretar um único coeficiente de formalidade como medida de segmentação ou como retorno causal à formalização. Ela sugere uma decomposição conceitual entre composição dos trabalhadores, alocação entre firmas e ocupações, características institucionais e diferenças condicionais remanescentes. É essa interpretação que orienta, neste artigo, tanto a comparação entre amostras ampla e restrita quanto a introdução progressiva de controles por escolaridade, atividade e ocupação.
+Um resultado de \citet{ulyssea2018} é particularmente relevante para estudos de diferenciais 
+de rendimento. Utilizando a PNAD, uma especificação com controles individuais e setoriais 
+produz diferencial formal–informal próximo de 29\%. Quando são utilizados dados 
+empregador–empregado e controladas diferenças entre firmas, esse diferencial é drasticamente 
+reduzido. A literatura contemporânea, portanto, não fornece suporte para interpretar um 
+único coeficiente de formalidade como medida de segmentação ou como retorno causal à 
+formalização. Ela sugere uma decomposição conceitual entre composição dos trabalhadores, 
+alocação entre firmas e ocupações, características institucionais e diferenças condicionais 
+remanescentes. É essa interpretação que orienta, neste artigo, tanto a comparação entre 
+amostras ampla e restrita quanto a introdução progressiva de controles por escolaridade, 
+atividade e ocupação.
 
 \subsection{Gênero, raça e composição dos diferenciais de rendimento}
 
-A literatura sobre diferenciais de gênero e raça compartilha a preocupação em distinguir diferenças de características das diferenças de remuneração dessas características, mas os mecanismos de composição não necessariamente operam da mesma forma para os dois grupos. Na literatura de gênero, a expansão da participação feminina e da escolaridade produziu uma aparente aproximação entre homens e mulheres sem eliminar os diferenciais condicionais de rendimento. Utilizando PNAD e a decomposição de Oaxaca para 1981, 1988 e 1996, \citet{giuberti2005} mostram que as características observáveis das mulheres brasileiras, especialmente sua maior escolaridade, implicariam rendimentos superiores aos masculinos se fossem remuneradas segundo a estrutura dos homens. A diferença efetivamente observada surge porque os retornos a essas características são distintos entre os grupos.
+A literatura sobre diferenciais de gênero e raça compartilha a preocupação em distinguir 
+diferenças de características das diferenças de remuneração dessas características, mas os 
+mecanismos de composição não necessariamente operam da mesma forma para os dois grupos. Na 
+literatura de gênero, a expansão da participação feminina e da escolaridade produziu uma 
+aparente aproximação entre homens e mulheres sem eliminar os diferenciais condicionais de 
+rendimento. Utilizando PNAD e a decomposição de Oaxaca para 1981, 1988 e 1996, 
+\citet{giuberti2005} mostram que as características observáveis das mulheres brasileiras, 
+especialmente sua maior escolaridade, implicariam rendimentos superiores aos masculinos se 
+fossem remuneradas segundo a estrutura dos homens. A diferença efetivamente observada 
+surge porque os retornos a essas características são distintos entre os grupos.
 
-A evidência posterior reforçou tanto a redução histórica do gap quanto sua persistência. \citet{madalozzo2010} utiliza PNADs de 1978, 1988, 1998 e 2007, combina equações mincerianas com decomposição de Oaxaca e incorpora ocupação e atividade à especificação. O componente não explicado cai de aproximadamente 33\% em 1978 para cerca de 15\% em 2007 na especificação mais rica, mas não desaparece; simultaneamente, a autora documenta persistência de segregação ocupacional e diferenças de retornos entre homens e mulheres. A escolha metodológica é importante: controlar ocupação aproxima trabalhadores em postos semelhantes, mas pode também absorver uma dimensão da própria desigualdade se a distribuição entre ocupações fizer parte do mecanismo de interesse.
+A evidência posterior reforçou tanto a redução histórica do \textit{gap} quanto sua persistência. 
+\citet{madalozzo2010} utiliza PNADs de 1978, 1988, 1998 e 2007, combina equações mincerianas 
+com decomposição de Oaxaca e incorpora ocupação e atividade à especificação. O componente 
+não explicado cai de aproximadamente 33\% em 1978 para cerca de 15\% em 2007 na especificação 
+mais rica, mas não desaparece. Simultaneamente, a autora documenta persistência de segregação 
+ocupacional e diferenças de retornos entre homens e mulheres. A escolha metodológica é 
+importante, já que controlar ocupação aproxima trabalhadores em postos semelhantes, mas pode também 
+absorver uma dimensão da própria desigualdade se a distribuição entre ocupações fizer parte 
+do mecanismo de interesse.
 
-Trabalhos mais recentes procuram reduzir outros problemas de comparabilidade. \citet{morello2021}, utilizando PNADs de 1996 a 2015 e propensity-score matching, restringem a comparação à região de suporte comum entre homens e mulheres. Os autores encontram um componente desfavorável às mulheres persistentemente significativo, em torno de 13\%–20\% ao longo do período, com heterogeneidade relevante entre ocupações. A mudança de Oaxaca-Blinder para métodos de matching não elimina, portanto, a evidência de diferencial condicional, mas chama atenção para o fato de que homens e mulheres nem sempre são diretamente comparáveis em todas as combinações de características. \citet{castro2022} chegam a uma conclusão metodológica semelhante ao estudar o agronegócio brasileiro entre 2004 e 2015: utilizam equações mincerianas, correção de seleção de Heckman, decomposição Oaxaca-Blinder e métodos para diferentes pontos da distribuição de rendimentos, ilustrando como seleção para o mercado, composição e heterogeneidade distributiva podem exigir exercícios empíricos distintos.
+Trabalhos mais recentes procuram reduzir outros problemas de comparabilidade. 
+\citet{morello2021}, utilizando PNADs de 1996 a 2015 e \textit{propensity-score matching},
+restringem a comparação à região de suporte comum entre homens e mulheres. Os autores 
+encontram um componente desfavorável às mulheres persistentemente significativo, em torno 
+de 13\%–20\% ao longo do período, com heterogeneidade relevante entre ocupações. A mudança 
+de Oaxaca-Blinder para métodos de \textit{matching} não elimina, portanto, a evidência de diferencial
+condicional, mas chama atenção para o fato de que homens e mulheres nem sempre são diretamente 
+comparáveis em todas as combinações de características. \citet{castro2022} chegam a uma 
+conclusão metodológica semelhante ao estudar o agronegócio brasileiro entre 2004 e 2015. Os autores 
+utilizam equações mincerianas, correção de seleção de Heckman, decomposição Oaxaca-Blinder e 
+métodos para diferentes pontos da distribuição de rendimentos. Isso ajuda a ilustrar como seleção para 
+o mercado, composição e heterogeneidade distributiva podem exigir exercícios empíricos 
+distintos.
 
-A literatura racial brasileira parte de uma estrutura semelhante, mas identifica um papel muito maior das desigualdades acumuladas antes da comparação salarial. \citet{soares2000} separa diferenças de qualificação, inserção e remuneração e encontra que parcela importante da desvantagem de trabalhadores negros está associada às características com que eles chegam ao mercado de trabalho. \citet{campante2004} aprofundam esse argumento aplicando uma decomposição inspirada em Oaxaca-Blinder à PNAD de 1996 e comparando Nordeste e Sudeste. A inclusão de desigualdades educacionais persistentes reduz parcela do componente que poderia ser atribuído diretamente ao mercado de trabalho; ao mesmo tempo, permanece uma diferença condicional, com intensidade distinta entre regiões. Essa heterogeneidade regional é particularmente relevante para este estudo porque mostra que resultados nacionais podem ocultar estruturas muito diferentes entre mercados locais.
+A literatura racial brasileira parte de uma estrutura semelhante, mas identifica um papel 
+muito maior das desigualdades acumuladas antes da comparação salarial. \citet{soares2000} 
+separa diferenças de qualificação, inserção e remuneração e encontra que parcela importante 
+da desvantagem de trabalhadores negros está associada às características com que eles chegam 
+ao mercado de trabalho. \citet{campante2004} aprofundam esse argumento aplicando uma 
+decomposição inspirada em Oaxaca-Blinder à PNAD de 1996 e comparando Nordeste e Sudeste. 
+A inclusão de desigualdades educacionais persistentes reduz parcela do componente que poderia 
+ser atribuído diretamente ao mercado de trabalho, mas, ao mesmo tempo, permanece uma diferença 
+condicional, com intensidade distinta entre regiões. Essa heterogeneidade regional é 
+particularmente relevante para este estudo porque mostra que resultados nacionais podem 
+ocultar estruturas muito diferentes entre mercados locais.
 
-A literatura mais recente deslocou parte da atenção da composição individual para a alocação dos trabalhadores dentro do próprio mercado. Usando registros empregador–empregado, \citet{gerard2021} mostram que trabalhadores não brancos estão menos representados em estabelecimentos que pagam maiores prêmios salariais, de modo que o sorting entre firmas responde por parcela do diferencial racial. O resultado acrescenta uma margem que pesquisas domiciliares dificilmente conseguem observar: mesmo trabalhadores com escolaridade, ocupação e outras características semelhantes podem trabalhar em firmas sistematicamente diferentes. \citet{cardoso2025}, por sua vez, documentam segregação racial em níveis finos da estrutura ocupacional, mostrando que a desigualdade não se resume à concentração em grandes setores ou ocupações. Esses estudos modificam a interpretação do “resíduo” de uma equação salarial: ele pode incorporar discriminação, mas também alocação entre firmas, tarefas e posições não observadas.
+A literatura mais recente deslocou parte da atenção da composição individual para a alocação 
+dos trabalhadores dentro do próprio mercado. Usando registros empregador–empregado, 
+\citet{gerard2021} mostram que trabalhadores não brancos estão menos representados em 
+estabelecimentos que pagam maiores prêmios salariais, de modo que o \textit{sorting} entre firmas
+responde por parcela do diferencial racial. O resultado acrescenta uma margem que pesquisas 
+domiciliares dificilmente conseguem observar, que é o fato de que mesmo trabalhadores com escolaridade, ocupação 
+e outras características semelhantes podem trabalhar em firmas sistematicamente diferentes. 
+\citet{cardoso2025}, por sua vez, documentam segregação racial em níveis finos da estrutura 
+ocupacional, mostrando que a desigualdade não se resume à concentração em grandes setores ou 
+ocupações. Esses estudos modificam a interpretação do “resíduo” de uma equação salarial. Ele 
+pode incorporar discriminação, mas também alocação entre firmas, tarefas e posições não 
+observadas.
 
-Essa questão é ainda mais sensível para a população indígena. A evidência latino-americana mostra que diferenças de educação, localização e inserção ocupacional respondem por parcela relevante dos gaps étnicos, mas não necessariamente por sua totalidade \citep{canelas2014, canedo2019}. A interação com gênero também não deve ser tratada como mera soma de dois coeficientes. Para o Peru, \citet{kolev2015} encontram uma desvantagem particularmente intensa para mulheres indígenas, o que motiva investigar explicitamente como as duas dimensões se combinam. A literatura brasileira ainda é limitada nesse aspecto e, quando indígenas são agrupados com pretos e pardos, perde-se precisamente a heterogeneidade que interessa a estados como Roraima. \citet{marques2024}, por exemplo, encontram forte desvantagem do conjunto preto-pardo-indígena entre 2002 e 2015, mas sua agregação PPI não permite identificar se o padrão indígena acompanha o de pretos e pardos.
+Essa questão é ainda mais sensível para a população indígena. A evidência latino-americana 
+mostra que diferenças de educação, localização e inserção ocupacional respondem por parcela 
+relevante dos \textit{gaps} étnicos, mas não necessariamente por sua totalidade 
+\citep{canelas2014, canedo2019}. A interação com gênero também não deve ser tratada como 
+mera soma de dois coeficientes. Estudando o caso do Peru, \citet{kolev2015} encontram uma desvantagem 
+particularmente intensa para mulheres indígenas, o que motiva investigar explicitamente 
+como as duas dimensões se combinam. A literatura brasileira ainda é limitada nesse aspecto 
+e, quando indígenas são agrupados com pretos e pardos, perde-se precisamente a heterogeneidade 
+que interessa a estados como Roraima. \citet{marques2024}, por exemplo, encontram forte 
+desvantagem do conjunto preto-pardo-indígena entre 2002 e 2015, mas sua agregação PPI não 
+permite identificar se o padrão indígena acompanha o de pretos e pardos.
 
-Em conjunto, essa literatura conduz a uma questão central para os resultados deste artigo: a composição observável deve reduzir os gaps de gênero e raça na mesma direção? A evidência anterior sugere que não. A escolaridade relativamente elevada das mulheres pode mascarar uma desvantagem condicional, enquanto a desigualdade educacional racial tende a ampliar o diferencial bruto. Essa diferença motiva diretamente os exercícios sequenciais de inclusão de controles utilizados posteriormente.
+Em conjunto, essa literatura conduz a uma questão central para os resultados deste artigo: a 
+composição observável deve reduzir os \textit{gaps} de gênero e raça na mesma direção? A evidência 
+anterior sugere que não. A escolaridade relativamente elevada das mulheres pode mascarar 
+uma desvantagem condicional, enquanto a desigualdade educacional racial tende a ampliar 
+o diferencial bruto. Essa diferença motiva diretamente os exercícios sequenciais de inclusão 
+de controles utilizados posteriormente.
 
 \subsection{Estrutura regional e setor público}
 
-Uma terceira vertente necessária para compreender o mercado de trabalho de Roraima diz respeito ao setor público. A literatura brasileira mostra que o diferencial público–privado é elevado em comparações brutas, mas grande parte dele está associada à composição dos trabalhadores e varia intensamente entre regiões e níveis governamentais. \citet{foguel2000}, utilizando a PNAD de 1995, já mostravam que servidores públicos possuem, em média, escolaridade, idade e outras características associadas a maiores rendimentos, e que a magnitude do diferencial muda entre União, estados e municípios. \citet{moriconi2009}, analisando as PNADs de 1995 a 2004 para os estados brasileiros, reforçam a dimensão regional dessa heterogeneidade e identificam Roraima entre os casos de maiores diferenciais público–privado do país.
+Uma terceira vertente necessária para compreender o mercado de trabalho de Roraima diz 
+respeito ao setor público. A literatura brasileira mostra que o diferencial público–privado 
+é elevado em comparações brutas, mas grande parte dele está associada à composição dos 
+trabalhadores e varia intensamente entre regiões e níveis governamentais. \citet{foguel2000}, 
+utilizando a PNAD de 1995, já mostravam que servidores públicos possuem, em média, 
+escolaridade, idade e outras características associadas a maiores rendimentos, e que a 
+magnitude do diferencial muda entre União, estados e municípios. \citet{moriconi2009}, 
+analisando as PNADs de 1995 a 2004 para os estados brasileiros, reforçam a dimensão regional 
+dessa heterogeneidade e identificam Roraima entre os casos de maiores diferenciais 
+público–privado do país.
 
-Dados e métodos mais recentes reforçam a importância da seleção. \citet{mattos2022} exploram a estrutura em painel da PNAD Contínua entre 2016 e 2019. O diferencial transversal público–privado supera 60\%, mas a maior parte é associada a características observáveis e efeitos individuais; quando a heterogeneidade individual é controlada, o componente residual é consideravelmente menor. \citet{baez2021}, utilizando PNAD Contínua de 2017 a 2019 e distinguindo níveis de governo, mostram adicionalmente que falar em “setor público” como categoria única encobre diferenças muito grandes: para o Brasil, os diferenciais estimados são muito superiores no governo federal, menores nos estados e próximos de zero ou negativos em algumas comparações municipais. A implicação para uma pesquisa com PNAD Contínua é direta: mesmo após identificar um diferencial associado ao emprego público, parte da heterogeneidade interna de carreiras, órgãos e níveis governamentais continua não observada. 
+Dados e métodos mais recentes reforçam a importância da seleção. \citet{mattos2022} exploram 
+a estrutura em painel da PNAD Contínua entre 2016 e 2019. O diferencial transversal 
+público–privado supera 60\%, mas a maior parte é associada a características observáveis e 
+efeitos individuais. Quando a heterogeneidade individual é controlada, o componente residual 
+é consideravelmente menor. \citet{baez2021}, utilizando PNAD Contínua de 2017 a 2019 e 
+distinguindo níveis de governo, mostram adicionalmente que falar em “setor público” como 
+categoria única encobre diferenças muito grandes. Para o Brasil, os diferenciais estimados 
+são muito superiores no governo federal, menores nos estados e próximos de zero ou negativos 
+em algumas comparações municipais. A implicação para uma pesquisa com PNAD Contínua é 
+direta. Mesmo após identificar um diferencial associado ao emprego público, parte da 
+heterogeneidade interna de carreiras, órgãos e níveis governamentais continua não observada. 
 
-O período recente de Roraima acrescenta ainda uma transformação demográfica singular. \citet{ryu2022}, utilizando PNAD Contínua, controle sintético e estratégias de diferenças-em-diferenças/event study, tratam Roraima como unidade exposta ao fluxo venezuelano e encontram redução da participação e do emprego agregados, sem efeito estatisticamente significativo sobre o rendimento por hora; os impactos variam por escolaridade, gênero e posição ocupacional. \citet{santanna2024} estudam outra margem do mesmo choque: com a RAIS identificada, que permite distinguir trabalhadores brasileiros e venezuelanos no mercado formal, encontram pequeno aumento dos salários formais dos brasileiros em Roraima, praticamente nenhum deslocamento de emprego e evidências de realocação ocupacional. Os resultados não são necessariamente contraditórios, pois as bases observam populações e segmentos diferentes. Para o presente artigo, esses estudos são sobretudo evidência de que o mercado roraimense passou, dentro da janela 2016–2025, por mudanças capazes de afetar de forma heterogênea sua composição.
+O período recente de Roraima acrescenta ainda uma transformação demográfica singular. 
+\citet{ryu2022}, utilizando PNAD Contínua, controle sintético e estratégias de 
+diferenças-em-diferenças, tratam Roraima como unidade exposta ao fluxo venezuelano 
+e encontram redução da participação e do emprego agregados, sem efeito estatisticamente 
+significativo sobre o rendimento por hora, mostrando que os impactos variam por escolaridade, gênero e 
+posição ocupacional. \citet{santanna2024} estudam outra margem do mesmo choque, usando a RAIS 
+identificada, que permite distinguir trabalhadores brasileiros e venezuelanos no mercado 
+formal. Os autores encontram pequeno aumento dos salários formais dos brasileiros em Roraima, 
+praticamente nenhum deslocamento de emprego e evidências de realocação ocupacional. Os 
+resultados não são necessariamente contraditórios, pois as bases observam populações e 
+segmentos diferentes. Para o presente artigo, esses estudos são sobretudo evidência de 
+que o mercado roraimense passou, dentro da janela 2016–2025, por mudanças capazes de afetar 
+de forma heterogênea sua composição.
 
-A literatura conduz, assim, a duas implicações para a análise posterior. Primeiro, a elevada remuneração média do setor público em Roraima não deve ser interpretada isoladamente como um “prêmio” institucional: seleção dos trabalhadores, nível de governo, carreira e composição ocupacional são potenciais componentes do diferencial. Segundo, um mercado estadual no qual o emprego público possui peso elevado pode apresentar uma estrutura de desigualdade distinta da obtida em estimativas nacionais. Essa possibilidade é particularmente importante quando formalidade e raça são examinadas conjuntamente, pois diferenças raciais dentro do segmento formal podem refletir não apenas o acesso à carteira ou ao estatuto, mas também a alocação entre diferentes posições do setor público.
+A literatura conduz, assim, a duas implicações para a análise posterior. Primeiro, a 
+elevada remuneração média do setor público em Roraima não deve ser interpretada isoladamente 
+como um “prêmio” institucional, já que a seleção dos trabalhadores, o nível de governo, a carreira e 
+a composição ocupacional são potenciais componentes do diferencial. Segundo, um mercado estadual 
+no qual o emprego público possui peso elevado pode apresentar uma estrutura de desigualdade 
+distinta da obtida em estimativas nacionais. Essa possibilidade é particularmente importante 
+quando formalidade e raça são examinadas conjuntamente, pois diferenças raciais dentro do 
+segmento formal podem refletir não apenas o acesso à carteira ou ao estatuto, mas também a 
+alocação entre diferentes posições do setor público.
 
-Em síntese, as três vertentes convergem para uma interpretação comum. Os diferenciais de rendimento observados no mercado de trabalho não decorrem de uma única margem: características dos trabalhadores, seleção para diferentes formas de inserção, alocação entre ocupações, firmas e instituições e diferenças de remuneração dentro dessas posições atuam simultaneamente. A literatura também indica que esses mecanismos não são necessariamente iguais para gênero e raça e que sua importância pode variar conforme a estrutura regional. É a partir dessa perspectiva que o artigo utiliza especificações progressivamente condicionadas, compara amostras ampla e restrita, distingue rendimento mensal e horário e examina separadamente escolaridade, setor público e interações entre formalidade, gênero e raça/cor.
+Em síntese, as três vertentes convergem para uma interpretação comum. Os diferenciais de 
+rendimento observados no mercado de trabalho não decorrem de uma única margem. Características 
+dos trabalhadores, seleção para diferentes formas de inserção, alocação entre ocupações, 
+firmas e instituições e diferenças de remuneração dentro dessas posições atuam simultaneamente. 
+A literatura também indica que esses mecanismos não são necessariamente iguais para gênero 
+e raça e que sua importância pode variar conforme a estrutura regional. É a partir dessa 
+perspectiva que o artigo utiliza especificações progressivamente condicionadas, compara 
+amostras ampla e restrita, distingue rendimento mensal e horário e examina separadamente 
+escolaridade, setor público e interações entre formalidade, gênero e raça/cor.
 
 \section{Metodologia}
 \label{sec:metodologia}
-% TODO: PNAD Contínua, amostra ampla vs. restrita, definição de
-% formalidade/raça (ver docs/definicao_formalidade.md e docs/definicao_raca.md),
-% especificação M4, desenho survey bootstrap (200 réplicas),
-% referências metodológicas (Lumley 2004; Rao & Wu 1988; Gelbach 2016;
-% Brambor, Clark & Golder 2006).
 
 \subsection{Dados}
 \label{subsec:dados}
@@ -185,7 +446,8 @@ selecionados. Restringe-se a análise às pessoas com 14 anos ou mais
 classificadas como ocupadas na semana de referência e, nas equações de
 rendimento, às observações com rendimento positivo e válido no trabalho
 principal. A amostra principal, denominada \textit{ampla}, reúne todos os
-ocupados para os quais é possível definir a condição de formalidade (sendo os demais classificados pela condição de informalidade). Uma segunda
+ocupados para os quais é possível definir a condição de formalidade (sendo 
+os demais classificados pela condição de informalidade). Uma segunda
 amostra, denominada \textit{restrita}, inclui apenas empregados privados,
 trabalhadores domésticos, empregados públicos e militares ou servidores
 estatutários, excluindo empregadores, trabalhadores por conta própria e
@@ -231,18 +493,18 @@ observações. A idade entra em nível e ao quadrado, enquanto a escolaridade é
 representada por categorias de nível de instrução. Para controlar a inserção
 produtiva, utilizam-se os grandes grupos de ocupação e atividade econômica da
 PNAD Contínua. Na especificação base, essas duas dimensões são combinadas
-em células ocupação$\times$atividade, células com menos de 30 observações são
+em células ocupação$\times$atividade. Células com menos de 30 observações foram
 agrupadas em uma categoria residual, definida na amostra original e mantida
 fixa em todas as réplicas.
 
 Todas as estatísticas e estimações incorporam o desenho amostral complexo da
 PNAD Contínua. Como pesos amostrais e estrutura do plano de amostragem devem ser
 considerados também na estimação da variância
-\citep{lumley2004analysis,lumley2010complex}, utiliza-se o peso principal e os
-200 pesos de replicação bootstrap disponibilizados pelo IBGE. O desenho é
+\citep{lumley2004analysis,lumley2010complex}, utiliza-se o peso principal e os 
+pesos de replicação bootstrap disponibilizados pelo IBGE. O desenho é
 implementado no pacote \texttt{survey} do R como um
 \textit{replicate-weight design}, e as variâncias de coeficientes, contrastes e
-efeitos marginais são obtidas a partir das mesmas 200 réplicas.
+efeitos marginais são obtidas a partir dessas réplicas bootstrap.
 
 \subsection{Estratégia empírica}
 \label{subsec:estrategia}
@@ -315,7 +577,7 @@ M4 &: \quad \mathbf{Z}_{it}+\mathbf{X}_{it}
 
 \noindent
 A comparação entre essas especificações constitui um exercício de
-\textit{accounting}, onde acompanha-se como os diferenciais se modificam à medida
+\textit{accounting}, no qual se acompanha como os diferenciais se modificam à medida
 que dimensões adicionais de composição são incorporadas ao modelo. A estratégia
 não corresponde a uma decomposição causal ou Oaxaca--Blinder\footnote{O exercício de \textit{accounting} é preferido porque permite acompanhar diretamente como blocos específicos de controles alteram os diferenciais estimados, sem impor a decomposição entre componentes ``explicado'' e ``não explicado'' característica de Oaxaca--Blinder.}, mas permite
 avaliar a sensibilidade dos diferenciais à composição observável
@@ -376,7 +638,7 @@ ocupação$\times$atividade. O modelo é estimado separadamente nas amostras amp
 e restrita e com o mesmo desenho amostral das equações salariais. Como os
 coeficientes do logit não possuem interpretação direta em pontos percentuais,
 reportam-se efeitos marginais médios, calculados como mudanças discretas nas
-probabilidades previstas e recomputados em cada uma das 200 réplicas bootstrap
+probabilidades previstas e recomputados em cada uma das réplicas bootstrap
 \citep{hanmer2013behind}. Esses resultados também são interpretados de maneira
 associacional.
 
@@ -473,7 +735,7 @@ retorno causal da formalização.
     distribuição observada de gênero e raça/cor. Barras representam intervalos
     de confiança de 95\%. A amostra ampla inclui todos os ocupados com condição
     de formalidade definida; a amostra restrita inclui apenas relações de
-    emprego. Estimações incorporam o desenho amostral da PNAD Contínua e as 200
+    emprego. Estimações incorporam o desenho amostral da PNAD Contínua e das
     réplicas bootstrap oficiais do IBGE.
     \end{minipage}
 \end{figure}
@@ -516,7 +778,7 @@ economicamente relevantes.
     logit de acesso à formalidade. As categorias de referência são homem e
     branco. Barras representam intervalos de confiança de 95\%. O modelo inclui
     idade, idade ao quadrado, escolaridade, efeitos fixos de período e células
-    ocupação$\times$atividade. Variâncias calculadas com as 200 réplicas
+    ocupação$\times$atividade. Variâncias calculadas com as réplicas
     bootstrap oficiais da PNAD Contínua.
     \end{minipage}
 \end{figure}
@@ -549,7 +811,7 @@ obtido na especificação base. Como mostra o painel (a) da
 Figura~\ref{fig:gaps_genero_raca}, entre trabalhadores informais as mulheres
 apresentam rendimento por hora aproximadamente 14,6\% inferior ao dos homens
 observacionalmente comparáveis. Entre trabalhadores formais, o diferencial é
-de aproximadamente 15,0\%. A diferença entre os dois gaps é de apenas cerca de
+de aproximadamente 15,0\%. A diferença entre os dois \textit{gaps} é de apenas cerca de
 meio ponto percentual e não é estatisticamente significativa ($p=0,775$).
 Dentro da precisão permitida pelos dados, portanto, não há evidência de que a
 formalidade esteja associada à redução do diferencial de gênero no rendimento
@@ -580,8 +842,8 @@ apresentada na metodologia.
 
 % ------------------------------------------------------------------
 % INSERIR FIGURA 3 AQUI
-% Figura 3, painel A: gap de gênero entre informais e formais.
-% Figura 3, painel B: gaps raciais entre informais e formais.
+% Figura 3, painel A: \textit{gap} de gênero entre informais e formais.
+% Figura 3, painel B: \textit{gaps} raciais entre informais e formais.
 % ------------------------------------------------------------------
 
 \begin{figure}[htbp]
@@ -615,7 +877,7 @@ aproximadamente $-30\%$ para pretos, $-27\%$ para pardos e $-40\%$ para
 indígenas. Diferentemente do caso das mulheres, portanto, a desigualdade já é
 expressiva na comparação não condicionada.
 
-Após a inclusão dos controles da especificação preferida, os gaps diminuem
+Após a inclusão dos controles da especificação preferida, os \textit{gaps} diminuem
 consideravelmente, mas permanecem negativos. O painel (b) da
 Figura~\ref{fig:gaps_genero_raca} mostra que, entre trabalhadores informais,
 os contrastes médios são de aproximadamente $-7,6\%$ para pretos, $-7,6\%$
@@ -623,15 +885,15 @@ para pardos e $-8,5\%$ para indígenas em relação aos brancos. Entre formais,
 os diferenciais são de aproximadamente $-13,6\%$, $-11,4\%$ e $-18,9\%$,
 respectivamente. A Figura~\ref{fig:gaps_genero_raca} evidencia, portanto, que
 a formalidade não está associada a uma convergência generalizada dos
-rendimentos raciais; para indígenas, em particular, a distância em relação
+rendimentos raciais. Para indígenas, em particular, a distância em relação
 aos brancos é substancialmente maior no segmento formal.
 
-A diferença entre os gaps formal e informal é de aproximadamente $-6,5\%$
+A diferença entre os \textit{gaps} formal e informal é de aproximadamente $-6,5\%$
 para pretos ($p=0,071$), $-4,1\%$ para pardos ($p=0,152$) e $-11,3\%$ para
 indígenas ($p=0,010$). Há evidência estatisticamente mais clara, portanto, de
 ampliação do diferencial indígena no segmento formal. Para pretos, a diferença
-é estimada com menor precisão e alcança apenas significância ao nível de 10\%;
-para pardos, não se rejeita igualdade entre os gaps nos dois segmentos.
+é estimada com menor precisão e alcança apenas significância ao nível de 10\%. Já 
+para pardos, não se rejeita igualdade entre os \textit{gaps} nos dois segmentos.
 
 A forte redução entre os diferenciais brutos e condicionais indica que a
 composição observável está associada a parcela importante da desigualdade
@@ -644,10 +906,10 @@ mostra que a composição individual observada não esgota o diferencial racial.
 Os resultados também dialogam com \citet{gerard2021}, que mostram que
 desigualdades podem persistir dentro do próprio segmento formal por meio da
 alocação não aleatória de trabalhadores entre firmas e posições com estruturas
-remuneratórias distintas. Assim, o maior gap observado entre formais não deve
+remuneratórias distintas. Assim, o maior \textit{gap} observado entre formais não deve
 ser interpretado automaticamente como uma característica da formalidade em si.
 No caso de Roraima, a Seção~\ref{sec:mecanismos} investiga uma dimensão
-institucional particularmente relevante para essa comparação: a elevada
+institucional particularmente relevante para essa comparação,  que é a elevada
 presença do setor público.
 
 A separação da categoria indígena acrescenta uma dimensão importante à
@@ -662,7 +924,7 @@ Robles, 2015).
 Em conjunto, os resultados de gênero e raça/cor revelam movimentos
 composicionais opostos. Para gênero, um diferencial bruto pequeno e ligeiramente
 favorável às mulheres transforma-se em uma desvantagem condicional próxima de
-15\%. Para raça/cor, gaps brutos muito elevados diminuem substancialmente após
+15\%. Para raça/cor, \textit{gaps} brutos muito elevados diminuem substancialmente após
 o condicionamento, embora permaneçam negativos. A
 Seção~\ref{sec:mecanismos} examina diretamente essa assimetria e mostra quais
 blocos de características observáveis estão associados às mudanças dos
@@ -676,7 +938,7 @@ Os resultados da seção anterior mostraram dois padrões que exigem explicaçã
 adicional. Primeiro, o pequeno diferencial bruto de rendimento por hora entre
 mulheres e homens transforma-se em uma desvantagem condicional próxima de
 15\%, enquanto os diferenciais raciais seguem trajetória oposta e diminuem
-substancialmente após a inclusão de controles. Segundo, os gaps raciais são
+substancialmente após a inclusão de controles. Segundo, os \textit{gaps} raciais são
 maiores entre trabalhadores formais, sobretudo para indígenas. Esta seção
 investiga quais dimensões observáveis estão associadas a esses movimentos,
 sem atribuir interpretação causal aos exercícios.
@@ -688,7 +950,7 @@ A Figura~\ref{fig:accounting_genero_raca} apresenta os exercícios sequenciais d
 \textit{accounting} para gênero e raça/cor. No painel (a), o diferencial bruto
 de rendimento por hora entre mulheres e homens é pequeno, cerca de 3,3\% a
 favor das mulheres. A inclusão apenas de idade e idade ao quadrado praticamente
-não altera esse resultado. A mudança ocorre com a escolaridade: após sua
+não altera esse resultado. A mudança ocorre com a escolaridade, já que após sua
 inclusão, o diferencial passa para aproximadamente $-16,4\%$ e permanece
 próximo desse patamar quando são acrescentados controles por atividade,
 ocupação$\times$atividade e setor público.
@@ -699,7 +961,7 @@ mercado de trabalho roraimense com características educacionais relativamente
 favoráveis. Quando trabalhadores com níveis de escolaridade semelhantes são
 comparados, emerge uma diferença salarial substancial. O padrão é coerente com
 \citet{giuberti2005}, que mostram que a maior escolaridade feminina
-pode reduzir o gap observado sem eliminar diferenças condicionais de
+pode reduzir o \textit{gap} observado sem eliminar diferenças condicionais de
 remuneração, e com a persistência do diferencial documentada por
 \citet{madalozzo2010} e \citet{morello2021}.
 
@@ -713,7 +975,7 @@ público produzem alterações comparativamente menores.
 
 % ------------------------------------------------------------------
 % INSERIR FIGURA 4 AQUI
-% Figura 4: Accounting sequencial dos gaps de gênero e raça/cor.
+% Figura 4: Accounting sequencial dos \textit{gaps} de gênero e raça/cor.
 % ------------------------------------------------------------------
 
 \begin{figure}[htbp]
@@ -729,20 +991,20 @@ público produzem alterações comparativamente menores.
     rendimento real por hora à medida que blocos de controles são incorporados
     sequencialmente. O painel (b) apresenta os diferenciais de pretos, pardos e
     indígenas em relação aos brancos segundo a mesma lógica. Estimações para a
-    amostra ampla, incorporando o desenho amostral e as 200 réplicas bootstrap
+    amostra ampla, incorporando o desenho amostral e as réplicas bootstrap
     oficiais da PNAD Contínua. Valores percentuais calculados por
     $100[\exp(\widehat{\beta})-1]$.
     \end{minipage}
 \end{figure}
 
 A comparação entre os dois painéis constitui uma das principais evidências do
-artigo. A escolaridade opera em sentidos opostos na formação dos gaps
-observados, por um lado, a vantagem educacional feminina oculta parte da desvantagem
-condicional das mulheres, por outro, a desvantagem educacional racial amplia os
+artigo. A escolaridade opera em sentidos opostos na formação dos \textit{gaps}
+observados. Por um lado, a vantagem educacional feminina oculta parte da desvantagem
+condicional das mulheres. Por outro, a desvantagem educacional racial amplia os
 diferenciais brutos de pretos, pardos e indígenas. Esse último resultado
 dialoga diretamente com \citet{soares2000} e \citet{campante2004}, que atribuem
 papel central às desigualdades de qualificação acumuladas antes da comparação
-salarial. Ao mesmo tempo, a permanência de gaps após esses controles mostra que
+salarial. Ao mesmo tempo, a permanência de \textit{gaps} após esses controles mostra que
 a desigualdade racial não se esgota nessa margem.
 
 A diferença entre rendimento mensal e horário acrescenta uma segunda dimensão.
@@ -750,10 +1012,10 @@ A decomposição exata apresentada na metodologia mostra que cerca de 54\% do
 diferencial mensal associado ao gênero, na escala logarítmica, decorre de
 diferenças na jornada. Mulheres trabalham, condicionalmente, cerca de 16,7\%
 menos horas semanais do que homens comparáveis. Para raça/cor, a composição é
-distinta, aproximadamente 73\%--77\% dos diferenciais mensais estão associados
+distinta. Aproximadamente 73\%--77\% dos diferenciais mensais estão associados
 ao componente de remuneração por hora e apenas 23\%--27\% à jornada.
 
-Assim, gênero e raça não diferem apenas quanto ao papel da escolaridade. O gap
+Assim, gênero e raça não diferem apenas quanto ao papel da escolaridade. O \textit{gap}
 mensal feminino é fortemente influenciado pela margem de horas trabalhadas,
 enquanto os diferenciais raciais são predominantemente diferenças de
 remuneração horária. Essa distinção reforça a cautela em utilizar rendimento
@@ -782,7 +1044,7 @@ carreiras e níveis de governo \citep{foguel2000, moriconi2009,
 mattos2022, baez2021}.
 
 A especificação por posição na ocupação reforça essa heterogeneidade. Em
-comparação ao empregado privado sem carteira, militares e estatutários e
+comparação ao empregado privado sem carteira, os militares/estatutários e os
 empregadores apresentam os maiores diferenciais condicionais de rendimento por
 hora, próximos de 92\% e 90\%, respectivamente. Empregados públicos com e sem
 carteira também apresentam diferenciais positivos, enquanto trabalhadores
@@ -791,19 +1053,19 @@ formal--informal agrega posições com estruturas remuneratórias bastante
 distintas.
 
 Mais importante para o argumento racial, a Figura~\ref{fig:raca_setor_publico}
-mostra que a ampliação dos gaps observada entre trabalhadores formais está
+mostra que a ampliação dos \textit{gaps} observada entre trabalhadores formais está
 fortemente concentrada no setor público. Entre formais do setor privado ou
 doméstico, os diferenciais em relação aos brancos são aproximadamente $-3,4\%$
 para pretos, $-4,7\%$ para pardos e $-8,0\%$ para indígenas. No setor público,
 os mesmos diferenciais alcançam cerca de $-21,2\%$, $-17,0\%$ e $-26,8\%$,
-respectivamente. A diferença público--privado no gap é estatisticamente
+respectivamente. A diferença público--privado no \textit{gap} é estatisticamente
 significativa para os três grupos e particularmente elevada para indígenas.
 
 % ------------------------------------------------------------------
 % INSERIR FIGURA 5 AQUI
 % Figura 5:
 % painel (a) estrutura salarial por posição na ocupação;
-% painel (b) gaps raciais entre trabalhadores formais,
+% painel (b) \textit{gaps} raciais entre trabalhadores formais,
 %           setor privado/doméstico versus setor público.
 % ------------------------------------------------------------------
 
@@ -822,12 +1084,12 @@ significativa para os três grupos e particularmente elevada para indígenas.
     formais, os diferenciais de pretos, pardos e indígenas em relação aos
     brancos nos setores privado/doméstico e público. Barras representam
     intervalos de confiança de 95\%. Estimações incorporam o desenho amostral
-    da PNAD Contínua e as 200 réplicas bootstrap oficiais.
+    da PNAD Contínua e as réplicas bootstrap oficiais.
     \end{minipage}
 \end{figure}
 
 Esse resultado modifica a interpretação da Figura~\ref{fig:gaps_genero_raca}.
-O maior gap racial observado entre formais não parece constituir uma
+O maior \textit{gap} racial observado entre formais não parece constituir uma
 característica homogênea da formalidade. Ele está fortemente associado à
 composição institucional do segmento formal em Roraima, especialmente ao setor
 público. A evidência é compatível com \citet{gerard2021}, no sentido de que
@@ -856,8 +1118,8 @@ diferenciais de gênero e pertencimento indígena implicaria diferença próxima
 de 28,2\%. A interação mulher$\times$indígena corresponde a aproximadamente
 $+12,3\%$ e é estatisticamente significativa ($p=0,004$).
 
-O resultado não indica ausência de desvantagem para mulheres indígenas,
-elas continuam em posição relativa desfavorável. O que se rejeita é a hipótese
+O resultado não indica ausência de desvantagem para mulheres indígenas. Elas 
+continuam em posição relativa desfavorável. O que se rejeita é a hipótese
 de que os diferenciais de gênero e pertencimento indígena simplesmente se
 somem na escala logarítmica. Esse padrão difere da evidência de desvantagem
 interseccional particularmente intensa encontrada por \citet{kolev2015}
@@ -867,7 +1129,6 @@ descreve heterogeneidade condicional e não identifica um mecanismo causal.
 
 \section{Robustez}
 \label{sec:robustez}
-% TODO: resumo + Tabela 10 (robustez temporal resumida); detalhe completo no apêndice
 
 Os resultados principais utilizam apenas os quartos trimestres de 2016 a 2025,
 opção que busca preservar a comparabilidade sazonal entre os cortes e reduzir
@@ -882,7 +1143,7 @@ pandemia.
 
 A Tabela~\ref{tab:robustez_temporal} apresenta os principais coeficientes da
 parametrização de referência. Como o modelo contém interações, esses
-coeficientes devem ser lidos em relação às categorias de referência: o
+coeficientes devem ser lidos em relação às categorias de referência. O
 coeficiente de formalidade corresponde ao diferencial entre trabalhadores
 formais e informais para homens brancos, o coeficiente de mulher corresponde
 ao diferencial mulher--homem entre trabalhadores informais brancos e os
@@ -979,12 +1240,12 @@ Indígena
 &(0,042) \\
 
 \midrule
-Réplicas descartadas
-& 0/200
-& 0/200
-& 0/200
-& 0/200
-& 0/200 \\
+N
+& 23.938
+& 95.198
+& 10.267
+& 9.922
+& 20.189 \\
 \bottomrule
 \end{tabular}
 
@@ -998,7 +1259,7 @@ incluem idade, idade ao quadrado, escolaridade e células
 ocupação$\times$atividade. A especificação principal inclui efeitos fixos de
 período; a estimação com todos os trimestres utiliza efeitos fixos de
 ano$\times$trimestre. Erros-padrão e inferência incorporam o peso amostral e
-os 200 pesos de replicação bootstrap oficiais da PNAD Contínua.
+os pesos de replicação bootstrap oficiais da PNAD Contínua.
 $^{***}p<0,01$, $^{**}p<0,05$, $^{*}p<0,10$.
 \end{minipage}
 \end{table}
@@ -1007,7 +1268,7 @@ A comparação entre as duas primeiras colunas mostra que a ampliação da base
 para todos os trimestres produz alterações relativamente pequenas nos
 coeficientes. O parâmetro de formalidade passa de 0,295 para 0,267, enquanto
 o coeficiente associado às mulheres varia de $-0,194$ para $-0,184$. Entre os
-coeficientes raciais, as mudanças também são moderadas: preto passa de
+coeficientes raciais, as mudanças também são moderadas. O coeficiente de preto passa de
 $-0,101$ para $-0,103$, pardo de $-0,096$ para $-0,077$ e indígena de
 $-0,137$ para $-0,132$. Assim, a utilização exclusiva dos quartos trimestres
 não parece produzir a direção ou a ordem de magnitude dos principais
@@ -1048,7 +1309,7 @@ Em conjunto, os exercícios indicam que os principais resultados não dependem
 do uso exclusivo dos quartos trimestres nem parecem ser produzidos pelos anos
 da pandemia. As magnitudes variam entre recortes, como esperado em um mercado
 de pequena escala e com algumas células amostrais reduzidas, mas a estrutura
-central dos achados permanece, a formalidade está associada a maior rendimento,
+central dos achados permanece. A formalidade está associada a maior rendimento,
 o diferencial feminino permanece negativo após condicionamento e os
 diferenciais raciais persistem, ainda que com maior imprecisão para alguns
 grupos. Esses resultados reforçam a estabilidade descritiva das associações
@@ -1077,7 +1338,7 @@ principal dimensão associada a essa mudança. O resultado aproxima o caso
 roraimense da evidência de \citet{giuberti2005}, segundo a qual
 características educacionais relativamente favoráveis às mulheres podem
 mascarar parte do diferencial condicional de gênero. Para raça/cor, ocorre o
-movimento oposto: os elevados gaps brutos de pretos, pardos e indígenas caem
+movimento oposto. Os elevados \textit{gaps} brutos de pretos, pardos e indígenas caem
 substancialmente após o controle pela escolaridade. Nesse sentido, os resultados
 dialogam com \citet{soares2000} e \citet{campante2004}, ao indicar que desigualdades
 acumuladas antes da comparação salarial respondem por parcela importante da
@@ -1086,7 +1347,7 @@ desvantagem racial observada.
 Essas diferenças de composição não eliminam, contudo, os diferenciais dentro
 do mercado de trabalho. Mulheres permanecem com rendimento por hora inferior
 ao dos homens tanto entre formais quanto entre informais, e a formalidade não
-está associada a uma convergência relevante desse gap. Para raça/cor, a
+está associada a uma convergência relevante desse \textit{gap}. Para raça/cor, a
 heterogeneidade é ainda mais pronunciada, já que os diferenciais condicionais
 permanecem negativos e tornam-se maiores dentro do segmento formal,
 especialmente para indígenas. Esse resultado reforça a interpretação sugerida
@@ -1095,7 +1356,7 @@ segmentos, mas também por meio da alocação dos trabalhadores dentro do própr
 mercado formal.
 
 No caso de Roraima, a centralidade do setor público é fundamental para
-compreender esse resultado. A maior magnitude dos gaps raciais entre
+compreender esse resultado. A maior magnitude dos \textit{gaps} raciais entre
 trabalhadores formais está fortemente concentrada no emprego público, enquanto
 os diferenciais são consideravelmente menores entre formais do setor
 privado/doméstico. Essa evidência acrescenta uma dimensão regional à literatura
@@ -1109,19 +1370,19 @@ também pode ser relevante para a estrutura das desigualdades raciais.
 
 A separação da categoria indígena constitui outra contribuição do estudo.
 Indígenas apresentam os maiores diferenciais brutos e condicionais entre os
-grupos raciais analisados e também a maior ampliação do gap dentro do segmento
+grupos raciais analisados e também a maior ampliação do \textit{gap} dentro do segmento
 formal. Ao mesmo tempo, o resultado para mulheres indígenas mostra que gênero e
 pertencimento indígena não se acumulam de forma simplesmente aditiva. Esse
 padrão difere da desvantagem interseccional particularmente intensa encontrada
 por \citet{kolev2015} para o Peru, sem implicar ausência de
-desvantagem: mulheres indígenas continuam apresentando rendimento inferior ao
+desvantagem, já que mulheres indígenas continuam apresentando rendimento inferior ao
 de homens brancos observacionalmente comparáveis. A evidência reforça, portanto,
 a importância de evitar agregações raciais amplas que eliminem precisamente a
 heterogeneidade relevante para mercados como o de Roraima.
 
 Os resultados também mostram que diferentes medidas de rendimento capturam
 margens distintas da desigualdade. A jornada responde por parcela importante
-do diferencial mensal de gênero, enquanto os gaps raciais são
+do diferencial mensal de gênero, enquanto os \textit{gaps} raciais são
 predominantemente associados à remuneração por hora. Isso sugere que análises
 baseadas apenas no rendimento mensal podem misturar diferenças no preço do
 trabalho com diferenças na quantidade de horas ofertadas, produzindo
@@ -1136,7 +1397,7 @@ emprego público, do gênero ou da raça/cor. Os diferenciais condicionais podem
 incorporar características produtivas não observadas, experiência, qualidade
 da educação e alocação entre firmas, carreiras, funções e níveis de governo,
 além de mecanismos discriminatórios que a PNAD Contínua não permite isolar.
-Em particular, a concentração dos gaps raciais no setor público não permite
+Em particular, a concentração dos \textit{gaps} raciais no setor público não permite
 distinguir diferenças de remuneração dentro de posições observadas de
 \textit{sorting} para carreiras e postos públicos não observados.
 
@@ -1150,9 +1411,28 @@ permanecem entre trabalhadores observacionalmente semelhantes. Bases que
 permitam acompanhar trajetórias individuais e identificar firmas, carreiras
 públicas e níveis de governo de forma mais detalhada constituem uma extensão
 natural desta agenda.
+
+\begingroup
+\footnotesize
+\section*{Declaração sobre uso de Inteligência Artificial}
+
+Ferramentas de inteligência artificial foram utilizadas ao longo do
+desenvolvimento deste artigo. O assistente Claude (Anthropic) foi empregado
+na elaboração e depuração do código de análise de dados em R e Python (incluindo 
+auxílio na criação das rotinas de estimação, decomposição sequencial, geração das
+figuras), na formatação e verificação da bibliografia e do documento em
+LaTeX; e no auxílio à redação e revisão de trechos do texto. O ChatGPT
+(OpenAI) foi utilizado no planejamento e na revisão de conteúdo, incluindo
+sugestões sobre a estrutura de seções, especificação de figuras e tabelas, e
+comentários sobre o texto. Todo o conteúdo produzido com auxílio dessas
+ferramentas foi revisado, verificado contra os dados originais e validado
+pelos autores, que assumem total responsabilidade pela precisão,
+integridade e conclusões do artigo.
+\endgroup
+
 \begingroup
 \small
-\bibliographystyle{apalike}
+\bibliographystyle{apalike-pt}
 \bibliography{referencias}
 \endgroup
 
