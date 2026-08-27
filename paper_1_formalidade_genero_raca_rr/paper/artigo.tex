@@ -15,6 +15,7 @@
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
 \usepackage[brazilian]{babel}
+\usepackage{indentfirst}
 \usepackage{setspace}
 \usepackage{geometry}
 \usepackage{amsmath}
@@ -22,6 +23,7 @@
 \usepackage{graphicx}
 \usepackage{url}
 \usepackage[authoryear,round]{natbib}
+\renewcommand{\bibsection}{\section{\refname}}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{hyperref}
 \hypersetup{
@@ -464,7 +466,7 @@ da informalidade discutida por \citet{ulyssea2006} e \citet{ulyssea2018}.
 As variáveis dependentes principais são o rendimento mensal real do trabalho
 principal e o rendimento real por hora. O rendimento mensal habitual é
 deflacionado pelo deflator trimestral oficial da PNAD Contínua. O rendimento por
-hora é definido por
+hora ($w^h_{it}$) é definido por:
 
 \begin{equation}
     w^h_{it}=\frac{w^m_{it}}{4{,}33H_{it}},
@@ -476,7 +478,7 @@ em que $w^m_{it}$ representa o rendimento mensal habitual e $H_{it}$ as horas
 habitualmente trabalhadas por semana no trabalho principal\footnote{O fator 4,33 na equação \ref{eq:renda_hora} resulta de $52/12$ e converte a jornada semanal habitual em uma aproximação da jornada mensal. Dessa forma, o rendimento por hora é obtido dividindo-se o rendimento mensal habitual pelo número estimado de horas habitualmente trabalhadas no mês.}. Nas estimações são
 utilizados $\ln w^m_{it}$ e $\ln w^h_{it}$.
 
-A variável $Mulher_{it}$ assume valor um para mulheres e zero para homens, que
+A variável de gênero assume valor um para mulheres e zero para homens, que
 constituem a categoria de referência. A variável de raça/cor distingue brancos,
 pretos, pardos e indígenas, com brancos como referência. A categoria amarela é
 excluída das especificações que envolvem raça/cor devido ao número reduzido de
@@ -537,12 +539,13 @@ A especificação principal é
 
 \noindent
 em que $\ln w_{it}$ representa alternativamente o logaritmo do rendimento
-mensal real ou do rendimento real por hora; $F_{it}$ indica formalidade;
+mensal real ou do rendimento real por hora; $F_{it}$ indica formalidade; $Mulher_{it}$ indica gênero feminino;
 $\mathbf{R}_{it}$ contém indicadores para pretos, pardos e indígenas;
 $A_{it}$ representa idade; $\mathbf{E}_{it}$ reúne as categorias de
 escolaridade; $\mathbf{C}_{it}$ representa os efeitos fixos das células
-ocupação$\times$atividade; e $\lambda_t$ corresponde aos efeitos fixos de
-período. As interações permitem que o diferencial de gênero varie segundo a
+ocupação$\times$atividade; $\lambda_t$ corresponde aos efeitos fixos de
+período; e $\varepsilon_{it}$ representa o termo de erro, que reúne fatores não observados associados ao rendimento. 
+As interações permitem que o diferencial de gênero varie segundo a
 formalidade, que os diferenciais raciais sejam distintos entre formais e
 informais e que gênero e raça/cor não se combinem necessariamente de forma
 aditiva. Não se inclui uma interação tripla entre formalidade, gênero e raça/cor
@@ -771,12 +774,11 @@ Em conjunto, as Figuras~\ref{fig:formalidade_amostras} e
 \ref{fig:acesso_formalidade} descrevem margens distintas. A formalidade está
 associada a maior rendimento entre trabalhadores observavelmente semelhantes,
 enquanto não se encontram diferenças precisas de gênero ou raça/cor na
-probabilidade condicional de inserção formal. Essa distinção reforça a cautela
-da literatura de segmentação e seleção, que chamam a atenção para o fato de que diferenças de remuneração entre
-posições não implicam, mecanicamente, barreiras observáveis de acesso a essas
-posições \citep{ulyssea2006,ulyssea2018}. A questão seguinte
-é, portanto, se as desigualdades entre grupos diminuem uma vez alcançado o
-segmento formal.
+probabilidade condicional de inserção formal. Essa distinção reforça a 
+cautela da literatura de segmentação e seleção, que chama a atenção para o 
+fato de que diferenças de remuneração entre posições não implicam, 
+mecanicamente, barreiras observáveis de acesso a essas posições \citep{ulyssea2006,ulyssea2018}. 
+A questão é particularmente relevante quando se examinam diferenças segundo gênero e raça/cor.
 
 \subsection{Gênero}
 \label{subsec:resultados_genero}
@@ -1101,10 +1103,10 @@ diferenciais de gênero e pertencimento indígena implicaria diferença próxima
 de 28,2\%. A interação mulher$\times$indígena corresponde a aproximadamente
 $+12,3\%$ e é estatisticamente significativa ($p=0,004$).
 
-O resultado não indica ausência de desvantagem para mulheres indígenas. Elas 
-continuam em posição relativa desfavorável. O que se rejeita é a hipótese
-de que os diferenciais de gênero e pertencimento indígena simplesmente se
-somem na escala logarítmica. Esse padrão difere da evidência de desvantagem
+As mulheres indígenas permanecem em posição relativa desfavorável. Além disso, 
+rejeita-se a hipótese de que os diferenciais de gênero e pertencimento indígena 
+se somem de forma simplesmente aditiva na escala logarítmica. Esse padrão difere 
+da evidência de desvantagem
 interseccional particularmente intensa encontrada por \citet{kolev2015}
 para o Peru e reforça a importância de tratar a categoria indígena
 separadamente no contexto roraimense. Como nos demais exercícios, a interação
@@ -1356,7 +1358,7 @@ por \citet{kolev2015} para o Peru, sem implicar ausência de
 desvantagem, já que mulheres indígenas continuam apresentando rendimento inferior ao
 de homens brancos observacionalmente comparáveis. A evidência reforça, portanto,
 a importância de evitar agregações raciais amplas que eliminem precisamente a
-heterogeneidade relevante para mercados como o de Roraima.
+heterogeneidade relevante para mercados de trabalho como o de Roraima.
 
 Os resultados também mostram que diferentes medidas de rendimento capturam
 margens distintas da desigualdade. A jornada responde por parcela importante
@@ -1389,7 +1391,7 @@ natural desta agenda.
 
 \begingroup
 \footnotesize
-\section*{Declaração sobre uso de Inteligência Artificial}
+\section{Declaração sobre uso de Inteligência Artificial}
 
 Ferramentas de inteligência artificial foram utilizadas como apoio à programação, 
 formatação, organização e revisão do manuscrito. Claude (Anthropic) e ChatGPT
