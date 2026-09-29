@@ -1,0 +1,12 @@
+Versao Word para a II Semana de Economia Brasileira (CICEF-BNDES)
+
+Fonte unica: ../artigo_seb.tex (usa ../../figures e ../../referencias.bib). Depois de editar o .tex:
+  1. compilar o LaTeX (pdflatex, bibtex, pdflatex x2) para atualizar artigo_seb.aux
+  2. python build_docx.py           -> gera ../artigo_seb.docx
+     (a versao final submetida, editada no Word, e 'Silva, Silva & Silva - ....docx';
+      regerar NAO a sobrescreve)
+Requisitos: pip install pypandoc_binary python-docx
+Formato: make_reference.py (A4, Times New Roman 12, 1,5 linhas, margens 2,5 cm)
+Citacoes: chicago.csl (Chicago autor-data com virgula: Autor, ano, p.)
+Figuras: PNG 300 dpi rasterizados de ../../figures/*.pdf (regerar se as figuras mudarem)
+Limite do edital: 25 paginas no Word (conferir com word_check.ps1).
